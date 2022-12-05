@@ -1,5 +1,7 @@
-### Gradle ###
+### IntelliJ ###
+.DS_STORE
 
+### Gradle ###
 .gradle
 build/
 gradle-app.setting
