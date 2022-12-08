@@ -1,11 +1,11 @@
 package nl.tudelft.sem.template.matching.domain;
 
-import lombok.Value;
+import lombok.Data;
 
 /**
  * A DDD value object representing an activity.
  */
-@Value
+@Data
 public class ActivityApp {
     private long activityId;
     private String publisherId;
