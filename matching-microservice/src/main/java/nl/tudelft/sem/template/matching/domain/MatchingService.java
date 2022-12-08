@@ -1,7 +1,6 @@
 package nl.tudelft.sem.template.matching.domain;
 
 import nl.tudelft.sem.template.matching.models.ActivityReponse;
-import org.h2.engine.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -40,7 +39,7 @@ public class MatchingService {
                         case COMPETITION:
                             return a.getGender().equals(user.getGender())
                                     && a.getOrganisation().equals(user.getOrganisation())
-                                    && a.isCompetitiveness() == user.isCompetitiveness();
+                                    && (!a.isCompetitiveness() || user.isCompetitiveness());
                         default:
                             return true;
 
