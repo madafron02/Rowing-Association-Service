@@ -13,6 +13,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.SchemaOutputResolver;
 import java.io.IOException;
 import java.util.List;
 
@@ -67,7 +68,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                         String netId = jwtTokenVerifier.getNetIdFromToken(token);
                         var authenticationToken = new UsernamePasswordAuthenticationToken(
                                 netId,
-                                null, List.of() // no credentials and no authorities
+                                token, List.of() // no credentials and no authorities
                         );
                         authenticationToken.setDetails(new WebAuthenticationDetailsSource()
                                 .buildDetails(request));
@@ -84,6 +85,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     System.err.println("Unable to parse JWT token");
                 }
             }
+        } else {
             System.err.println("Invalid authorization header");
         }
 
