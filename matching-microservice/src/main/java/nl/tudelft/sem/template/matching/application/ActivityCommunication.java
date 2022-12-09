@@ -2,8 +2,10 @@ package nl.tudelft.sem.template.matching.application;
 
 import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.HttpHeaders;
 import nl.tudelft.sem.template.matching.domain.TimeslotApp;
 import nl.tudelft.sem.template.matching.models.ActivityAvailabilityResponseModel;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 
@@ -27,6 +29,8 @@ public class ActivityCommunication {
                 .target(SERVER)
                 .path("/activity/availability")
                 .request(APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer "
+                        + SecurityContextHolder.getContext().getAuthentication().getCredentials())
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(availability, APPLICATION_JSON), ActivityAvailabilityResponseModel.class);
     }

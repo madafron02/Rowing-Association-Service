@@ -1,10 +1,13 @@
 package nl.tudelft.sem.template.matching.application;
 
 import jakarta.ws.rs.core.HttpHeaders;
+import nl.tudelft.sem.template.matching.domain.UserApp;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+
+import javax.ws.rs.client.Entity;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
@@ -21,14 +24,14 @@ public class UsersCommunication {
      * @param userId the id of the user
      * @return the details of the user
      */
-    public static String getUserDetails(String userId) {
+    public UserApp getUserDetails(String userId) {
         return new ResteasyClientBuilder().build()
                 .target(SERVER)
-                .path("/hello")
+                .path("/user/details")
                 .request(APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer "
                         + SecurityContextHolder.getContext().getAuthentication().getCredentials())
                 .accept(APPLICATION_JSON)
-                .get(String.class);
+                .post(Entity.entity(userId, APPLICATION_JSON), UserApp.class);
     }
 }
