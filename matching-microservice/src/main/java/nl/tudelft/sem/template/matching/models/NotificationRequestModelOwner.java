@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.matching.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import nl.tudelft.sem.template.matching.domain.TimeslotApp;
 
@@ -8,6 +9,7 @@ import nl.tudelft.sem.template.matching.domain.TimeslotApp;
  * to the Notification one in the case we want to email the owner of the activity.
  */
 @Data
+@AllArgsConstructor
 public class NotificationRequestModelOwner {
     private String ownerId;
     private String participantId;
