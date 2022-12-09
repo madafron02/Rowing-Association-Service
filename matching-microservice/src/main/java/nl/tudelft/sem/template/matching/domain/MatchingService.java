@@ -1,6 +1,11 @@
 package nl.tudelft.sem.template.matching.domain;
 
+import nl.tudelft.sem.template.matching.application.ActivityCommunication;
+import nl.tudelft.sem.template.matching.application.NotificationCommunication;
+import nl.tudelft.sem.template.matching.application.UsersCommunication;
+import nl.tudelft.sem.template.matching.authentication.AuthManager;
 import nl.tudelft.sem.template.matching.models.ActivityReponse;
+import nl.tudelft.sem.template.matching.models.MatchingResponseModel;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,15 +17,46 @@ import java.util.stream.Collectors;
 @Service
 public class MatchingService {
 
+    private final transient AuthManager auth;
     private final transient MatchingRepo matchingRepo;
+    private final transient UsersCommunication usersCommunication;
+    private final transient NotificationCommunication notificationCommunication;
+    private final transient ActivityCommunication activityCommunication;
+
 
     /**
      * Constructor of the matching service.
      *
-     * @param repo the repository of matches
+     * @param auth                      the authentication manager
+     * @param repo                      the repository of matches
+     * @param usersCommunication        communication to the user service
+     * @param notificationCommunication communication to the notification service
+     * @param activityCommunication     communication to the activity service
      */
-    public MatchingService(MatchingRepo repo) {
+    public MatchingService(AuthManager auth,
+                           MatchingRepo repo,
+                           UsersCommunication usersCommunication,
+                           NotificationCommunication notificationCommunication,
+                           ActivityCommunication activityCommunication) {
+        this.auth = auth;
         this.matchingRepo = repo;
+        this.usersCommunication = usersCommunication;
+        this.notificationCommunication = notificationCommunication;
+        this.activityCommunication = activityCommunication;
+    }
+
+    /**
+     * Facade for gathering user details, activities, filtering,
+     * and returning a DTO containing the list of matched activities.
+     *
+     * @param timeslot submitted by the user
+     * @param position submitted by the user
+     * @return DTO containing the list of matched activities
+     */
+    public MatchingResponseModel submitAvailability(TimeslotApp timeslot, String position) {
+        UserApp user = usersCommunication.getUserDetails(auth.getUserId());
+        List<ActivityApp> activities = activityCommunication.getActivitiesByAvailability(timeslot).getAvailableActivities();
+        return new MatchingResponseModel(filterActivities(activities, user, position));
     }
 
     /**
