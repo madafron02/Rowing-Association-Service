@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.matching.application;
 
 import jakarta.ws.rs.core.HttpHeaders;
 import lombok.NoArgsConstructor;
+import nl.tudelft.sem.template.matching.domain.ActivityApp;
 import nl.tudelft.sem.template.matching.domain.TimeslotApp;
 import nl.tudelft.sem.template.matching.models.ActivityAvailabilityResponseModel;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
@@ -37,5 +38,24 @@ public class ActivityCommunication {
                         + SecurityContextHolder.getContext().getAuthentication().getCredentials())
                 .accept(APPLICATION_JSON)
                 .post(Entity.entity(availability, APPLICATION_JSON), ActivityAvailabilityResponseModel.class);
+    }
+
+
+    /**
+     * Method for calling the api request in Activity microservice to get the timeslot of a given activity
+     * by providing its id.
+     *
+     * @param activityId the id of the activity
+     * @return the timeslot of the activity
+     */
+    public TimeslotApp getActivityTimeslotById(long activityId) {
+        return new ResteasyClientBuilder().build()
+                .target(SERVER)
+                .path("/activity/" + activityId)
+                .request(APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer "
+                        + SecurityContextHolder.getContext().getAuthentication().getCredentials())
+                .accept(APPLICATION_JSON)
+                .get(TimeslotApp.class);
     }
 }
