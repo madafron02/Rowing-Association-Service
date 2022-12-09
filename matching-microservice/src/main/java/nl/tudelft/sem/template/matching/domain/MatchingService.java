@@ -6,6 +6,8 @@ import nl.tudelft.sem.template.matching.application.UsersCommunication;
 import nl.tudelft.sem.template.matching.authentication.AuthManager;
 import nl.tudelft.sem.template.matching.models.ActivityReponse;
 import nl.tudelft.sem.template.matching.models.MatchingResponseModel;
+import nl.tudelft.sem.template.matching.models.NotificationRequestModelOwner;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -98,4 +100,61 @@ public class MatchingService {
         return new ActivityReponse(matchMade.getMatchId(), activity.getType(), activity.getTimeslot());
     }
 
+    /**
+     * Method for verifying the identity of the user making a request by using the SecurityContext
+     * in the auth manager.
+     *
+     * @param matchId the id of the match
+     * @return true if the user making the request has the same userIs as the userId of the match given
+     *         false otherwise
+     */
+    private boolean verifyUser(long matchId) {
+        return auth.getUserId().equals(matchingRepo.getMatchByMatchId(matchId).get().getParticipantId());
+    }
+
+    /**
+     * Method for verifying the existence of the match.
+     *
+     * @param matchId the id of the match
+     * @return true if it exists in the database a match with the id given
+     *         false otherwise
+     */
+    public boolean verifyMatch(long matchId) {
+        return matchingRepo.getMatchByMatchId(matchId).isPresent() && verifyUser(matchId);
+    }
+
+    /**
+     * Method called by the api request for picking an activity which retrieves the match by the matchId
+     * sets the status as Pending, saves the Match and then notifies the owner of a new match being made.
+     *
+     * @param matchId the id of a match
+     */
+    public void pickActivity(long matchId) {
+        Match match = matchingRepo.getMatchByMatchId(matchId).get();
+        match.setStatus(Status.PENDING);
+        matchingRepo.save(match);
+        notifyOwner(match);
+    }
+
+    /**
+     * Method for notifying an owner of the match made by calling the method in the NotificationCommunication.
+     *
+     * @param match the Match entity made
+     */
+    private void notifyOwner(Match match) {
+        notificationCommunication
+                .sendReminderToOwner(new NotificationRequestModelOwner(match.getOwnerId(),
+                        match.getParticipantId(),
+                        match.getActivityId(),
+                        activityCommunication.getActivityTimeslotById(match.getActivityId())));
+    }
+
+    /**
+     * Method for getting the pending requests by the current userId acting as owner of activities.
+     *
+     * @return the List of matches being in pending for the owner (client making a request)
+     */
+    public List<Match> getPendingRequests() {
+        return matchingRepo.getMatches(auth.getUserId());
+    }
 }
