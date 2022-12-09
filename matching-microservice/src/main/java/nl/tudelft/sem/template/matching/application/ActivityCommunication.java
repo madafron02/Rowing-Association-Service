@@ -1,13 +1,13 @@
 package nl.tudelft.sem.template.matching.application;
 
-import jakarta.ws.rs.client.ClientBuilder;
-import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.HttpHeaders;
 import nl.tudelft.sem.template.matching.domain.TimeslotApp;
 import nl.tudelft.sem.template.matching.models.ActivityAvailabilityResponseModel;
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
 
+
+import javax.ws.rs.client.Entity;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
@@ -25,7 +25,7 @@ public class ActivityCommunication {
      * @return an ActivityAvailabilityResponseModel -> list of activities
      */
     public ActivityAvailabilityResponseModel getActivitiesByAvailability(TimeslotApp availability) {
-        return ClientBuilder.newClient()
+        return new ResteasyClientBuilder().build()
                 .target(SERVER)
                 .path("/activity/availability")
                 .request(APPLICATION_JSON)
