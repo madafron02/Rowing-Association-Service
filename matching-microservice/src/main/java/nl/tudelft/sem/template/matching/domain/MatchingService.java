@@ -6,9 +6,11 @@ import nl.tudelft.sem.template.matching.application.UsersCommunication;
 import nl.tudelft.sem.template.matching.authentication.AuthManager;
 import nl.tudelft.sem.template.matching.models.ActivityReponse;
 import nl.tudelft.sem.template.matching.models.MatchingResponseModel;
+import nl.tudelft.sem.template.matching.models.NotificationRequestModelParticipant;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -96,6 +98,39 @@ public class MatchingService {
         Match matchMade = new Match(user.getId(), activity.getActivityId(), activity.getPublisherId(), position);
         matchingRepo.save(matchMade);
         return new ActivityReponse(matchMade.getMatchId(), activity.getType(), activity.getTimeslot());
+    }
+
+    /**
+     * Method for accepting or denying a request.
+     *
+     * @param matchId  the id of the match to set a decision to
+     * @param decision of the owner
+     * @return true iff the request was valid and the notification was sent
+     */
+    public boolean acceptOrDenyRequest(long matchId, boolean decision) {
+        Optional<Match> match = matchingRepo.getMatchByMatchId(matchId);
+        if (!match.isPresent()) {
+            return false;
+        }
+        if (!match.get().getOwnerId().equals(auth.getUserId())) {
+            return false;
+        }
+        if (!match.get().getStatus().equals(Status.PENDING)) {
+            return false;
+        }
+        Match newMatch = match.get();
+        if (decision) {
+            newMatch.setStatus(Status.ACCEPTED);
+        } else {
+            newMatch.setStatus(Status.DECLINE);
+        }
+        matchingRepo.save(newMatch);
+        notificationCommunication.sendNotificationToParticipant(
+                new NotificationRequestModelParticipant(newMatch.getParticipantId(),
+                        newMatch.getActivityId(),
+                        activityCommunication.getActivityTimeslotById(newMatch.getActivityId()),
+                        decision));
+        return true;
     }
 
 }

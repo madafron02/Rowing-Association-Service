@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.matching.controllers;
 
 import nl.tudelft.sem.template.matching.domain.MatchingService;
+import nl.tudelft.sem.template.matching.models.DecisionModel;
 import nl.tudelft.sem.template.matching.models.MatchingRequestModel;
 import nl.tudelft.sem.template.matching.models.MatchingResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,5 +48,20 @@ public class MatchingController {
             System.err.println(Arrays.toString(e.getStackTrace()));
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    /**
+     * API Endpoint for accepting or denying a request of a participant.
+     *
+     * @param decision DTO containing the matchId and the decision
+     * @return message containing whether this action was successful
+     */
+    @PostMapping("/accept")
+    public ResponseEntity<String> acceptOrDenyRequest(@RequestBody DecisionModel decision) {
+        if (!service.acceptOrDenyRequest(decision.getMatchId(), decision.isDecision())) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok("Notification sent successfully !");
     }
 }
