@@ -8,5 +8,5 @@ public interface AuthHandler {
 
     public void setNext(AuthHandler handler);
 
-    public void setExceptionHandler(AuthHandler handler);
+    public void setExceptionHandler(ExceptionHandler handler);
 }
