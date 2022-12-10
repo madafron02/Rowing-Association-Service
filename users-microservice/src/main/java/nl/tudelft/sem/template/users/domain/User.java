@@ -14,45 +14,45 @@ import java.util.Objects;
 public class User {
 
     /**
-     * Entity that represents the users in the system
+     * Entity that represents the users in the system.
      */
 
     @Id
-    @Column(name = "id", nullable = false)
-    private String netId;
+    @Column(name = "id", nullable = false, unique = true)
+    private String email;
     private String gender;
     private boolean competitive;
     private String certificate;
     private String organization;
 
     /**
-     * Constructor for the User entity
+     * Constructor for the User entity.
      *
-     * @param netId - the email of the user
+     * @param email - the email of the user
      * @param gender - the gender of the user
      * @param competitive - TRUE if user is competitive, FALSE if user is not competitive
      * @param certificate - the highest priority certificate of the user
      * @param organization - the organization of the user
      */
-    public User(String netId, String gender, boolean competitive, String certificate, String organization){
-        this.netId = netId;
-        this.gender=gender;
-        this.competitive=competitive;
-        this.certificate=certificate;
-        this.organization=organization;
+    public User(String email, String gender, boolean competitive, String certificate, String organization) {
+        this.email = email;
+        this.gender = gender;
+        this.competitive = competitive;
+        this.certificate = certificate;
+        this.organization = organization;
     }
 
     /**
-     * Getter for the netId of a user
+     * Getter for the email of a user.
      *
-     * @return the netId of the user
+     * @return the email of the user
      */
-    public String getNetId() {
-        return netId;
+    public String getEmail() {
+        return email;
     }
 
     /**
-     * Getter for the gender of a user
+     * Getter for the gender of a user.
      *
      * @return the gender of the user
      */
@@ -61,7 +61,7 @@ public class User {
     }
 
     /**
-     * getter for the competitiveness of a user
+     * Getter for the competitiveness of a user.
      *
      * @return TRUE if the user is competitive, FALSE if the user is not competitive
      */
@@ -70,7 +70,7 @@ public class User {
     }
 
     /**
-     * getter for the certificate of a user
+     * Getter for the certificate of a user.
      *
      * @return the certificate of a user
      */
@@ -79,7 +79,7 @@ public class User {
     }
 
     /**
-     * getter for the organization of a user
+     * Getter for the organization of a user.
      *
      * @return the organization of a user
      */
@@ -88,7 +88,7 @@ public class User {
     }
 
     /**
-     * setter for the gender of a user
+     * Setter for the gender of a user.
      *
      * @param gender the gender of the user
      */
@@ -97,7 +97,7 @@ public class User {
     }
 
     /**
-     * setter for the competitiveness of a user
+     * Setter for the competitiveness of a user.
      *
      * @param competitive the competitiveness of the user
      */
@@ -106,7 +106,7 @@ public class User {
     }
 
     /**
-     * setter for the certificate of a user
+     * Setter for the certificate of a user.
      *
      * @param certificate the certificate of a user
      */
@@ -115,7 +115,7 @@ public class User {
     }
 
     /**
-     * setter for the organization of a user
+     * Setter for the organization of a user.
      *
      * @param organization the organization of a user
      */
@@ -124,26 +124,30 @@ public class User {
     }
 
     /**
-     * Method for checking equality between two User objects, only considers the User's netId.
+     * Method for checking equality between two User objects, only considers the User's email.
      *
      * @param o the comparison object
      * @return TRUE if the objects are equal. FALSE if they are not equal.
      */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         User user = (User) o;
-        return netId.equals(user.netId);
+        return email.equals(user.email);
     }
 
     /**
-     * Method for hashing the User entity, only consider the user's netId
+     * Method for hashing the User entity, only consider the user's email.
      *
      * @return hashCode of User entity
      */
     @Override
     public int hashCode() {
-        return Objects.hash(netId);
+        return Objects.hash(email);
     }
 }

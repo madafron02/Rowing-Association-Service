@@ -26,7 +26,7 @@ public class UserTest {
 
     @Test
     void testGetNetId(){
-        assertThat(user.getNetId()).isEqualTo("ealstad@tudelft.nl");
+        assertThat(user.getEmail()).isEqualTo("ealstad@tudelft.nl");
     }
 
     @Test
