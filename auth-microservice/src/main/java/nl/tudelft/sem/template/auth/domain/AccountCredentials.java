@@ -1,9 +1,12 @@
 package nl.tudelft.sem.template.auth.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.Objects;
 
+@Entity
 public class AccountCredentials {
-
+    @Id
     private String userId;
     private String password;
 
@@ -11,6 +14,11 @@ public class AccountCredentials {
         this.userId = userId;
         this.password = password;
     }
+
+    public AccountCredentials() {
+
+    }
+
     public String getUserId() {
         return userId;
     }
@@ -30,5 +38,13 @@ public class AccountCredentials {
     @Override
     public int hashCode() {
         return Objects.hash(getUserId(), getPassword());
+    }
+
+    @Override
+    public String toString() {
+        return "AccountCredentials{" +
+                "userId='" + userId + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 }
