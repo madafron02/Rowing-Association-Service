@@ -1,39 +1,55 @@
 package nl.tudelft.sem.template.auth.controllers;
 
+import nl.tudelft.sem.template.auth.application.handlers.CreateAccount;
+import nl.tudelft.sem.template.auth.application.handlers.CreateToken;
+import nl.tudelft.sem.template.auth.application.handlers.ExceptionHandler;
+import nl.tudelft.sem.template.auth.application.handlers.SanitizeCredentials;
+import nl.tudelft.sem.template.auth.domain.AccountCredentials;
+import nl.tudelft.sem.template.auth.domain.AccountsRepo;
+import nl.tudelft.sem.template.auth.models.RegistrationRequestModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Hello World example controller.
- * <p>
- * This controller shows how you can extract information from the JWT token.
- * </p>
- */
 @RestController
 public class AuthenticationController {
 
+    @Value("${jwt.secret}")
+    private String jwtSecret;
+    private final AccountsRepo accountsRepo;
 
-    /**
-     * Instantiates a new controller.
-     *
-     * @param authManager Spring Security component used to authenticate and authorize the user
-     */
-//    @Autowired
-//    public DefaultController(AuthManager authManager) {
-//        this.authManager = authManager;
-//    }
+    @Autowired
+    public AuthenticationController(AccountsRepo accountsRepo) {
+        this.accountsRepo = accountsRepo;
+    }
 
-    /**
-     * Gets example by id.
-     *
-     * @return the example found in the database with the given id
-     */
-    @GetMapping("/hello")
-    public ResponseEntity<String> helloWorld() {
-        return ResponseEntity.ok("Hello World!");
+    @PostMapping("/register")
+    public ResponseEntity register(@RequestBody RegistrationRequestModel request) throws Exception {
+
+        AccountCredentials credentials = new AccountCredentials(request.getUserId(), request.getPassword());
+
+        ExceptionHandler exceptionHandler = new ExceptionHandler();
+        SanitizeCredentials sanitizeCredentials = new SanitizeCredentials();
+        CreateAccount createAccount = new CreateAccount(accountsRepo);
+        CreateToken createToken = new CreateToken(jwtSecret);
+
+        sanitizeCredentials.setExceptionHandler(exceptionHandler);
+        createAccount.setExceptionHandler(exceptionHandler);
+        createToken.setExceptionHandler(exceptionHandler);
+
+        sanitizeCredentials.setNext(createAccount);
+        createAccount.setNext(createToken);
+
+        sanitizeCredentials.handle(credentials);
+
+        String token = createToken.getToken();
+        if(exceptionHandler.didCatchException() || token == null){
+            return ResponseEntity.status(exceptionHandler.getStatusCode()).body(exceptionHandler.getErrorMessage());
+        }
+        return ResponseEntity.ok(token);
     }
 
 }
