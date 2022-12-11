@@ -17,4 +17,5 @@ public class ActivityApp {
     private HashMap<String, Integer> positions;
     private boolean competitiveness;
     private TypeOfActivity type;
+    private String certificate;
 }

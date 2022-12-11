@@ -1,4 +1,4 @@
-package nl.tudelft.sem.template.matching.database;
+package nl.tudelft.sem.template.matching.domain.database;
 
 import nl.tudelft.sem.template.matching.domain.Certificate;
 import org.springframework.data.jpa.repository.JpaRepository;
