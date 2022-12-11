@@ -1,7 +1,10 @@
 package nl.tudelft.sem.template.auth.application.handlers;
 
-import lombok.SneakyThrows;
 import nl.tudelft.sem.template.auth.domain.AccountCredentials;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.security.SecureRandom;
 
 public class SanitizeCredentials implements AuthHandler{
 
@@ -14,8 +17,43 @@ public class SanitizeCredentials implements AuthHandler{
     @Override
     public void handle(AccountCredentials credentials) {
         if(next == null) return;
-
-        //TODO
+        this.credentials = credentials;
+        try {
+            if(credentials.getUserId() == null || credentials.getUserId().equals("")){
+                exceptionHandler.handleException(new IllegalArgumentException(), "Please provide a user id.");
+                return;
+            }
+            if(credentials.getPassword() == null || credentials.getPassword().equals("")){
+                exceptionHandler.handleException(new IllegalArgumentException(), "Please provide a password.");
+                return;
+            }
+            String sanitizedUserId = sanitize(credentials.getUserId());
+            String sanitizedPassword = sanitize(credentials.getPassword());
+            if(sanitizedUserId.length() < credentials.getUserId().length()){
+                exceptionHandler.handleException(new IllegalArgumentException(), "Your user id contains illegal" +
+                        " characters. Please only use letters, numbers and the following characters: " +
+                        "!#$%&()*+,-./:;<=>?@^_`{|}~");
+                return;
+            }
+            if(sanitizedPassword.length() < credentials.getPassword().length()){
+                exceptionHandler.handleException(new IllegalArgumentException(), "Your password contains illegal" +
+                        " characters. Please only use letters, numbers and the following characters: " +
+                        "!#$%&()*+,-./:;<=>?@^_`{|}~");
+                return;
+            }
+            if(!isEmailAddress(sanitizedUserId)){
+                exceptionHandler.handleException(new IllegalArgumentException(), "Your user id must be an email address.");
+                return;
+            }
+            AccountCredentials newCredentials = new AccountCredentials(sanitizedUserId, sanitizedPassword);
+            next.handle(newCredentials);
+        } catch (Exception e){
+            if(exceptionHandler != null){
+                exceptionHandler.handleException(e);
+            } else {
+                throw e;
+            }
+        }
     }
 
     @Override
