@@ -49,7 +49,7 @@ public class UserService {
         if (email == null || repo.existsUserByEmail(email)) {
             return null;
         }
-        User newUser = new User();
+        User newUser = new User(email);
         repo.save(newUser);
         return newUser;
     }
