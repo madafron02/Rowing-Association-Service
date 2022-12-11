@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 class ExceptionHandlerTest {
 
@@ -29,37 +30,34 @@ class ExceptionHandlerTest {
     }
 
     @Test
-    void testThrowError(){
-        Exception exception = new RuntimeException();
-        boolean bool = false;
-        try {
-            exceptionHandler.throwException(exception, "Test exception!");
-            bool = true;
-        } catch (Exception e){
-            assertThat(e).isEqualTo(exception);
-        }
-        assertThat(bool).isFalse();
+    void testNoException(){
+        assertThat(exceptionHandler.didCatchException()).isFalse();
     }
 
     @Test
-    void testGetMessage(){
-        Exception exception = new RuntimeException();
-        try {
-            exceptionHandler.throwException(exception, "Test exception!");
-        } catch (Exception e){
-
-        }
-        assertThat(exceptionHandler.getErrorMessage()).isEqualTo("Test exception!");
+    void testException(){
+        exceptionHandler.handleException(new RuntimeException());
+        assertThat(exceptionHandler.didCatchException()).isTrue();
     }
 
     @Test
     void testGetException(){
         Exception exception = new RuntimeException();
-        try {
-            exceptionHandler.throwException(exception, "Test exception!");
-        } catch (Exception e){
-
-        }
+        exceptionHandler.handleException(exception);
         assertThat(exceptionHandler.getException()).isEqualTo(exception);
+    }
+
+    @Test
+    void testGetException2(){
+        Exception exception = new RuntimeException();
+        exceptionHandler.handleException(exception, "Test exception!");
+        assertThat(exceptionHandler.getException()).isEqualTo(exception);
+    }
+
+    @Test
+    void testGetMessage(){
+        Exception exception = new RuntimeException();
+        exceptionHandler.handleException(exception, "Test exception!");
+        assertThat(exceptionHandler.getErrorMessage()).isEqualTo("Test exception!");
     }
 }
