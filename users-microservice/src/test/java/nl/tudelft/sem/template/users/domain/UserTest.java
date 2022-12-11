@@ -10,88 +10,88 @@ public class UserTest {
     private static User user;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         user = new User("ealstad@tudelft.nl", "male", true, "C4", "proteus");
     }
 
     @Test
-    void testNoArgsConstructor(){
+    void testNoArgsConstructor() {
         assertThat(new User()).isNotNull();
     }
 
     @Test
-    void testConstructor(){
+    void testConstructor() {
         assertThat(user).isNotNull();
     }
 
     @Test
-    void testGetNetId(){
+    void testGetNetId() {
         assertThat(user.getEmail()).isEqualTo("ealstad@tudelft.nl");
     }
 
     @Test
-    void testGetGender(){
+    void testGetGender() {
         assertThat(user.getGender()).isEqualTo("male");
     }
 
     @Test
-    void testIsCompetitive(){
+    void testIsCompetitive() {
         assertThat(user.isCompetitive()).isTrue();
     }
 
     @Test
-    void testGetCertificate(){
+    void testGetCertificate() {
         assertThat(user.getCertificate()).isEqualTo("C4");
     }
 
     @Test
-    void testGetOrganization(){
+    void testGetOrganization() {
         assertThat(user.getOrganization()).isEqualTo("proteus");
     }
 
     @Test
-    void testSetGender(){
+    void testSetGender() {
         user.setGender("female");
         assertThat(user.getGender()).isEqualTo("female");
     }
 
     @Test
-    void testSetCompetitive(){
+    void testSetCompetitive() {
         user.setCompetitive(false);
         assertThat(user.isCompetitive()).isFalse();
     }
 
     @Test
-    void testSetCertificate(){
+    void testSetCertificate() {
         user.setCertificate("4+");
         assertThat(user.getCertificate()).isEqualTo("4+");
     }
 
     @Test
-    void testSetOrganization(){
+    void testSetOrganization() {
         user.setOrganization("laga");
         assertThat(user.getOrganization()).isEqualTo("laga");
     }
 
     @Test
-    void testEqualsSelf(){
+    void testEqualsSelf() {
         assertThat(user.equals(user)).isTrue();
     }
 
     @Test
-    void testEqualsOther(){
+    void testEqualsOther() {
         User otherUser = new User("ealstad@tudelft.nl", "female", false, "8+", "rowpro");
         assertThat(user.equals(otherUser)).isTrue();
     }
 
     @Test
-    void testNotEqual(){
+    void testNotEqual() {
         User otherUser = new User("hstyles@tudelft.nl", "female", false, "8+", "rowpro");
         assertThat(user.equals(otherUser)).isFalse();
     }
 
     @Test
-    void testHash(){
+    void testHash() {
         User otherUser = new User("ealstad@tudelft.nl", "female", false, "8+", "rowpro");
         assertThat(user.hashCode()).isEqualTo(otherUser.hashCode());
     }

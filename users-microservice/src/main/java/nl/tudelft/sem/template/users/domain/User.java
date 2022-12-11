@@ -28,11 +28,11 @@ public class User {
     /**
      * Constructor for the User entity.
      *
-     * @param email - the email of the user
-     * @param gender - the gender of the user
-     * @param competitive - TRUE if user is competitive, FALSE if user is not competitive
-     * @param certificate - the highest priority certificate of the user
-     * @param organization - the organization of the user
+     * @param email the email of the user
+     * @param gender the gender of the user
+     * @param competitive TRUE if user is competitive, FALSE if user is not competitive
+     * @param certificate the highest priority certificate of the user
+     * @param organization the organization of the user
      */
     public User(String email, String gender, boolean competitive, String certificate, String organization) {
         this.email = email;
@@ -40,6 +40,15 @@ public class User {
         this.competitive = competitive;
         this.certificate = certificate;
         this.organization = organization;
+    }
+
+    /**
+     * Constructor for the User entity, only defining the id.
+     *
+     * @param email the email of the user
+     */
+    public User(String email) {
+        this.email = email;
     }
 
     /**
