@@ -27,6 +27,7 @@ import java.util.List;
 public class MatchingController {
 
     private final transient MatchingService service;
+    private final CertificateRepo certificateRepo;
 
     /**
      * Instantiates a new controller.
@@ -34,8 +35,10 @@ public class MatchingController {
      * @param service DDD microservice for matching
      */
     @Autowired
-    public MatchingController(MatchingService service) {
+    public MatchingController(MatchingService service,
+                              CertificateRepo certificateRepo) {
         this.service = service;
+        this.certificateRepo = certificateRepo;
     }
 
     /**
@@ -111,5 +114,16 @@ public class MatchingController {
     @GetMapping("/match/{status}")
     public ResponseEntity<List<Match>> getMatches(@RequestParam Status status) {
         return ResponseEntity.ok(service.getMatches(status));
+    }
+
+    /**
+     * API Endpoint used by other microservices to sanitize the certificate input.
+     *
+     * @param certificate name to validate
+     * @return true iff the certificate name is valid
+     */
+    @PostMapping("/certificate/validate")
+    public ResponseEntity<Boolean> validateCertificate(@RequestBody String certificate) {
+        return ResponseEntity.ok(certificateRepo.getCertificateByName(certificate).isPresent());
     }
 }
