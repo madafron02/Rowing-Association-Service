@@ -10,9 +10,12 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/activities-microservice" />
+            <option value="$PROJECT_DIR$/auth-microservice" />
             <option value="$PROJECT_DIR$/authentication-microservice" />
             <option value="$PROJECT_DIR$/example-microservice" />
+            <option value="$PROJECT_DIR$/users-microservice" />
             <option value="$PROJECT_DIR$/matching-microservice" />
+            <option value="$PROJECT_DIR$/notification-microservice" />
           </set>
         </option>
       </GradleProjectSettings>
