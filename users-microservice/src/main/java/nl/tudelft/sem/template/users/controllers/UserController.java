@@ -23,7 +23,7 @@ import java.util.Map;
  *
  */
 @RestController
-@RequestMapping("users")
+@RequestMapping("user")
 public class UserController {
 
     private final transient AuthManager authManager;
@@ -39,16 +39,6 @@ public class UserController {
     public UserController(AuthManager authManager, UserService userService) {
         this.authManager = authManager;
         this.userService = userService;
-    }
-
-    /**
-     * Gets example by id.
-     *
-     * @return the example found in the database with the given id
-     */
-    @GetMapping("/hello")
-    public ResponseEntity<String> helloWorld() {
-        return ResponseEntity.ok("Hello " + authManager.getNetId());
     }
 
     /**
@@ -71,7 +61,7 @@ public class UserController {
      *
      * @return User entity of user specified by email.
      */
-    @GetMapping("/userdata")
+    @GetMapping("/details")
     public ResponseEntity<User> getUserDataById(@RequestBody String email) {
         User user = userService.getByEmail(email);
         if (user == null) {
