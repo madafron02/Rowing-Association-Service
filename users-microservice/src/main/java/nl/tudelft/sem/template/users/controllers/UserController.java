@@ -15,9 +15,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 
 
-
-import java.util.Map;
-
 /**
  * UserController for controlling requests for adding and receiving user data.
  *
