@@ -105,7 +105,7 @@ public class Activity {
         this.startTime = dataModel.getStartTime();
         this.endTime = dataModel.getEndTime();
         this.certificate = dataModel.getCertificate();
-        this.competition = dataModel.isCompetition();
+        this.competition = dataModel.getCompetition();
         this.gender = dataModel.getGender();
     }
 
