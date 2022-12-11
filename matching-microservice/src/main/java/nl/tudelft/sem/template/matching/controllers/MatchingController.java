@@ -1,9 +1,9 @@
 package nl.tudelft.sem.template.matching.controllers;
 
-import nl.tudelft.sem.template.matching.database.CertificateRepo;
 import nl.tudelft.sem.template.matching.domain.Match;
 import nl.tudelft.sem.template.matching.domain.MatchingService;
 import nl.tudelft.sem.template.matching.domain.Status;
+import nl.tudelft.sem.template.matching.domain.database.CertificateRepo;
 import nl.tudelft.sem.template.matching.models.DecisionModel;
 import nl.tudelft.sem.template.matching.models.MatchingRequestModel;
 import nl.tudelft.sem.template.matching.models.MatchingResponseModel;
@@ -27,7 +27,7 @@ import java.util.List;
 public class MatchingController {
 
     private final transient MatchingService service;
-    private final CertificateRepo certificateRepo;
+    private final transient CertificateRepo certificateRepo;
 
     /**
      * Instantiates a new controller.

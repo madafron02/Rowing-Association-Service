@@ -1,9 +1,7 @@
 package nl.tudelft.sem.template.matching.domain.handlers;
 
-import lombok.AllArgsConstructor;
-import nl.tudelft.sem.template.matching.domain.database.CertificateRepo;
 import nl.tudelft.sem.template.matching.domain.MatchFilter;
-import org.springframework.beans.factory.annotation.Autowired;
+import nl.tudelft.sem.template.matching.domain.database.CertificateRepo;
 
 
 public class CertificateHandler implements FilteringHandler {
@@ -30,8 +28,10 @@ public class CertificateHandler implements FilteringHandler {
             }
         }
 
-        long certificateIdUser = certificateRepo.getCertificateByName(matchFilter.getUser().getCertificate());
-        long certificateIdActivity = certificateRepo.getCertificateByName(matchFilter.getActivityApp().getCertificate());
+        long certificateIdUser = certificateRepo.getCertificateByName(
+                matchFilter.getUser().getCertificate()).get();
+        long certificateIdActivity = certificateRepo.getCertificateByName(
+                matchFilter.getActivityApp().getCertificate()).get();
 
 
         if (certificateIdActivity <= certificateIdUser) {
