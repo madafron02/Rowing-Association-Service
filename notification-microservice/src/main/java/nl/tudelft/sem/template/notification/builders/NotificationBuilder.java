@@ -6,8 +6,8 @@ import nl.tudelft.sem.template.notification.domain.Notification;
  * NotificationBuilder is a concrete builder for notifications.
  */
 public class NotificationBuilder implements Builder {
-    private String receiverEmail;
-    private String message;
+    private transient String receiverEmail;
+    private transient String message;
 
     /**
      * Setter for receiver email.

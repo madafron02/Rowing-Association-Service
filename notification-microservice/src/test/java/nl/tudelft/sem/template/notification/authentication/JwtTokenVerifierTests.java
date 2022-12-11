@@ -1,6 +1,11 @@
 package nl.tudelft.sem.template.notification.authentication;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +21,8 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 public class JwtTokenVerifierTests {
     private transient JwtTokenVerifier jwtTokenVerifier;
 
-    private final String secret = "testSecret123";
+    private final transient String secret = "testSecret123";
+    private final transient String user = "user123";
 
     @BeforeEach
     public void setup() throws NoSuchFieldException, IllegalAccessException {
@@ -27,7 +33,7 @@ public class JwtTokenVerifierTests {
     @Test
     public void validateNonExpiredToken() {
         // Arrange
-        String token = generateToken(secret, "user123", -10_000_000, 10_000_000);
+        String token = generateToken(secret, user, -10_000_000, 10_000_000);
 
         // Act
         boolean actual = jwtTokenVerifier.validateToken(token);
@@ -38,11 +44,9 @@ public class JwtTokenVerifierTests {
 
     @Test
     public void validateExpiredToken() {
-        // Arrange
-        String token = generateToken(secret, "user123", -10_000_000, -5_000_000);
-
         // Act
-        ThrowableAssert.ThrowingCallable action = () -> jwtTokenVerifier.validateToken(token);
+        ThrowableAssert.ThrowingCallable action = () -> jwtTokenVerifier.validateToken(
+                generateToken(secret, user, -10_000_000, -5_000_000));
 
         // Assert
         assertThatExceptionOfType(ExpiredJwtException.class)
@@ -51,11 +55,9 @@ public class JwtTokenVerifierTests {
 
     @Test
     public void validateTokenIncorrectSignature() {
-        // Arrange
-        String token = generateToken("incorrectSecret", "user123", -10_000_000, 10_000_000);
-
         // Act
-        ThrowableAssert.ThrowingCallable action = () -> jwtTokenVerifier.validateToken(token);
+        ThrowableAssert.ThrowingCallable action = () -> jwtTokenVerifier.validateToken(
+                generateToken("incorrectSecret", user, -10_000_000, 10_000_000));
 
         // Assert
         assertThatExceptionOfType(SignatureException.class)
@@ -64,11 +66,8 @@ public class JwtTokenVerifierTests {
 
     @Test
     public void validateMalformedToken() {
-        // Arrange
-        String token = "malformedtoken";
-
         // Act
-        ThrowableAssert.ThrowingCallable action = () -> jwtTokenVerifier.validateToken(token);
+        ThrowableAssert.ThrowingCallable action = () -> jwtTokenVerifier.validateToken("malformedtoken");
 
         // Assert
         assertThatExceptionOfType(MalformedJwtException.class)
@@ -78,11 +77,11 @@ public class JwtTokenVerifierTests {
     @Test
     public void parseNetid() {
         // Arrange
-        String expected = "user123";
-        String token = generateToken(secret, expected, -10_000_000, 10_000_000);
+        String expected = user;
 
         // Act
-        String actual = jwtTokenVerifier.getNetIdFromToken(token);
+        String actual = jwtTokenVerifier.getNetIdFromToken(
+                generateToken(secret, expected, -10_000_000, 10_000_000));
 
         // Assert
         assertThat(actual).isEqualTo(expected);

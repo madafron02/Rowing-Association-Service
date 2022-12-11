@@ -9,8 +9,8 @@ import java.util.Objects;
  */
 @Component
 public class Notification {
-    private String receiverEmail;
-    private String message;
+    private transient String receiverEmail;
+    private transient String message;
 
     /**
      * Constructor of a notification.

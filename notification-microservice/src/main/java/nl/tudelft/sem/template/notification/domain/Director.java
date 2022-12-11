@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class Director {
-    private Builder builder;
+    private transient Builder builder;
 
     /**
      * Constructor of the director.
@@ -32,15 +32,16 @@ public class Director {
     public void makeNotificationForPlayer(String participantId, long activityId,
                                                   Timeslot timeslot, boolean decision) {
         String message;
+        String dash = " - ";
 
         if (decision) {
             message = "Congratulations! You have been accepted for activity " + activityId
                     + ". You are expected to be there between " + timeslot.getStart().toString()
-                    + " and " + timeslot.getEnd().toString() + ".";
+                    + dash + timeslot.getEnd().toString() + ".";
         } else {
             message = "Unfortunately, you have been denied for activity " + activityId
                     + ", happening between " + timeslot.getStart().toString()
-                    + " and " + timeslot.getEnd().toString()
+                    + dash + timeslot.getEnd().toString()
                     + ". We advise you to not give up and try another timeslot or activity.";
         }
 
@@ -58,10 +59,12 @@ public class Director {
      */
     public void makeNotificationForPlayerChanges(String participantId, long activityId,
                                           Timeslot timeslot) {
+        String dash = " - ";
+
         builder.setReceiverEmail(participantId);
         builder.setMessage("Unfortunately, the details for activity " + activityId
                 + ", happening between " + timeslot.getStart().toString()
-                + " and " + timeslot.getEnd().toString()
+                + dash + timeslot.getEnd().toString()
                 + "have been changed and you have been unenrolled. "
                 + "We advise you to try another timeslot or activity.");
     }
@@ -77,10 +80,12 @@ public class Director {
      */
     public void makeNotificationForPublisher(String ownerId, String participantId,
                                                  long activityId, Timeslot timeslot) {
+        String dash = " - ";
+
         builder.setReceiverEmail(ownerId);
         builder.setMessage("You have a new request: user "
                 + participantId + " wants to participate in activity " + activityId
-                + " between " + timeslot.getStart().toString() + " and "
+                + " between " + timeslot.getStart().toString() + dash
                 + timeslot.getEnd().toString() + ". Please decide as soon as possible"
                 + " whether you accept this request or not.");
     }

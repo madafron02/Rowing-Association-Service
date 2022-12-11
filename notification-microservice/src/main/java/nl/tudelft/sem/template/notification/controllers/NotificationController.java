@@ -29,10 +29,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class NotificationController {
 
     private final transient AuthManager authManager;
-    private Director director;
+    private transient Director director;
 
     @Autowired
-    private JavaMailSender javaMailSender;
+    private transient JavaMailSender javaMailSender;
 
     /**
      * Instantiates a new notification controller.
@@ -77,9 +77,6 @@ public class NotificationController {
             sendNotification(builder.build());
             return ResponseEntity.ok("Email sent successfully.");
         } catch (Exception exception) {
-            if (exception instanceof MailException) {
-                return ResponseEntity.unprocessableEntity().body(exception.getMessage());
-            }
             return ResponseEntity.badRequest().body(exception.getMessage());
         }
     }
@@ -106,9 +103,6 @@ public class NotificationController {
             sendNotification(builder.build());
             return ResponseEntity.ok("Email sent successfully.");
         } catch (Exception exception) {
-            if (exception instanceof MailException) {
-                return ResponseEntity.unprocessableEntity().body(exception.getMessage());
-            }
             return ResponseEntity.badRequest().body(exception.getMessage());
         }
     }
