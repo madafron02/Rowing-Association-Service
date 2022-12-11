@@ -1,7 +1,6 @@
 package nl.tudelft.sem.template.notification.builders;
 
 import nl.tudelft.sem.template.notification.domain.Notification;
-import org.springframework.stereotype.Component;
 
 /**
  * Builder interface to be implemented by any concrete builder class.
