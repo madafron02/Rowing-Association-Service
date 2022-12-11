@@ -8,6 +8,7 @@ import nl.tudelft.sem.template.matching.models.DecisionModel;
 import nl.tudelft.sem.template.matching.models.MatchingRequestModel;
 import nl.tudelft.sem.template.matching.models.MatchingResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -51,6 +52,8 @@ public class MatchingController {
     @PostMapping("/submit")
     public ResponseEntity<MatchingResponseModel> submitAvailability(@RequestBody MatchingRequestModel request) {
         try {
+            if(!service.verifyPosition(request.getPosition()))
+                return ResponseEntity.badRequest().build();
             return ResponseEntity.ok(service.submitAvailability(request.getTimeslot(), request.getPosition()));
         } catch (Exception e) {
             System.err.println(Arrays.toString(e.getStackTrace()));

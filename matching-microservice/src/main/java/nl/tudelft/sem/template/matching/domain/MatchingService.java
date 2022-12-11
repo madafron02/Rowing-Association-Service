@@ -227,4 +227,21 @@ public class MatchingService {
         return matchingRepo.getMatchesByParticipantIdAndStatus(userId, status);
     }
 
+    /**
+     * Method for verifying whether a position is valid.
+     *
+     * @param position to check
+     * @return true iff the position exists
+     */
+    public boolean verifyPosition(String position) {
+        switch (position) {
+            case "cox" : return true;
+            case "starboard" : return true;
+            case "coach" : return true;
+            case "port" : return true;
+            case "sculling" : return true;
+            default : return false;
+        }
+    }
+
 }
