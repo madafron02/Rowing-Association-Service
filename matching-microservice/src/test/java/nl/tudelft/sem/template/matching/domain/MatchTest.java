@@ -57,6 +57,11 @@ class MatchTest {
     }
 
     @Test
+    void testGetPosition() {
+        assertThat(match.getPosition()).isEqualTo("cox");
+    }
+
+    @Test
     void testEqualsSame() {
         assertThat(match.equals(match)).isTrue();
     }

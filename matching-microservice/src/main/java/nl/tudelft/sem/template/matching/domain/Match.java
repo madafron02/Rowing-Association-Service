@@ -102,6 +102,15 @@ public class Match {
     }
 
     /**
+     * Getter for the position occupied by the participant.
+     *
+     * @return a String representing the position
+     */
+    public String getPosition() {
+        return position;
+    }
+
+    /**
      * Getter for the status of the match.
      *
      * @return the status
