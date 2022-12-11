@@ -19,7 +19,7 @@ public class CreateAccount implements AuthHandler{
 
     @Override
     public void handle(AccountCredentials credentials) {
-        if(next == null) return;
+        if(next == null || exceptionHandler == null) return;
         this.credentials = credentials;
         try {
             if(accountExists()){
