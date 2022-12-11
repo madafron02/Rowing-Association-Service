@@ -35,11 +35,7 @@ public class CreateAccount implements AuthHandler{
             }
             next.handle(credentials);
         } catch (Exception e){
-            if(exceptionHandler != null){
-                exceptionHandler.handleException(e);
-            } else {
-                throw e;
-            }
+            exceptionHandler.handleException(e);
         }
     }
 

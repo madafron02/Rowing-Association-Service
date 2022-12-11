@@ -48,11 +48,7 @@ public class SanitizeCredentials implements AuthHandler{
             AccountCredentials newCredentials = new AccountCredentials(sanitizedUserId, hashPassword(sanitizedPassword));
             next.handle(newCredentials);
         } catch (Exception e){
-            if(exceptionHandler != null){
-                exceptionHandler.handleException(e);
-            } else {
-                throw e;
-            }
+            exceptionHandler.handleException(e);
         }
     }
 
