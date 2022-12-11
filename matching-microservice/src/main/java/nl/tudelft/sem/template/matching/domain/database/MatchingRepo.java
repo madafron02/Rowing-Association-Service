@@ -1,5 +1,7 @@
-package nl.tudelft.sem.template.matching.domain;
+package nl.tudelft.sem.template.matching.domain.database;
 
+import nl.tudelft.sem.template.matching.domain.Match;
+import nl.tudelft.sem.template.matching.domain.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

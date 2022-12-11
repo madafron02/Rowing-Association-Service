@@ -4,10 +4,20 @@ import nl.tudelft.sem.template.matching.application.ActivityCommunication;
 import nl.tudelft.sem.template.matching.application.NotificationCommunication;
 import nl.tudelft.sem.template.matching.application.UsersCommunication;
 import nl.tudelft.sem.template.matching.authentication.AuthManager;
+import nl.tudelft.sem.template.matching.domain.database.CertificateRepo;
+import nl.tudelft.sem.template.matching.domain.database.MatchingRepo;
+import nl.tudelft.sem.template.matching.domain.handlers.CertificateHandler;
+import nl.tudelft.sem.template.matching.domain.handlers.CompetitivenessHandler;
+import nl.tudelft.sem.template.matching.domain.handlers.FilteringHandler;
+import nl.tudelft.sem.template.matching.domain.handlers.GenderHandler;
+import nl.tudelft.sem.template.matching.domain.handlers.OrganisationHandler;
+import nl.tudelft.sem.template.matching.domain.handlers.PositionHandler;
+import nl.tudelft.sem.template.matching.domain.handlers.TypeOfActivityHandler;
 import nl.tudelft.sem.template.matching.models.ActivityReponse;
 import nl.tudelft.sem.template.matching.models.MatchingResponseModel;
 import nl.tudelft.sem.template.matching.models.NotificationRequestModelOwner;
 import nl.tudelft.sem.template.matching.models.NotificationRequestModelParticipant;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +35,8 @@ public class MatchingService {
     private final transient UsersCommunication usersCommunication;
     private final transient NotificationCommunication notificationCommunication;
     private final transient ActivityCommunication activityCommunication;
+    private transient FilteringHandler filteringHandler;
+    private final transient CertificateRepo certificateRepo;
 
 
     /**
@@ -40,12 +52,34 @@ public class MatchingService {
                            MatchingRepo repo,
                            UsersCommunication usersCommunication,
                            NotificationCommunication notificationCommunication,
-                           ActivityCommunication activityCommunication) {
+                           ActivityCommunication activityCommunication,
+                           CertificateRepo certificateRepo) {
         this.auth = auth;
         this.matchingRepo = repo;
         this.usersCommunication = usersCommunication;
         this.notificationCommunication = notificationCommunication;
         this.activityCommunication = activityCommunication;
+        this.certificateRepo = certificateRepo;
+        filteringHandlerSetUp();
+    }
+
+
+    /**
+     * Function for setting up the Chain of Responsibility pattern implemented for filtering.
+     */
+    public final void filteringHandlerSetUp() {
+        this.filteringHandler = new PositionHandler();
+        FilteringHandler certificateHandler = new CertificateHandler(certificateRepo);
+        this.filteringHandler.setNext(certificateHandler);
+        FilteringHandler typeOfActivityHandler = new TypeOfActivityHandler();
+        certificateHandler.setNext(typeOfActivityHandler);
+        FilteringHandler organisationHandler = new OrganisationHandler();
+        typeOfActivityHandler.setNext(organisationHandler);
+        FilteringHandler genderHandler = new GenderHandler();
+        organisationHandler.setNext(genderHandler);
+        FilteringHandler competitivenessHandler = new CompetitivenessHandler();
+        genderHandler.setNext(competitivenessHandler);
+
     }
 
     /**
@@ -72,18 +106,8 @@ public class MatchingService {
      * @return the positions the user is matched with
      */
     public List<ActivityReponse> filterActivities(List<ActivityApp> activities, UserApp user, String position) {
-        return activities.stream().filter(a -> a.getPositions().containsKey(position))
-                .filter(a -> {
-                    switch (a.getType()) {
-                        case COMPETITION:
-                            return a.getGender().equals(user.getGender())
-                                    && a.getOrganisation().equals(user.getOrganisation())
-                                    && (!a.isCompetitiveness() || user.isCompetitiveness());
-                        default:
-                            return true;
-
-                    }
-                }).map(a -> matchUserToActivity(user, position, a))
+        return activities.stream().filter(a -> this.filteringHandler.handle(new MatchFilter(a, user, position)))
+                .map(a -> matchUserToActivity(user, position, a))
                 .collect(Collectors.toList());
     }
 
@@ -107,7 +131,7 @@ public class MatchingService {
      *
      * @param matchId the id of the match
      * @return true if the user making the request has the same userIs as the userId of the match given
-     *          false otherwise
+     *         false otherwise
      */
     private boolean verifyUser(long matchId) {
         return auth.getUserId().equals(matchingRepo.getMatchByMatchId(matchId).get().getParticipantId());
@@ -118,7 +142,7 @@ public class MatchingService {
      *
      * @param matchId the id of the match
      * @return true if it exists in the database a match with the id given
-     *      false otherwise
+     *         false otherwise
      */
     public boolean verifyMatch(long matchId) {
         return matchingRepo.getMatchByMatchId(matchId).isPresent() && verifyUser(matchId);
