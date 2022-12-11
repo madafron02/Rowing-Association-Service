@@ -50,14 +50,28 @@ class ExceptionHandlerTest {
     @Test
     void testGetException2(){
         Exception exception = new RuntimeException();
-        exceptionHandler.handleException(exception, "Test exception!");
+        exceptionHandler.handleException(exception, "Test exception!", 400);
         assertThat(exceptionHandler.getException()).isEqualTo(exception);
     }
 
     @Test
     void testGetMessage(){
         Exception exception = new RuntimeException();
-        exceptionHandler.handleException(exception, "Test exception!");
+        exceptionHandler.handleException(exception, "Test exception!", 400);
         assertThat(exceptionHandler.getErrorMessage()).isEqualTo("Test exception!");
+    }
+
+    @Test
+    void testDefaultStatus(){
+        Exception exception = new RuntimeException();
+        exceptionHandler.handleException(exception);
+        assertThat(exceptionHandler.getStatusCode()).isEqualTo(500);
+    }
+
+    @Test
+    void testCustomStatus(){
+        Exception exception = new RuntimeException();
+        exceptionHandler.handleException(exception, "Test exception!", 42);
+        assertThat(exceptionHandler.getStatusCode()).isEqualTo(42);
     }
 }

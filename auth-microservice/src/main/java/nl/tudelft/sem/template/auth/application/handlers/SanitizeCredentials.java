@@ -20,11 +20,11 @@ public class SanitizeCredentials implements AuthHandler{
         this.credentials = credentials;
         try {
             if(credentials.getUserId() == null || credentials.getUserId().equals("")){
-                exceptionHandler.handleException(new IllegalArgumentException(), "Please provide a user id.");
+                exceptionHandler.handleException(new IllegalArgumentException(), "Please provide a user id.", 400);
                 return;
             }
             if(credentials.getPassword() == null || credentials.getPassword().equals("")){
-                exceptionHandler.handleException(new IllegalArgumentException(), "Please provide a password.");
+                exceptionHandler.handleException(new IllegalArgumentException(), "Please provide a password.", 400);
                 return;
             }
             String sanitizedUserId = sanitize(credentials.getUserId());
@@ -32,17 +32,17 @@ public class SanitizeCredentials implements AuthHandler{
             if(sanitizedUserId.length() < credentials.getUserId().length()){
                 exceptionHandler.handleException(new IllegalArgumentException(), "Your user id contains illegal" +
                         " characters. Please only use letters, numbers and the following characters: " +
-                        "!#$%&()*+,-./:;<=>?@^_`{|}~");
+                        "!#$%&()*+,-./:;<=>?@^_`{|}~", 400);
                 return;
             }
             if(sanitizedPassword.length() < credentials.getPassword().length()){
                 exceptionHandler.handleException(new IllegalArgumentException(), "Your password contains illegal" +
                         " characters. Please only use letters, numbers and the following characters: " +
-                        "!#$%&()*+,-./:;<=>?@^_`{|}~");
+                        "!#$%&()*+,-./:;<=>?@^_`{|}~", 400);
                 return;
             }
             if(!isEmailAddress(sanitizedUserId)){
-                exceptionHandler.handleException(new IllegalArgumentException(), "Your user id must be an email address.");
+                exceptionHandler.handleException(new IllegalArgumentException(), "Your user id must be an email address.", 400);
                 return;
             }
             AccountCredentials newCredentials = new AccountCredentials(sanitizedUserId, hashPassword(sanitizedPassword));

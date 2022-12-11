@@ -24,13 +24,13 @@ public class CreateAccount implements AuthHandler{
         try {
             if(accountExists()){
                 exceptionHandler.handleException(new SQLException(), "An account with this user id already exists." +
-                        " Please choose a different user id.");
+                        " Please choose a different user id.", 400);
                 return;
             }
             accountsRepo.save(credentials);
             if(!verifySavedAccount()){
                 exceptionHandler.handleException(new SQLException(), "There was an error while saving your account." +
-                        " Please try again later");
+                        " Please try again later", 500);
                 return;
             }
             next.handle(credentials);
