@@ -14,6 +14,7 @@
             <option value="$PROJECT_DIR$/example-microservice" />
             <option value="$PROJECT_DIR$/users-microservice" />
             <option value="$PROJECT_DIR$/matching-microservice" />
+            <option value="$PROJECT_DIR$/notification-microservice" />
           </set>
         </option>
       </GradleProjectSettings>
