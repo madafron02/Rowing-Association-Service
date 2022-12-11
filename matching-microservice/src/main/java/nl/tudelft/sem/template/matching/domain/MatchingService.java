@@ -7,7 +7,6 @@ import nl.tudelft.sem.template.matching.authentication.AuthManager;
 import nl.tudelft.sem.template.matching.models.ActivityReponse;
 import nl.tudelft.sem.template.matching.models.MatchingResponseModel;
 import nl.tudelft.sem.template.matching.models.NotificationRequestModelOwner;
-import org.springframework.http.ResponseEntity;
 import nl.tudelft.sem.template.matching.models.NotificationRequestModelParticipant;
 import org.springframework.stereotype.Service;
 
@@ -157,7 +156,7 @@ public class MatchingService {
      * @return the List of matches being in pending for the owner (client making a request)
      */
     public List<Match> getPendingRequests() {
-        return matchingRepo.getMatches(auth.getUserId());
+        return matchingRepo.getMatchesByOwnerIdAndStatus(auth.getUserId(), Status.PENDING);
     }
 
     /**
@@ -169,7 +168,7 @@ public class MatchingService {
      */
     public boolean acceptOrDenyRequest(long matchId, boolean decision) {
         Optional<Match> match = matchingRepo.getMatchByMatchId(matchId);
-        if (!match.isPresent()) {
+        if (match.isEmpty()) {
             return false;
         }
         if (!match.get().getOwnerId().equals(auth.getUserId())) {
@@ -181,6 +180,7 @@ public class MatchingService {
         Match newMatch = match.get();
         if (decision) {
             newMatch.setStatus(Status.ACCEPTED);
+            activityCommunication.updateActivity(newMatch.getActivityId(), newMatch.getPosition());
         } else {
             newMatch.setStatus(Status.DECLINE);
         }
@@ -191,6 +191,17 @@ public class MatchingService {
                         activityCommunication.getActivityTimeslotById(newMatch.getActivityId()),
                         decision));
         return true;
+    }
+
+    /**
+     * Method for retrieving all matches of the user with the specified status.
+     *
+     * @param status of the required activities
+     * @return list of required matches
+     */
+    public List<Match> getMatches(Status status) {
+        String userId = auth.getUserId();
+        return matchingRepo.getMatchesByParticipantIdAndStatus(userId, status);
     }
 
 }

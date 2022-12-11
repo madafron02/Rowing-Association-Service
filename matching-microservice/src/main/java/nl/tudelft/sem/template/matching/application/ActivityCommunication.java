@@ -2,13 +2,11 @@ package nl.tudelft.sem.template.matching.application;
 
 import jakarta.ws.rs.core.HttpHeaders;
 import lombok.NoArgsConstructor;
-import nl.tudelft.sem.template.matching.domain.ActivityApp;
 import nl.tudelft.sem.template.matching.domain.TimeslotApp;
 import nl.tudelft.sem.template.matching.models.ActivityAvailabilityResponseModel;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-
 
 import javax.ws.rs.client.Entity;
 
@@ -57,5 +55,23 @@ public class ActivityCommunication {
                         + SecurityContextHolder.getContext().getAuthentication().getCredentials())
                 .accept(APPLICATION_JSON)
                 .get(TimeslotApp.class);
+    }
+
+    /**
+     * Method for calling the api request in Activity microservice to decrease one of the positions
+     * available for the specified activity.
+     *
+     * @param activityId the id of the activity
+     * @param position position of the match
+     */
+    public void updateActivity(long activityId, String position) {
+        new ResteasyClientBuilder().build()
+                .target(SERVER)
+                .path("/activity/update/" + activityId)
+                .request(APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer "
+                        + SecurityContextHolder.getContext().getAuthentication().getCredentials())
+                .accept(APPLICATION_JSON)
+                .put(Entity.entity(position, APPLICATION_JSON));
     }
 }

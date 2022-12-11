@@ -18,11 +18,8 @@ public interface MatchingRepo extends JpaRepository<Match, Long> {
 
     List<Match> getMatchesByOwnerId(String ownerId);
 
-    @Query(value =
-            "SELECT * FROM Match m "
-                    + "WHERE m.owner_id == ownerID"
-                    + "AND m.status == PENDING",
-            nativeQuery = true)
-    List<Match> getMatches(@Param("ownerId") String ownerId);
+    List<Match> getMatchesByParticipantIdAndStatus(String ownerId, Status status);
+
+    List<Match> getMatchesByOwnerIdAndStatus(String ownerId, Status status);
 
 }

@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.matching.controllers;
 
 import nl.tudelft.sem.template.matching.domain.Match;
 import nl.tudelft.sem.template.matching.domain.MatchingService;
+import nl.tudelft.sem.template.matching.domain.Status;
 import nl.tudelft.sem.template.matching.models.DecisionModel;
 import nl.tudelft.sem.template.matching.models.MatchingRequestModel;
 import nl.tudelft.sem.template.matching.models.MatchingResponseModel;
@@ -11,9 +12,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
+import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.List;
 
@@ -91,12 +94,23 @@ public class MatchingController {
      *
      * @return a list with all the matches that are in pending
      */
-    @GetMapping("/pending")
+    @GetMapping("/participants")
     public ResponseEntity<List<Match>> getPendingRequests() {
         try {
             return ResponseEntity.ok(service.getPendingRequests());
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    /**
+     * API Endpoint used by a user to retrieve all the activities he matched with a specific status.
+     *
+     * @param status of the required matches
+     * @return a list with all the matches of the user that have the required status
+     */
+    @GetMapping("/match/{status}")
+    public ResponseEntity<List<Match>> getMatches(@RequestParam Status status) {
+        return ResponseEntity.ok(service.getMatches(status));
     }
 }

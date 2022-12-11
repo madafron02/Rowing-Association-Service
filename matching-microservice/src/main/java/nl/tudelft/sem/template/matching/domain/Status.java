@@ -1,6 +1,6 @@
 package nl.tudelft.sem.template.matching.domain;
 
-enum Status {
+public enum Status {
     MATCHED,
     PENDING,
     ACCEPTED,
