@@ -11,6 +11,7 @@
         <module name="template.matching-microservice.main" />
         <module name="template.notification-microservice.main" />
         <module name="template.example-microservice.main" />
+        <module name="template.users-microservice.main" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="11" />
