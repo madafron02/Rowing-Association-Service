@@ -18,7 +18,7 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 @NoArgsConstructor
 public class UsersCommunication {
 
-    private static final String SERVER = "http://localhost:8082";
+    private static final String SERVER = "http://localhost:8085";
 
     /**
      * Method for calling the api request in the User microservice to get the details of an user.
