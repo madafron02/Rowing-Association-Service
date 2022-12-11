@@ -60,10 +60,13 @@ public class NotificationController {
      *
      * @param notificationRequestModelParticipant the request bodu format
      * @return if email is sent successfully returns 200 OK,
-     * otherwise 422 Unprocessable Entity and the exception message
+     *          otherwise 422 Unprocessable Entity and the exception message
      */
-    @PostMapping(value = "/participant", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<String> sendNotificationToPlayer(@RequestBody NotificationRequestModelParticipant notificationRequestModelParticipant) {
+    @PostMapping(value = "/participant",
+                consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+                produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<String> sendNotificationToPlayer(
+                @RequestBody NotificationRequestModelParticipant notificationRequestModelParticipant) {
         try {
             Builder builder = new NotificationBuilder();
             director = new Director(builder);
@@ -87,10 +90,13 @@ public class NotificationController {
      *
      * @param notificationRequestModelParticipantChanges the request body format
      * @return if email is sent successfully returns 200 OK,
-     * otherwise 422 Unprocessable Entity and the exception message
+     *      otherwise 422 Unprocessable Entity and the exception message
      */
-    @PostMapping(value = "/activity-changed", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<String> sendNotificationToPlayerChanges(@RequestBody NotificationRequestModelParticipantChanges notificationRequestModelParticipantChanges) {
+    @PostMapping(value = "/activity-changed",
+                consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+                produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<String> sendNotificationToPlayerChanges(
+                @RequestBody NotificationRequestModelParticipantChanges notificationRequestModelParticipantChanges) {
         try {
             Builder builder = new NotificationBuilder();
             director = new Director(builder);
@@ -112,10 +118,13 @@ public class NotificationController {
      *
      * @param notificationRequestModelOwner request body format
      * @return if email is sent successfully returns 200 OK,
-     * otherwise 422 Unprocessable Entity and the exception message
+     *      otherwise 422 Unprocessable Entity and the exception message
      */
-    @PostMapping(value = "/publisher", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<String> sendNotificationToPublisher(@RequestBody NotificationRequestModelOwner notificationRequestModelOwner) {
+    @PostMapping(value = "/publisher",
+                consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+                produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<String> sendNotificationToPublisher(
+                @RequestBody NotificationRequestModelOwner notificationRequestModelOwner) {
         try {
             Builder builder = new NotificationBuilder();
             director = new Director(builder);
