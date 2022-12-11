@@ -14,13 +14,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * Notification microservice controller.
- *
  * This controller allows sending email notifications through API requests.
- *
  */
 @RestController
 @RequestMapping("/notification")
@@ -50,22 +52,18 @@ public class NotificationController {
     @GetMapping("/hello")
     public ResponseEntity<String> helloWorld() {
         return ResponseEntity.ok("Hello " + authManager.getNetId() + ", this is the notification microservice.");
-
     }
 
     /**
      * Sends a notification through email to a player when he receives a decision from the owner of
-     * the activity he signed up for
+     * the activity he signed up for.
      *
      * @param notificationRequestModelParticipant the request bodu format
      * @return if email is sent successfully returns 200 OK,
      * otherwise 422 Unprocessable Entity and the exception message
      */
-    @PostMapping(value = "/participant",
-            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<String> sendNotificationToPlayer(
-            @RequestBody NotificationRequestModelParticipant notificationRequestModelParticipant) {
+    @PostMapping(value = "/participant", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<String> sendNotificationToPlayer(@RequestBody NotificationRequestModelParticipant notificationRequestModelParticipant) {
         try {
             Builder builder = new NotificationBuilder();
             director = new Director(builder);
@@ -76,7 +74,7 @@ public class NotificationController {
             sendNotification(builder.build());
             return ResponseEntity.ok("Email sent successfully.");
         } catch (Exception exception) {
-            if(exception instanceof MailException){
+            if (exception instanceof MailException) {
                 return ResponseEntity.unprocessableEntity().body(exception.getMessage());
             }
             return ResponseEntity.badRequest().body(exception.getMessage());
@@ -85,17 +83,14 @@ public class NotificationController {
 
     /**
      * Sends a notification through email to a player when the activity he was approved for
-     * gets deleted or if its details are changed
+     * gets deleted or if its details are changed.
      *
      * @param notificationRequestModelParticipantChanges the request body format
      * @return if email is sent successfully returns 200 OK,
      * otherwise 422 Unprocessable Entity and the exception message
      */
-    @PostMapping(value = "/activity-changed",
-            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<String> sendNotificationToPlayerChanges(
-            @RequestBody NotificationRequestModelParticipantChanges notificationRequestModelParticipantChanges) {
+    @PostMapping(value = "/activity-changed", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<String> sendNotificationToPlayerChanges(@RequestBody NotificationRequestModelParticipantChanges notificationRequestModelParticipantChanges) {
         try {
             Builder builder = new NotificationBuilder();
             director = new Director(builder);
@@ -105,7 +100,7 @@ public class NotificationController {
             sendNotification(builder.build());
             return ResponseEntity.ok("Email sent successfully.");
         } catch (Exception exception) {
-            if(exception instanceof MailException){
+            if (exception instanceof MailException) {
                 return ResponseEntity.unprocessableEntity().body(exception.getMessage());
             }
             return ResponseEntity.badRequest().body(exception.getMessage());
@@ -113,17 +108,14 @@ public class NotificationController {
     }
 
     /**
-     * Sends email to publisher of an activity when a user wants to sign up for it in a certain timeslot
+     * Sends email to publisher of an activity when a user wants to sign up for it in a certain timeslot.
      *
      * @param notificationRequestModelOwner request body format
      * @return if email is sent successfully returns 200 OK,
      * otherwise 422 Unprocessable Entity and the exception message
      */
-    @PostMapping(value = "/publisher",
-            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public ResponseEntity<String> sendNotificationToPublisher(
-            @RequestBody NotificationRequestModelOwner notificationRequestModelOwner) {
+    @PostMapping(value = "/publisher", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity<String> sendNotificationToPublisher(@RequestBody NotificationRequestModelOwner notificationRequestModelOwner) {
         try {
             Builder builder = new NotificationBuilder();
             director = new Director(builder);
@@ -139,7 +131,7 @@ public class NotificationController {
     }
 
     /**
-     * Sends the notification using the JavaMailSender
+     * Sends the notification using the JavaMailSender.
      *
      * @param notification notification to be sent
      * @throws MailException if the notification cannot be sent

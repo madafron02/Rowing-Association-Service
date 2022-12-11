@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import java.util.Objects;
 
 /**
- * Notification object containing the email address of the receiver and its body (message)
+ * Notification object containing the email address of the receiver and its body (message).
  */
 @Component
 public class Notification {
@@ -13,7 +13,7 @@ public class Notification {
     private String message;
 
     /**
-     * Constructor of a notification
+     * Constructor of a notification.
      *
      * @param receiverEmail email of receiver
      * @param message email body
@@ -24,6 +24,8 @@ public class Notification {
     }
 
     /**
+     * Gets receiver email.
+     *
      * @return the receiver email as String
      */
     public String getReceiverEmail() {
@@ -31,6 +33,8 @@ public class Notification {
     }
 
     /**
+     * Gets message.
+     *
      * @return the message as String
      */
     public String getMessage() {
@@ -38,18 +42,26 @@ public class Notification {
     }
 
     /**
+     * Check equality of notfications.
+     *
      * @param o object to be checked if equal with this one
      * @return true if equal, false otherwise
      */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Notification)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Notification)) {
+            return false;
+        }
         Notification that = (Notification) o;
         return Objects.equals(receiverEmail, that.receiverEmail) && Objects.equals(message, that.message);
     }
 
     /**
+     * Hash code of notifications.
+     *
      * @return hash code of the notification
      */
     @Override
@@ -58,13 +70,15 @@ public class Notification {
     }
 
     /**
+     * Notification in string format.
+     *
      * @return notification as string
      */
     @Override
     public String toString() {
-        return "Notification{" +
-                "receiverEmail='" + receiverEmail + '\'' +
-                ", message='" + message + '\'' +
-                '}';
+        return "Notification{"
+                + "receiverEmail='" + receiverEmail + '\''
+                + ", message='" + message + '\''
+                + '}';
     }
 }

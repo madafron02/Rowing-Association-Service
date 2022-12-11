@@ -5,7 +5,7 @@ import lombok.Data;
 import nl.tudelft.sem.template.notification.domain.Timeslot;
 
 /**
- * Request model for the owner notification sending process
+ * Request model for the owner notification sending process.
  */
 @Data
 @AllArgsConstructor
@@ -16,6 +16,8 @@ public class NotificationRequestModelOwner {
     private Timeslot timeslot;
 
     /**
+     * Gets email of owner.
+     *
      * @return email of owner
      */
     public String getOwnerId() {
@@ -23,6 +25,8 @@ public class NotificationRequestModelOwner {
     }
 
     /**
+     * Gets email of participant.
+     *
      * @return email of participant
      */
     public String getParticipantId() {
@@ -30,6 +34,8 @@ public class NotificationRequestModelOwner {
     }
 
     /**
+     * Gets activity id.
+     *
      * @return id of activity
      */
     public long getActivityId() {
@@ -37,6 +43,8 @@ public class NotificationRequestModelOwner {
     }
 
     /**
+     * Gets timeslot.
+     *
      * @return timeslot chosen by participant
      */
     public Timeslot getTimeslot() {
