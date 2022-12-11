@@ -1,14 +1,11 @@
 package nl.tudelft.sem.template.notification.domain;
 
-import org.springframework.stereotype.Component;
-
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
  * Timeslot object meant to specify start time and end time of an activity.
  */
-@Component
 public class Timeslot {
     private final LocalDateTime start;
     private final LocalDateTime end;

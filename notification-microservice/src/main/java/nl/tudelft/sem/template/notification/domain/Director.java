@@ -1,13 +1,11 @@
 package nl.tudelft.sem.template.notification.domain;
 
 import nl.tudelft.sem.template.notification.builders.Builder;
-import org.springframework.stereotype.Component;
 
 /**
  * The director corresponding to the builder design pattern, it decides which scenario to use
  * when building a concrete Notification object.
  */
-@Component
 public class Director {
     private transient Builder builder;
 

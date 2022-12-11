@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 /**
  * Builder interface to be implemented by any concrete builder class.
  */
-@Component
 public interface Builder {
     /**
      * Setter for receiver email.

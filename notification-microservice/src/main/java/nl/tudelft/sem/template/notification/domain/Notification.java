@@ -1,13 +1,10 @@
 package nl.tudelft.sem.template.notification.domain;
 
-import org.springframework.stereotype.Component;
-
 import java.util.Objects;
 
 /**
  * Notification object containing the email address of the receiver and its body (message).
  */
-@Component
 public class Notification {
     private transient String receiverEmail;
     private transient String message;
