@@ -15,14 +15,15 @@ public class SanitizeCredentialsTest {
     private SanitizeCredentials sanitizeCredentials;
     private ExceptionHandler exceptionHandler;
 
-    @Mock SanitizeCredentials mockHandler;
+    @Mock
+    AuthHandler mockHandler;
 
     @BeforeEach
     void setUp(){
         sanitizeCredentials = new SanitizeCredentials();
         exceptionHandler = new ExceptionHandler();
         sanitizeCredentials.setExceptionHandler(exceptionHandler);
-        mockHandler = mock(SanitizeCredentials.class);
+        mockHandler = mock(AuthHandler.class);
         sanitizeCredentials.setNext(mockHandler);
     }
 
