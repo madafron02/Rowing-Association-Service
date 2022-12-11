@@ -11,10 +11,10 @@ import org.springframework.stereotype.Component;
 
 /**
  * Authentication entry point for JWT security.
- * <p>
+ * <
  * The authentication entry point is called when an unauthenticated client tries to access a protected resource.
  * This JWT authentication entry point returns a response indicating the request was unauthorized.
- * </p>
+ *
  */
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {

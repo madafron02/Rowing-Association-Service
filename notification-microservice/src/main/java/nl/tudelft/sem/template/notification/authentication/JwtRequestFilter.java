@@ -17,11 +17,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
  * Request filter for JWT security.
- * <p>
+ *
  * The request filter is called once for each request and makes it possible to modify the request
  * before it reaches the application. If an authorization header is present in the request,
  * the filter will validate it and authenticate the token.
- * </p>
+ *
  */
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {

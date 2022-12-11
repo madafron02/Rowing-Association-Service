@@ -8,7 +8,6 @@ import nl.tudelft.sem.template.notification.domain.Notification;
 import nl.tudelft.sem.template.notification.models.NotificationRequestModelOwner;
 import nl.tudelft.sem.template.notification.models.NotificationRequestModelParticipant;
 import nl.tudelft.sem.template.notification.models.NotificationRequestModelParticipantChanges;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +33,7 @@ public class NotificationController {
     private JavaMailSender javaMailSender;
 
     /**
-     * Instantiates a new controller.
+     * Instantiates a new notification controller.
      *
      * @param authManager Spring Security component used to authenticate and authorize the user
      */
@@ -54,6 +53,14 @@ public class NotificationController {
 
     }
 
+    /**
+     * Sends a notification through email to a player when he receives a decision from the owner of
+     * the activity he signed up for
+     *
+     * @param notificationRequestModelParticipant the request bodu format
+     * @return if email is sent successfully returns 200 OK,
+     * otherwise 422 Unprocessable Entity and the exception message
+     */
     @PostMapping(value = "/participant",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -76,6 +83,14 @@ public class NotificationController {
         }
     }
 
+    /**
+     * Sends a notification through email to a player when the activity he was approved for
+     * gets deleted or if its details are changed
+     *
+     * @param notificationRequestModelParticipantChanges the request body format
+     * @return if email is sent successfully returns 200 OK,
+     * otherwise 422 Unprocessable Entity and the exception message
+     */
     @PostMapping(value = "/activity-changed",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -97,6 +112,13 @@ public class NotificationController {
         }
     }
 
+    /**
+     * Sends email to publisher of an activity when a user wants to sign up for it in a certain timeslot
+     *
+     * @param notificationRequestModelOwner request body format
+     * @return if email is sent successfully returns 200 OK,
+     * otherwise 422 Unprocessable Entity and the exception message
+     */
     @PostMapping(value = "/publisher",
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
@@ -116,6 +138,12 @@ public class NotificationController {
         }
     }
 
+    /**
+     * Sends the notification using the JavaMailSender
+     *
+     * @param notification notification to be sent
+     * @throws MailException if the notification cannot be sent
+     */
     private void sendNotification(Notification notification) throws MailException {
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setTo(notification.getReceiverEmail());
