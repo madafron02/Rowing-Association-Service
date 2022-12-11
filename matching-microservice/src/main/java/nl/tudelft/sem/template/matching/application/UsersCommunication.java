@@ -4,10 +4,8 @@ import jakarta.ws.rs.core.HttpHeaders;
 import lombok.NoArgsConstructor;
 import nl.tudelft.sem.template.matching.domain.UserApp;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-
 
 import javax.ws.rs.client.Entity;
 

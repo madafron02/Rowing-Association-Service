@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.matching.controllers;
 
+import nl.tudelft.sem.template.matching.database.CertificateRepo;
 import nl.tudelft.sem.template.matching.domain.Match;
 import nl.tudelft.sem.template.matching.domain.MatchingService;
 import nl.tudelft.sem.template.matching.domain.Status;
@@ -15,8 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-
-import javax.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.List;
 
