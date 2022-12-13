@@ -4,7 +4,7 @@ The ‘Notification’ microservice has an implementation which respects the ‘
 
 Consider the construction of a notification. A notification is the final end product that is to be returned as the output of the construction process and sent towards a user. As of now, the building part has two steps: setting the receiver and constructing the message, methods defined in the ‘Builder’ interface and implemented in the ‘NotificationBuilder’. Using the same process, one can build notifications with different types of messages for the scenarios described in the „Architecture” section, paragraph „Notifications Microservice”.
 
-In order to create and send a specific type of notification, there is a ‘Director’ who calls its ‘makeNotification’ method for that notification in particular, then calls the ‘build’ method on its own builder to generate the final product, and finally sends the notification by calling its ‘sendNotification’ method.
+In order to create and send a specific type of notification, there is a ‘Director’ who calls its ‘makeNotification’ method for that notification in particular, then calls the ‘build’ method on its own builder to generate the final product. Finally, the NotificationController sends the notification by calling its ‘sendNotification’ method. 
 
 The greatest advantage of this desing pattern is that it makes the notification construction process independent of the parts that it consists of (receiver and message) and how they’re assembled: only their internal values count as differences. As a follow-up advantage, this pattern handles abstraction and complexity well, because the same construction process can be used for any representation of a notification.
 
