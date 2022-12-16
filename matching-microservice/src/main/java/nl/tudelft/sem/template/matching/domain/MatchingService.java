@@ -252,6 +252,8 @@ public class MatchingService {
     public void discardMatchesByActivity(Long activityId) {
         List<Match> matchesModifiedByActivityChange = matchingRepo.getMatchesByActivityId(activityId);
         matchesModifiedByActivityChange
+                .stream()
+                .filter(match -> match.getStatus() == Status.ACCEPTED)
                 .forEach(match ->
                         notificationCommunication
                                 .activityModifiedNotification
