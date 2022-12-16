@@ -4,7 +4,6 @@ import java.util.List;
 import nl.tudelft.sem.template.activities.authentication.AuthManager;
 import nl.tudelft.sem.template.activities.domain.Activity;
 import nl.tudelft.sem.template.activities.domain.ActivityRepository;
-import nl.tudelft.sem.template.activities.model.ActivityDataModel;
 import nl.tudelft.sem.template.activities.model.ActivityListResponseModel;
 import nl.tudelft.sem.template.activities.model.TimeslotDataModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +46,7 @@ public class ActivityController {
      */
     @GetMapping("/within-timeslot")
     public ResponseEntity<ActivityListResponseModel> getAllActivitiesWithinTimeslot(@RequestBody TimeslotDataModel request) {
-        List<Activity> activities = activityRepository.findActivitiesByStartTimeGreaterThanEqualAndEndTimeLessThanEqual(
+        List<Activity> activities = activityRepository.findActivitiesByTimeslot(
                 request.getStartTime(), request.getEndTime()
         );
         return ResponseEntity.ok(new ActivityListResponseModel(activities));
@@ -59,12 +58,11 @@ public class ActivityController {
      * @return the example found in the database with the given id
      */
     @PostMapping("/publish")
-    public ResponseEntity<String> createActivity(@RequestBody ActivityDataModel request) {
-        Activity activity = new Activity(request);
-        if (!activity.checkIfValid()) {
+    public ResponseEntity<String> createActivity(@RequestBody Activity request) {
+        if (!request.checkIfValid()) {
             return ResponseEntity.badRequest().build();
         }
-        activityRepository.save(activity);
+        activityRepository.save(request);
         return ResponseEntity.ok("Activity created successfully!");
     }
 }

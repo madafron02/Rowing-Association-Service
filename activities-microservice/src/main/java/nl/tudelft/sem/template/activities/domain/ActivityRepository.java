@@ -2,14 +2,16 @@ package nl.tudelft.sem.template.activities.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ActivityRepository extends JpaRepository<Activity, Long> {
 
-    List<Activity> findActivitiesByStartTimeGreaterThanEqualAndEndTimeLessThanEqual(
+    @Query(value = "SELECT * FROM activities WHERE start_time >= ?1 AND end_time <= ?2",
+            nativeQuery = true)
+    List<Activity> findActivitiesByTimeslot(
             LocalDateTime startTime, LocalDateTime endTime
     );
 }
