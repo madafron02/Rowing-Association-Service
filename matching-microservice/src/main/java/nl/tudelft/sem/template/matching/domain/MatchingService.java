@@ -15,6 +15,7 @@ import nl.tudelft.sem.template.matching.domain.handlers.PositionHandler;
 import nl.tudelft.sem.template.matching.domain.handlers.TypeOfActivityHandler;
 import nl.tudelft.sem.template.matching.models.ActivityReponse;
 import nl.tudelft.sem.template.matching.models.MatchingResponseModel;
+import nl.tudelft.sem.template.matching.models.NotificationActivityModified;
 import nl.tudelft.sem.template.matching.models.NotificationRequestModelOwner;
 import nl.tudelft.sem.template.matching.models.NotificationRequestModelParticipant;
 import org.springframework.stereotype.Service;
@@ -244,4 +245,20 @@ public class MatchingService {
         }
     }
 
+    /**
+     * Method for discarding the matches done with the activities having the specified activityId.
+     *
+     * @param activityId the id of the activity that was modified
+     */
+    public void discardMatchesByActivity(Long activityId) {
+        List<Match> matchesModifiedByActivityChange = matchingRepo.getMatchesByActivityId(activityId);
+        matchesModifiedByActivityChange
+                .stream()
+                .filter(match -> match.getStatus() == Status.ACCEPTED)
+                .forEach(match ->
+                        notificationCommunication
+                                .activityModifiedNotification(new NotificationActivityModified(match.getParticipantId(),
+                                        activityId)));
+        matchingRepo.deleteMatchesByActivityId(activityId);
+    }
 }
