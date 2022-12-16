@@ -14,18 +14,36 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller that handles incoming authentication and register requests.
+ */
 @RestController
 public class AuthenticationController {
 
+    /**
+     * The secret from the application.properties that will be used to sign the JWTs.
+     */
     @Value("${jwt.secret}")
     private String jwtSecret;
     private final AccountsRepo accountsRepo;
 
+    /**
+     * Automatically constructs a Controller.
+     *
+     * @param accountsRepo The repository that holds the accounts.
+     */
     @Autowired
     public AuthenticationController(AccountsRepo accountsRepo) {
         this.accountsRepo = accountsRepo;
     }
 
+    /**
+     * Mapping that processes an incoming request for registration.
+     *
+     * @param request The request model with the credentials provided by the client.
+     * @return ResponseEntity with either a JWT or an error.
+     * @throws Exception
+     */
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody RegistrationRequestModel request) throws Exception {
 
