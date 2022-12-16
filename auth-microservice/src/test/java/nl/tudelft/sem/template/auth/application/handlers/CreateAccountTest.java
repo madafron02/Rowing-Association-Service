@@ -5,6 +5,7 @@ import nl.tudelft.sem.template.auth.domain.AccountsRepo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
@@ -46,6 +47,18 @@ public class CreateAccountTest {
     }
 
     @Test
+    void testCorrectCreating(){
+        AccountCredentials credentials = new AccountCredentials("hello.there@world.com", "world");
+        Optional<AccountCredentials> notFound = Optional.empty();
+        Optional<AccountCredentials> found = Optional.of(credentials);
+        when(mockRepo.findById(any())).thenReturn(notFound).thenReturn(found);
+        createAccount.handle(credentials);
+        verify(mockRepo, times(2)).findById(any());
+        verify(mockRepo, times(1)).save(credentials);
+        verify(mockHandler, times(1)).handle(any());
+    }
+
+    @Test
     void testAlreadyExists(){
         AccountCredentials credentials = new AccountCredentials("hello.there@world.com", "world");
         Optional<AccountCredentials> option = Optional.of(credentials);
@@ -62,11 +75,22 @@ public class CreateAccountTest {
         AccountCredentials credentials = new AccountCredentials("hello.there@world.com", "world");
         Optional<AccountCredentials> option = Optional.empty();
         when(mockRepo.findById(any())).thenReturn(option);
+        when(mockRepo.save(any())).thenThrow(new RuntimeException());
+        createAccount.handle(credentials);
+        assertThat(exceptionHandler.didCatchException()).isTrue();
+        verify(mockHandler, times(0)).handle(any());
+    }
+
+    @Test
+    void testNotSavedCorrectly(){
+        AccountCredentials credentials = new AccountCredentials("hello.there@world.com", "world");
+        Optional<AccountCredentials> option = Optional.empty();
+        when(mockRepo.findById(any())).thenReturn(option).thenReturn(option);
+        when(mockRepo.save(any())).thenReturn(credentials);
         createAccount.handle(credentials);
         assertThat(exceptionHandler.didCatchException()).isTrue();
         assertThat(exceptionHandler.getErrorMessage()).isEqualTo("There was an error while saving your account." +
                 " Please try again later");
         verify(mockHandler, times(0)).handle(any());
     }
-
 }
