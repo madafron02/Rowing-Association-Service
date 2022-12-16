@@ -2,7 +2,6 @@ package nl.tudelft.sem.template.matching.domain.handlers;
 
 import nl.tudelft.sem.template.matching.domain.MatchFilter;
 import nl.tudelft.sem.template.matching.domain.TimeslotApp;
-import nl.tudelft.sem.template.matching.domain.database.MatchingRepo;
 
 public class TimeConstraintHandler implements FilteringHandler {
 
@@ -41,7 +40,8 @@ public class TimeConstraintHandler implements FilteringHandler {
                     return false;
                 }
             }
+            default:
+                return false;
         }
-        return false;
     }
 }

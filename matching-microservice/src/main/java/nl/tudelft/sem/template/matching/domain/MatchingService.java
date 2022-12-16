@@ -107,7 +107,10 @@ public class MatchingService {
      * @param position   teh position they can fill in
      * @return the positions the user is matched with
      */
-    public List<ActivityReponse> filterActivities(List<ActivityApp> activities, TimeslotApp timeslot, UserApp user, String position) {
+    public List<ActivityReponse> filterActivities(List<ActivityApp> activities,
+                                                  TimeslotApp timeslot,
+                                                  UserApp user,
+                                                  String position) {
         return activities.stream().filter(a -> this.filteringHandler.handle(new MatchFilter(a, user, position, timeslot)))
                 .map(a -> matchUserToActivity(user, position, a))
                 .collect(Collectors.toList());
