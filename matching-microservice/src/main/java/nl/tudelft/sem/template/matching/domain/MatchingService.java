@@ -247,6 +247,7 @@ public class MatchingService {
 
     /**
      * Method for discarding the matches done with the activities having the specified activityId.
+     *
      * @param activityId the id of the activity that was modified
      */
     public void discardMatchesByActivity(Long activityId) {
@@ -256,8 +257,8 @@ public class MatchingService {
                 .filter(match -> match.getStatus() == Status.ACCEPTED)
                 .forEach(match ->
                         notificationCommunication
-                                .activityModifiedNotification
-                                        (new NotificationActivityModified(match.getParticipantId(), activityId)));
+                                .activityModifiedNotification(new NotificationActivityModified(match.getParticipantId(),
+                                        activityId)));
         matchingRepo.deleteMatchesByActivityId(activityId);
     }
 }

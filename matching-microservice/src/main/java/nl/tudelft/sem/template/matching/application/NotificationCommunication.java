@@ -58,6 +58,7 @@ public class NotificationCommunication {
     /**
      * Method for calling an API request to the Notification microservice to send a notification to users
      * about the match being discard due to an activity change.
+     *
      * @param request - DTO containing participantId and activityId
      * @return String containing information whether the notification was successful
      */

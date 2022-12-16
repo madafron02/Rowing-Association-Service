@@ -9,7 +9,6 @@ import nl.tudelft.sem.template.matching.models.MatchingRequestModel;
 import nl.tudelft.sem.template.matching.models.MatchingResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -134,6 +133,7 @@ public class MatchingController {
     /**
      * API Endpoint used by the Notification microservice to discard all the matches done
      * for a modified activity.
+     *
      * @param activityId the id of the activity modifies
      * @return an okay response entity
      */
