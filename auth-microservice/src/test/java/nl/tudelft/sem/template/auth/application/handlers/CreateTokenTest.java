@@ -19,7 +19,7 @@ public class CreateTokenTest {
     AuthHandler mockHandler;
 
     @BeforeEach
-    void setup(){
+    void setup() {
         createToken = new CreateToken("Secret123");
         exceptionHandler = new ExceptionHandler();
         createToken.setExceptionHandler(exceptionHandler);
@@ -38,22 +38,22 @@ public class CreateTokenTest {
     }
 
     @Test
-    void testTokenCreation(){
+    void testTokenCreation() {
         createToken.handle(new AccountCredentials("hello", "world"));
         String token = createToken.getToken();
         assertThat(token).isNotNull();
     }
 
     @Test
-    void testNoExceptions(){
+    void testNoExceptions() {
         createToken.handle(new AccountCredentials("hello", "world"));
         assertThat(exceptionHandler.didCatchException()).isFalse();
     }
 
     @Test
-    void testTokenCreation2(){
+    void testTokenCreation2() {
         createToken.handle(new AccountCredentials("hello", "world"));
         String token = createToken.getToken();
-        assertThat(token.substring(0,20)).isEqualTo("eyJhbGciOiJIUzUxMiJ9");
+        assertThat(token.substring(0, 20)).isEqualTo("eyJhbGciOiJIUzUxMiJ9");
     }
 }

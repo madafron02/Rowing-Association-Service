@@ -20,13 +20,13 @@ checkStyle-auth-microservice:
     gradle auth-microservice:checkstyleMain auth-microservice:checkStyleTest
   allow_failure: true
 
-PMD-matching-microservice:
+PMD-auth-microservice:
   stage: staticAnalysis
   script:
     gradle auth-microservice:pmdMain
   allow_failure: true
 
-test-matching-microservice:
+test-auth-microservice:
   stage: test
   script:
     - gradle auth-microservice:test auth-microservice:jacocoTestReport

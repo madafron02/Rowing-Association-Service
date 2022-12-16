@@ -17,11 +17,11 @@ public class CreateToken implements AuthHandler {
 
     public static final long JWT_TOKEN_VALIDITY = 30 * 60 * 1000;
 
-    private String jwtSecret;
-    private AuthHandler next;
-    private ExceptionHandler exceptionHandler;
-    private AccountCredentials credentials;
-    private String token;
+    private transient String jwtSecret;
+    private transient AuthHandler next;
+    private transient ExceptionHandler exceptionHandler;
+    private transient AccountCredentials credentials;
+    private transient String token;
 
     /**
      * Constructs a CreateToken handler that handles the creation of a JWT token.

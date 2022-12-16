@@ -11,9 +11,11 @@ import java.security.SecureRandom;
  */
 public class SanitizeCredentials implements AuthHandler {
 
-    private AuthHandler next;
-    private ExceptionHandler exceptionHandler;
-    private AccountCredentials credentials;
+    private transient AuthHandler next;
+    private transient ExceptionHandler exceptionHandler;
+    private transient AccountCredentials credentials;
+    private transient String sanitizedUserId;
+    private transient String sanitizedPassword;
 
     /**
      * Constructs a SanitizeCredentials handler.
@@ -43,8 +45,8 @@ public class SanitizeCredentials implements AuthHandler {
                 exceptionHandler.handleException(new IllegalArgumentException(), "Please provide a password.", 400);
                 return;
             }
-            String sanitizedUserId = sanitize(credentials.getUserId());
-            String sanitizedPassword = sanitize(credentials.getPassword());
+            sanitizedUserId = sanitize(credentials.getUserId());
+            sanitizedPassword = sanitize(credentials.getPassword());
             if (sanitizedUserId.length() < credentials.getUserId().length()) {
                 exceptionHandler.handleException(new IllegalArgumentException(), "Your user id contains illegal"
                         + " characters. Please only use letters, numbers and the following characters: "

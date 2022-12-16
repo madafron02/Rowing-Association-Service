@@ -5,11 +5,11 @@ package nl.tudelft.sem.template.auth.application.handlers;
  */
 public class ExceptionHandler {
 
-    private Exception exception;
-    private String errorMessage;
-    private boolean caughtException;
+    private transient Exception exception;
+    private transient String errorMessage;
+    private transient boolean caughtException;
 
-    private int statusCode;
+    private transient int statusCode;
 
     /**
      * Constructs an ExceptionHandler.

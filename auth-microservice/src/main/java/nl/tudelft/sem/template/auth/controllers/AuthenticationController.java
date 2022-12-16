@@ -23,8 +23,8 @@ public class AuthenticationController {
      * The secret from the application.properties that will be used to sign the JWTs.
      */
     @Value("${jwt.secret}")
-    private String jwtSecret;
-    private final AccountsRepo accountsRepo;
+    private transient String jwtSecret;
+    private final transient AccountsRepo accountsRepo;
 
     /**
      * Automatically constructs a Controller.

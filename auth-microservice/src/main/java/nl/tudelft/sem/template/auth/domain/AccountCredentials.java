@@ -1,5 +1,7 @@
 package nl.tudelft.sem.template.auth.domain;
 
+import lombok.NoArgsConstructor;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.util.Objects;
@@ -8,6 +10,7 @@ import java.util.Objects;
  * Entity that stores a userId and password.
  */
 @Entity
+@NoArgsConstructor
 public class AccountCredentials {
     @Id
     private String userId;
@@ -22,13 +25,6 @@ public class AccountCredentials {
     public AccountCredentials(String userId, String password) {
         this.userId = userId;
         this.password = password;
-    }
-
-    /**
-     * Empty Constructor for an AccountCredentials entity.
-     */
-    public AccountCredentials() {
-
     }
 
     /**

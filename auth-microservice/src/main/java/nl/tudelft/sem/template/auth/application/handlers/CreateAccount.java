@@ -11,10 +11,10 @@ import java.util.Optional;
  */
 public class CreateAccount implements AuthHandler {
 
-    private AuthHandler next;
-    private ExceptionHandler exceptionHandler;
-    private AccountCredentials credentials;
-    private AccountsRepo accountsRepo;
+    private transient AuthHandler next;
+    private transient ExceptionHandler exceptionHandler;
+    private transient AccountCredentials credentials;
+    private transient AccountsRepo accountsRepo;
 
     /**
      * Constructs a CreateAccount handler.

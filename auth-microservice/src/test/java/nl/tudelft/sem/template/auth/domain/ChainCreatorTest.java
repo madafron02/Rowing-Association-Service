@@ -1,6 +1,9 @@
 package nl.tudelft.sem.template.auth.domain;
 
-import nl.tudelft.sem.template.auth.application.handlers.*;
+import nl.tudelft.sem.template.auth.application.handlers.CreateAccount;
+import nl.tudelft.sem.template.auth.application.handlers.CreateToken;
+import nl.tudelft.sem.template.auth.application.handlers.ExceptionHandler;
+import nl.tudelft.sem.template.auth.application.handlers.SanitizeCredentials;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -9,7 +12,12 @@ import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 
 /**
  * Tests for the ChainCreator class.
@@ -25,7 +33,7 @@ public class ChainCreatorTest {
 
 
     @BeforeEach
-    void setup(){
+    void setup() {
         exceptionHandler = new ExceptionHandler();
         mockRepo = mock(AccountsRepo.class);
         testSecret = "test123";
@@ -33,13 +41,14 @@ public class ChainCreatorTest {
     }
 
     @Test
-    void testCorrectRegistrationChain(){
-        MockedConstruction<SanitizeCredentials> mockedSanitizeCredentials = Mockito.mockConstruction(SanitizeCredentials.class,
-                (mock, context) -> {
-                    doNothing().when(mock).setNext(any());
-                    doNothing().when(mock).setExceptionHandler(any());
-                    doNothing().when(mock).handle(any());
-                });
+    void testCorrectRegistrationChain() {
+        MockedConstruction<SanitizeCredentials> mockedSanitizeCredentials =
+                Mockito.mockConstruction(SanitizeCredentials.class,
+                    (mock, context) -> {
+                        doNothing().when(mock).setNext(any());
+                        doNothing().when(mock).setExceptionHandler(any());
+                        doNothing().when(mock).handle(any());
+                    });
         MockedConstruction<CreateAccount> mockedCreateAccount = Mockito.mockConstruction(CreateAccount.class,
                 (mock, context) -> {
                     doNothing().when(mock).setNext(any());
@@ -54,17 +63,24 @@ public class ChainCreatorTest {
                     when(mock.getToken()).thenReturn("this is the token");
                 });
 
-        CreateToken returnedHandler = ChainCreator.createRegistrationChain(exceptionHandler, mockRepo, testSecret, credentials);
+        CreateToken returnedHandler = ChainCreator.createRegistrationChain(exceptionHandler, mockRepo, testSecret,
+                credentials);
 
         assertThat(mockedSanitizeCredentials.constructed().isEmpty()).isFalse();
         assertThat(mockedCreateAccount.constructed().isEmpty()).isFalse();
         assertThat(mockedCreateToken.constructed().isEmpty()).isFalse();
-        verify(mockedSanitizeCredentials.constructed().get(0), times(1)).setNext(mockedCreateAccount.constructed().get(0));
-        verify(mockedCreateAccount.constructed().get(0), times(1)).setNext(mockedCreateToken.constructed().get(0));
-        verify(mockedSanitizeCredentials.constructed().get(0), times(1)).setExceptionHandler(exceptionHandler);
-        verify(mockedCreateAccount.constructed().get(0), times(1)).setExceptionHandler(exceptionHandler);
-        verify(mockedCreateToken.constructed().get(0), times(1)).setExceptionHandler(exceptionHandler);
-        verify(mockedSanitizeCredentials.constructed().get(0), times(1)).handle(credentials);
+        verify(mockedSanitizeCredentials.constructed().get(0), times(1))
+                .setNext(mockedCreateAccount.constructed().get(0));
+        verify(mockedCreateAccount.constructed().get(0), times(1))
+                .setNext(mockedCreateToken.constructed().get(0));
+        verify(mockedSanitizeCredentials.constructed().get(0), times(1))
+                .setExceptionHandler(exceptionHandler);
+        verify(mockedCreateAccount.constructed().get(0), times(1))
+                .setExceptionHandler(exceptionHandler);
+        verify(mockedCreateToken.constructed().get(0), times(1))
+                .setExceptionHandler(exceptionHandler);
+        verify(mockedSanitizeCredentials.constructed().get(0), times(1))
+                .handle(credentials);
         assertThat(returnedHandler).isEqualTo(mockedCreateToken.constructed().get(0));
     }
 }

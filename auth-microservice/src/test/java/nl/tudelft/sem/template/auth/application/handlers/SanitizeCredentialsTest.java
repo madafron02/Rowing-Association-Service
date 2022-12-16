@@ -6,8 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * Tests for the SanitizeCredentials handler.
@@ -22,7 +24,7 @@ public class SanitizeCredentialsTest {
     AuthHandler mockHandler;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         sanitizeCredentials = new SanitizeCredentials();
         exceptionHandler = new ExceptionHandler();
         sanitizeCredentials.setExceptionHandler(exceptionHandler);
@@ -41,14 +43,14 @@ public class SanitizeCredentialsTest {
     }
 
     @Test
-    void testCallsNext(){
+    void testCallsNext() {
         sanitizeCredentials.handle(new AccountCredentials("hello.there@world.com", "world"));
         assertThat(exceptionHandler.didCatchException()).isFalse();
         verify(mockHandler, times(1)).handle(any());
     }
 
     @Test
-    void testHashPassword(){
+    void testHashPassword() {
         AccountCredentials credentials = new AccountCredentials("hello.there@world.com", "world");
         sanitizeCredentials.handle(credentials);
         assertThat(exceptionHandler.didCatchException()).isFalse();
@@ -56,42 +58,42 @@ public class SanitizeCredentialsTest {
     }
 
     @Test
-    void testEmptyUserId(){
+    void testEmptyUserId() {
         sanitizeCredentials.handle(new AccountCredentials("", "world"));
         assertThat(exceptionHandler.didCatchException()).isTrue();
         verify(mockHandler, times(0)).handle(any());
     }
 
     @Test
-    void testEmptyPassword(){
+    void testEmptyPassword() {
         sanitizeCredentials.handle(new AccountCredentials("hello@world.com", ""));
         assertThat(exceptionHandler.didCatchException()).isTrue();
         verify(mockHandler, times(0)).handle(any());
     }
 
     @Test
-    void testIllegalUserId(){
+    void testIllegalUserId() {
         sanitizeCredentials.handle(new AccountCredentials("hello\"@world.com", "world"));
         assertThat(exceptionHandler.didCatchException()).isTrue();
         verify(mockHandler, times(0)).handle(any());
     }
 
     @Test
-    void testNoEmail(){
+    void testNoEmail() {
         sanitizeCredentials.handle(new AccountCredentials("hello", "world"));
         assertThat(exceptionHandler.didCatchException()).isTrue();
         verify(mockHandler, times(0)).handle(any());
     }
 
     @Test
-    void testIllegalPassword(){
+    void testIllegalPassword() {
         sanitizeCredentials.handle(new AccountCredentials("hello", "world]"));
         assertThat(exceptionHandler.didCatchException()).isTrue();
         verify(mockHandler, times(0)).handle(any());
     }
 
     @Test
-    void testIncorrectEmail(){
+    void testIncorrectEmail() {
         sanitizeCredentials.handle(new AccountCredentials("hello..there@world.com", "world"));
         assertThat(exceptionHandler.didCatchException()).isTrue();
         verify(mockHandler, times(0)).handle(any());
