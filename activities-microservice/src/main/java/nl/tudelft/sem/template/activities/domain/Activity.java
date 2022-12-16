@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.activities.domain;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,6 +26,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Activity {
+
+    public static final List<String> CERTIFICATE_TYPES = List.of("C4", "4+", "8+");
+
+    public static final List<String> GENDER_TYPES = List.of("Male", "Female");
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -87,6 +92,9 @@ public class Activity {
                 || positions.getScullingRowerCount() != null;
         boolean nonNull = ownerId != null && requiresRowers && timeslot.getStartTime() != null;
         if (!nonNull) {
+            return false;
+        }
+        if (!CERTIFICATE_TYPES.contains(certificate) || !GENDER_TYPES.contains(gender)) {
             return false;
         }
         LocalDateTime now = LocalDateTime.now();
