@@ -11,4 +11,5 @@ public class MatchFilter {
     private ActivityApp activityApp;
     private UserApp user;
     private String position;
+    private TimeslotApp timeslot;
 }
