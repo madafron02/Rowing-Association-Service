@@ -41,8 +41,8 @@ public class AuthenticationController {
      *
      * @param request The request model with the credentials provided by the client.
      * @return ResponseEntity with either a JWT or an error.
-     * @throws Exception
-     * @PostMapping /register
+     * @throws Exception Throws exception when one occurs.
+     * {@code @PostMapping}   /register
      */
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody RegistrationRequestModel request) throws Exception {
@@ -53,7 +53,7 @@ public class AuthenticationController {
                 credentials);
 
         String token = createToken.getToken();
-        if(exceptionHandler.didCatchException() || token == null) {
+        if (exceptionHandler.didCatchException() || token == null) {
             return ResponseEntity.status(exceptionHandler.getStatusCode()).body(exceptionHandler.getErrorMessage());
         }
         return ResponseEntity.ok(token);

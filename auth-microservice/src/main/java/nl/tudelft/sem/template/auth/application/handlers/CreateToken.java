@@ -40,7 +40,7 @@ public class CreateToken implements AuthHandler {
      */
     @Override
     public void handle(AccountCredentials credentials) {
-        if(exceptionHandler == null) {
+        if (exceptionHandler == null) {
             return;
         }
         this.credentials = credentials;

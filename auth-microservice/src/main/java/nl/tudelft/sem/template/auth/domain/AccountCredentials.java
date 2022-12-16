@@ -19,7 +19,7 @@ public class AccountCredentials {
      * @param userId The userId as a String.
      * @param password The password as a String.
      */
-    public AccountCredentials(String userId, String password){
+    public AccountCredentials(String userId, String password) {
         this.userId = userId;
         this.password = password;
     }

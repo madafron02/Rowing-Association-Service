@@ -35,18 +35,18 @@ public class CreateAccount implements AuthHandler {
      */
     @Override
     public void handle(AccountCredentials credentials) {
-        if(next == null || exceptionHandler == null) {
+        if (next == null || exceptionHandler == null) {
             return;
         }
         this.credentials = credentials;
         try {
-            if(accountExists()) {
+            if (accountExists()) {
                 exceptionHandler.handleException(new SQLException(), "An account with this user id already exists."
                         + " Please choose a different user id.", 400);
                 return;
             }
             accountsRepo.save(credentials);
-            if(!verifySavedAccount()) {
+            if (!verifySavedAccount()) {
                 exceptionHandler.handleException(new SQLException(), "There was an error while saving your account."
                         + " Please try again later", 500);
                 return;
@@ -96,7 +96,7 @@ public class CreateAccount implements AuthHandler {
      */
     private boolean verifySavedAccount() {
         Optional<AccountCredentials> foundAccount = accountsRepo.findById(credentials.getUserId());
-        if(!foundAccount.isPresent()) {
+        if (!foundAccount.isPresent()) {
             return false;
         }
         return foundAccount.get().equals(credentials);

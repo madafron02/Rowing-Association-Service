@@ -13,8 +13,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      * Allows requests without authentication to be processed.
      *
      * @param http the {@link HttpSecurity} to modify
-     * @throws Exception
-     * @Override -
+     * @throws Exception Throws exception when configuration cannot be changed.
+     * {@code @Override} Overrides configure.
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {

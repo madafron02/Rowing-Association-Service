@@ -9,7 +9,7 @@ import java.security.SecureRandom;
 /**
  * AuthHandler that handles the sanitizes the clients credentials and hashes the password.
  */
-public class SanitizeCredentials implements AuthHandler{
+public class SanitizeCredentials implements AuthHandler {
 
     private AuthHandler next;
     private ExceptionHandler exceptionHandler;
@@ -30,34 +30,34 @@ public class SanitizeCredentials implements AuthHandler{
      */
     @Override
     public void handle(AccountCredentials credentials) {
-        if(next == null || exceptionHandler == null) {
+        if (next == null || exceptionHandler == null) {
             return;
         }
         this.credentials = credentials;
         try {
-            if(credentials.getUserId() == null || credentials.getUserId().equals("")){
+            if (credentials.getUserId() == null || credentials.getUserId().equals("")) {
                 exceptionHandler.handleException(new IllegalArgumentException(), "Please provide a user id.", 400);
                 return;
             }
-            if(credentials.getPassword() == null || credentials.getPassword().equals("")) {
+            if (credentials.getPassword() == null || credentials.getPassword().equals("")) {
                 exceptionHandler.handleException(new IllegalArgumentException(), "Please provide a password.", 400);
                 return;
             }
             String sanitizedUserId = sanitize(credentials.getUserId());
             String sanitizedPassword = sanitize(credentials.getPassword());
-            if(sanitizedUserId.length() < credentials.getUserId().length()) {
+            if (sanitizedUserId.length() < credentials.getUserId().length()) {
                 exceptionHandler.handleException(new IllegalArgumentException(), "Your user id contains illegal"
-                        + " characters. Please only use letters, numbers and the following characters: " +
-                        "!#$%&()*+,-./:;<=>?@^_`{|}~", 400);
+                        + " characters. Please only use letters, numbers and the following characters: "
+                        + "!#$%&()*+,-./:;<=>?@^_`{|}~", 400);
                 return;
             }
-            if(sanitizedPassword.length() < credentials.getPassword().length()) {
+            if (sanitizedPassword.length() < credentials.getPassword().length()) {
                 exceptionHandler.handleException(new IllegalArgumentException(), "Your password contains illegal"
-                        + " characters. Please only use letters, numbers and the following characters: " +
-                        "!#$%&()*+,-./:;<=>?@^_`{|}~", 400);
+                        + " characters. Please only use letters, numbers and the following characters: "
+                        + "!#$%&()*+,-./:;<=>?@^_`{|}~", 400);
                 return;
             }
-            if(!isEmailAddress(sanitizedUserId)) {
+            if (!isEmailAddress(sanitizedUserId)) {
                 exceptionHandler.handleException(new IllegalArgumentException(), "Your user id must be an email address.",
                         400);
                 return;
