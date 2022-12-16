@@ -15,7 +15,7 @@ public class ExceptionHandler {
      * Constructs an ExceptionHandler.
      * Sets caughtException, errorMessage and statusCode to a default value.
      */
-    public ExceptionHandler(){
+    public ExceptionHandler() {
         this.caughtException = false;
         this.errorMessage = "An unexpected error has occurred. Please try again.";
         this.statusCode = 500;
@@ -26,7 +26,7 @@ public class ExceptionHandler {
      *
      * @param exception The exception that was thrown.
      */
-    public void handleException(Exception exception){
+    public void handleException(Exception exception) {
         this.caughtException = true;
         this.exception = exception;
     }
@@ -38,7 +38,7 @@ public class ExceptionHandler {
      * @param errorMessage A custom error message for the client.
      * @param statusCode The http status code to be used in the response.
      */
-    public void handleException(Exception exception, String errorMessage, int statusCode){
+    public void handleException(Exception exception, String errorMessage, int statusCode) {
         this.caughtException = true;
         this.exception = exception;
         this.errorMessage = errorMessage;
@@ -69,7 +69,7 @@ public class ExceptionHandler {
      *
      * @return True if an exception was handled. False otherwise.
      */
-    public boolean didCatchException(){
+    public boolean didCatchException() {
         return caughtException;
     }
 
@@ -78,7 +78,7 @@ public class ExceptionHandler {
      *
      * @return The http status code associated with the exception.
      */
-    public int getStatusCode(){
+    public int getStatusCode() {
         return statusCode;
     }
 }

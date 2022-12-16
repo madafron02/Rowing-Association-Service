@@ -14,6 +14,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      *
      * @param http the {@link HttpSecurity} to modify
      * @throws Exception
+     * @Override -
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {

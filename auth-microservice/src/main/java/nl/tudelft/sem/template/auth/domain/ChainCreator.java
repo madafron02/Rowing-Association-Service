@@ -1,6 +1,10 @@
 package nl.tudelft.sem.template.auth.domain;
 
-import nl.tudelft.sem.template.auth.application.handlers.*;
+
+import nl.tudelft.sem.template.auth.application.handlers.CreateAccount;
+import nl.tudelft.sem.template.auth.application.handlers.CreateToken;
+import nl.tudelft.sem.template.auth.application.handlers.ExceptionHandler;
+import nl.tudelft.sem.template.auth.application.handlers.SanitizeCredentials;
 
 /**
  * Helper class for encapsulating the creation of handler chains.
@@ -16,7 +20,8 @@ public class ChainCreator {
      * @param credentials The client's credentials to register.
      * @return The last handler in the chain.
      */
-    public static CreateToken createRegistrationChain(ExceptionHandler exceptionHandler, AccountsRepo accountsRepo, String jwtSecret, AccountCredentials credentials){
+    public static CreateToken createRegistrationChain(ExceptionHandler exceptionHandler, AccountsRepo accountsRepo,
+                                                      String jwtSecret, AccountCredentials credentials) {
         SanitizeCredentials sanitizeCredentials = new SanitizeCredentials();
         CreateAccount createAccount = new CreateAccount(accountsRepo);
         CreateToken createToken = new CreateToken(jwtSecret);

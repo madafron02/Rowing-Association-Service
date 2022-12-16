@@ -3,13 +3,6 @@ package nl.tudelft.sem.template.auth.application.handlers;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import nl.tudelft.sem.template.auth.domain.AccountCredentials;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.Date;
@@ -20,7 +13,7 @@ import java.util.Map;
  * AuthHandler that handles the creation of a JSON Web Token.
  * After the handle method has succeeded, the token can be extracted using the getToken method.
  */
-public class CreateToken implements AuthHandler{
+public class CreateToken implements AuthHandler {
 
     public static final long JWT_TOKEN_VALIDITY = 30 * 60 * 1000;
 
@@ -35,7 +28,7 @@ public class CreateToken implements AuthHandler{
      *
      * @param jwtSecret The secret that will be used to create the JWT signature.
      */
-    public CreateToken(String jwtSecret){
+    public CreateToken(String jwtSecret) {
         this.jwtSecret = jwtSecret;
     }
 
@@ -47,9 +40,11 @@ public class CreateToken implements AuthHandler{
      */
     @Override
     public void handle(AccountCredentials credentials) {
-        if(exceptionHandler == null) return;
+        if(exceptionHandler == null) {
+            return;
+        }
         this.credentials = credentials;
-        try{
+        try {
             Map<String, Object> claims = new HashMap<>();
             long time = Instant.now().toEpochMilli();
             Date issued = new Date(time);
@@ -62,11 +57,11 @@ public class CreateToken implements AuthHandler{
                     .signWith(SignatureAlgorithm.HS512, jwtSecret)
                     .compact();
 
-        } catch (Exception e){
+        } catch (Exception e) {
             exceptionHandler.handleException(e);
         }
     }
-    
+
     /**
      * Sets the handler that can be called after at the end of the handle method.
      *
@@ -93,7 +88,7 @@ public class CreateToken implements AuthHandler{
      *
      * @return The JSON Web Token created by the handle method. Null if handle() was not called or failed.
      */
-    public String getToken(){
+    public String getToken() {
         return token;
     }
 }

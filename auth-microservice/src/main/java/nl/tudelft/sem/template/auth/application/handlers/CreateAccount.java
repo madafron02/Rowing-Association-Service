@@ -9,7 +9,7 @@ import java.util.Optional;
 /**
  * AuthHandler that handles the creation of new accounts.
  */
-public class CreateAccount implements AuthHandler{
+public class CreateAccount implements AuthHandler {
 
     private AuthHandler next;
     private ExceptionHandler exceptionHandler;
@@ -22,7 +22,7 @@ public class CreateAccount implements AuthHandler{
      *
      * @param accountsRepo The repository where the accounts are saved.
      */
-    public CreateAccount(AccountsRepo accountsRepo){
+    public CreateAccount(AccountsRepo accountsRepo) {
         this.accountsRepo = accountsRepo;
     }
 
@@ -35,22 +35,24 @@ public class CreateAccount implements AuthHandler{
      */
     @Override
     public void handle(AccountCredentials credentials) {
-        if(next == null || exceptionHandler == null) return;
+        if(next == null || exceptionHandler == null) {
+            return;
+        }
         this.credentials = credentials;
         try {
-            if(accountExists()){
-                exceptionHandler.handleException(new SQLException(), "An account with this user id already exists." +
-                        " Please choose a different user id.", 400);
+            if(accountExists()) {
+                exceptionHandler.handleException(new SQLException(), "An account with this user id already exists."
+                        + " Please choose a different user id.", 400);
                 return;
             }
             accountsRepo.save(credentials);
-            if(!verifySavedAccount()){
-                exceptionHandler.handleException(new SQLException(), "There was an error while saving your account." +
-                        " Please try again later", 500);
+            if(!verifySavedAccount()) {
+                exceptionHandler.handleException(new SQLException(), "There was an error while saving your account."
+                        + " Please try again later", 500);
                 return;
             }
             next.handle(credentials);
-        } catch (Exception e){
+        } catch (Exception e) {
             exceptionHandler.handleException(e);
         }
     }
@@ -82,7 +84,7 @@ public class CreateAccount implements AuthHandler{
      *
      * @return True if an account with the userId already exists. False otherwise.
      */
-    private boolean accountExists(){
+    private boolean accountExists() {
         Optional<AccountCredentials> foundAccount = accountsRepo.findById(credentials.getUserId());
         return foundAccount.isPresent();
     }
@@ -92,9 +94,9 @@ public class CreateAccount implements AuthHandler{
      *
      * @return True if an entry with the correct credentials exits. False otherwise.
      */
-    private boolean verifySavedAccount(){
+    private boolean verifySavedAccount() {
         Optional<AccountCredentials> foundAccount = accountsRepo.findById(credentials.getUserId());
-        if(!foundAccount.isPresent()){
+        if(!foundAccount.isPresent()) {
             return false;
         }
         return foundAccount.get().equals(credentials);

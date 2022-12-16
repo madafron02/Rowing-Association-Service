@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.auth.controllers;
 
-import nl.tudelft.sem.template.auth.application.handlers.*;
+import nl.tudelft.sem.template.auth.application.handlers.CreateToken;
+import nl.tudelft.sem.template.auth.application.handlers.ExceptionHandler;
 import nl.tudelft.sem.template.auth.domain.AccountCredentials;
 import nl.tudelft.sem.template.auth.domain.AccountsRepo;
 import nl.tudelft.sem.template.auth.domain.ChainCreator;
@@ -41,19 +42,20 @@ public class AuthenticationController {
      * @param request The request model with the credentials provided by the client.
      * @return ResponseEntity with either a JWT or an error.
      * @throws Exception
+     * @PostMapping /register
      */
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody RegistrationRequestModel request) throws Exception {
         AccountCredentials credentials = new AccountCredentials(request.getUserId(), request.getPassword());
 
         ExceptionHandler exceptionHandler = new ExceptionHandler();
-        CreateToken createToken = ChainCreator.createRegistrationChain(exceptionHandler, accountsRepo, jwtSecret, credentials);
+        CreateToken createToken = ChainCreator.createRegistrationChain(exceptionHandler, accountsRepo, jwtSecret,
+                credentials);
 
         String token = createToken.getToken();
-        if(exceptionHandler.didCatchException() || token == null){
+        if(exceptionHandler.didCatchException() || token == null) {
             return ResponseEntity.status(exceptionHandler.getStatusCode()).body(exceptionHandler.getErrorMessage());
         }
         return ResponseEntity.ok(token);
     }
-
 }

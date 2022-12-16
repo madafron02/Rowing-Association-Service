@@ -57,8 +57,12 @@ public class AccountCredentials {
      */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof AccountCredentials)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof AccountCredentials)) {
+            return false;
+        }
         AccountCredentials that = (AccountCredentials) o;
         return Objects.equals(getUserId(), that.getUserId()) && Objects.equals(getPassword(), that.getPassword());
     }
@@ -80,9 +84,9 @@ public class AccountCredentials {
      */
     @Override
     public String toString() {
-        return "AccountCredentials{" +
-                "userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+        return "AccountCredentials{"
+                + "userId='" + userId + '\''
+                + ", password='" + password + '\''
+                + '}';
     }
 }
