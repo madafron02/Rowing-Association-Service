@@ -90,14 +90,19 @@ public class Activity {
         boolean requiresRowers = positions.getCoxCount() != null || positions.getCoachCount() != null
                 || positions.getPortSideRowerCount() != null || positions.getStarboardSideRowerCount() != null
                 || positions.getScullingRowerCount() != null;
-        boolean nonNull = ownerId != null && requiresRowers && timeslot.getStartTime() != null;
+        boolean nonNull = ownerId != null && requiresRowers;
         if (!nonNull) {
             return false;
         }
-        if (!CERTIFICATE_TYPES.contains(certificate) || !GENDER_TYPES.contains(gender)) {
+        if (!CERTIFICATE_TYPES.contains(certificate)) {
+            return false;
+        }
+        if (competition && (gender == null || !GENDER_TYPES.contains(gender))) {
             return false;
         }
         LocalDateTime now = LocalDateTime.now();
-        return timeslot.getStartTime().isBefore(timeslot.getEndTime()) && timeslot.getEndTime().isAfter(now);
+        boolean timeslotExists = timeslot != null && timeslot.getStartTime() != null && timeslot.getEndTime() != null;
+        return timeslotExists && timeslot.getStartTime().isBefore(timeslot.getEndTime())
+                && timeslot.getEndTime().isAfter(now);
     }
 }
