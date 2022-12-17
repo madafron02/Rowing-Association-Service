@@ -50,14 +50,6 @@ public class SanitizeCredentialsTest {
     }
 
     @Test
-    void testHashPassword() {
-        AccountCredentials credentials = new AccountCredentials("hello.there@world.com", "world");
-        sanitizeCredentials.handle(credentials);
-        assertThat(exceptionHandler.didCatchException()).isFalse();
-        verify(mockHandler, times(0)).handle(credentials); //checks that the credentials have changed
-    }
-
-    @Test
     void testEmptyUserId() {
         sanitizeCredentials.handle(new AccountCredentials("", "world"));
         assertThat(exceptionHandler.didCatchException()).isTrue();

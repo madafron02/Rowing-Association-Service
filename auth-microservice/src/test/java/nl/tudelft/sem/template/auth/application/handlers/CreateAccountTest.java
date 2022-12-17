@@ -5,7 +5,10 @@ import nl.tudelft.sem.template.auth.domain.AccountsRepo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.security.SecureRandom;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,12 +55,15 @@ public class CreateAccountTest {
     @Test
     void testCorrectCreating() {
         AccountCredentials credentials = new AccountCredentials("hello.there@world.com", "world");
+        PasswordEncoder encoder = new BCryptPasswordEncoder(12, new SecureRandom());
+        AccountCredentials encoded = new AccountCredentials("hello.there@world.com",
+                encoder.encode("world"));
         Optional<AccountCredentials> notFound = Optional.empty();
-        Optional<AccountCredentials> found = Optional.of(credentials);
+        Optional<AccountCredentials> found = Optional.of(encoded);
         when(mockRepo.findById(any())).thenReturn(notFound).thenReturn(found);
         createAccount.handle(credentials);
         verify(mockRepo, times(2)).findById(any());
-        verify(mockRepo, times(1)).save(credentials);
+        verify(mockRepo, times(1)).save(any(AccountCredentials.class));
         verify(mockHandler, times(1)).handle(any());
     }
 

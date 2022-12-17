@@ -2,7 +2,10 @@ package nl.tudelft.sem.template.auth.application.handlers;
 
 import nl.tudelft.sem.template.auth.domain.AccountCredentials;
 import nl.tudelft.sem.template.auth.domain.AccountsRepo;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.util.Optional;
 
@@ -45,8 +48,10 @@ public class CreateAccount implements AuthHandler {
                         + " Please choose a different user id.", 400);
                 return;
             }
-            accountsRepo.save(credentials);
-            if (!verifySavedAccount()) {
+            String hashedPassword = hashPassword(credentials.getPassword());
+            AccountCredentials hashedCredentials = new AccountCredentials(credentials.getUserId(), hashedPassword);
+            accountsRepo.save(hashedCredentials);
+            if (!verifySavedAccount(credentials.getPassword())) {
                 exceptionHandler.handleException(new SQLException(), "There was an error while saving your account."
                         + " Please try again later", 500);
                 return;
@@ -94,12 +99,24 @@ public class CreateAccount implements AuthHandler {
      *
      * @return True if an entry with the correct credentials exits. False otherwise.
      */
-    private boolean verifySavedAccount() {
+    private boolean verifySavedAccount(String password) {
         Optional<AccountCredentials> foundAccount = accountsRepo.findById(credentials.getUserId());
         if (!foundAccount.isPresent()) {
             return false;
         }
-        return foundAccount.get().equals(credentials);
+        PasswordEncoder encoder = new BCryptPasswordEncoder(12, new SecureRandom());
+        return encoder.matches(password, foundAccount.get().getPassword());
+    }
+
+    /**
+     * Creates a hash from a password.
+     *
+     * @param password The password to be hashed.
+     * @return A String representing the hash of the password.
+     */
+    private String hashPassword(String password) {
+        PasswordEncoder encoder = new BCryptPasswordEncoder(12, new SecureRandom());
+        return encoder.encode(password);
     }
 
 

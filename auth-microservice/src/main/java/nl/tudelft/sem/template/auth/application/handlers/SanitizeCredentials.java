@@ -1,10 +1,6 @@
 package nl.tudelft.sem.template.auth.application.handlers;
 
 import nl.tudelft.sem.template.auth.domain.AccountCredentials;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.security.SecureRandom;
 
 /**
  * AuthHandler that handles the sanitizes the clients credentials and hashes the password.
@@ -64,7 +60,7 @@ public class SanitizeCredentials implements AuthHandler {
                         400);
                 return;
             }
-            AccountCredentials newCredentials = new AccountCredentials(sanitizedUserId, hashPassword(sanitizedPassword));
+            AccountCredentials newCredentials = new AccountCredentials(sanitizedUserId, sanitizedPassword);
             next.handle(newCredentials);
         } catch (Exception e) {
             exceptionHandler.handleException(e);
@@ -120,14 +116,5 @@ public class SanitizeCredentials implements AuthHandler {
                 + "\\x0c\\x0e-\\x7f])+)\\])");
     }
 
-    /**
-     * Creates a hash from a password.
-     *
-     * @param password The password to be hashed.
-     * @return A String representing the hash of the password.
-     */
-    private String hashPassword(String password) {
-        PasswordEncoder encoder = new BCryptPasswordEncoder(12, new SecureRandom());
-        return encoder.encode(password);
-    }
+
 }
