@@ -45,14 +45,14 @@ public class VerifyCredentials implements AuthHandler {
             Optional<AccountCredentials> foundAccount = accountsRepo.findById(credentials.getUserId());
             if (foundAccount.isEmpty()) {
                 exceptionHandler.handleException(new SQLException(), "UserId or password incorrect. Please try again.",
-                        400);
+                        401);
                 return;
             }
             AccountCredentials foundCredentials = foundAccount.get();
             if (!foundCredentials.getUserId().equals(credentials.getUserId())
                     || !passwordMatches(credentials.getPassword(), foundCredentials.getPassword())) {
                 exceptionHandler.handleException(new SQLException(), "UserId or password incorrect. Please try again.",
-                        400);
+                        401);
                 return;
             }
             next.handle(credentials);
