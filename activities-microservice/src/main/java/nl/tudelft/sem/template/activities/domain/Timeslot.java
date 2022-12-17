@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.activities.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
 public class Timeslot {
 
     @Column(name = "startTime", nullable = false)
