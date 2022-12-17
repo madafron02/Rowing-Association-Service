@@ -24,7 +24,7 @@ class ExceptionHandlerTest {
     }
 
     @Test
-    void testEmptyConstructor() {
+    void testNewConstructor() {
         assertThat(new ExceptionHandler()).isNotNull();
     }
 

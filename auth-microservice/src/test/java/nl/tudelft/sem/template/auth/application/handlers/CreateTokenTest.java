@@ -33,7 +33,7 @@ public class CreateTokenTest {
     }
 
     @Test
-    void testEmptyConstructor() {
+    void testNewConstructor() {
         assertThat(new CreateToken("Secret123")).isNotNull();
     }
 

@@ -38,7 +38,7 @@ public class SanitizeCredentialsTest {
     }
 
     @Test
-    void testEmptyConstructor() {
+    void testNewConstructor() {
         assertThat(new SanitizeCredentials()).isNotNull();
     }
 

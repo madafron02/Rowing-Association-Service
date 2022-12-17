@@ -45,7 +45,7 @@ public class CreateAccountTest {
     }
 
     @Test
-    void testEmptyConstructor() {
+    void testNewConstructor() {
         assertThat(new CreateAccount(mockRepo)).isNotNull();
     }
 
