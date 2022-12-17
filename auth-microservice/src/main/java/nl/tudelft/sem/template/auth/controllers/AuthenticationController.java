@@ -5,13 +5,14 @@ import nl.tudelft.sem.template.auth.application.handlers.ExceptionHandler;
 import nl.tudelft.sem.template.auth.domain.AccountCredentials;
 import nl.tudelft.sem.template.auth.domain.AccountsRepo;
 import nl.tudelft.sem.template.auth.domain.ChainCreator;
-import nl.tudelft.sem.template.auth.models.RegistrationRequestModel;
+import nl.tudelft.sem.template.auth.models.CredentialsRequestModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
 
 /**
  * Controller that handles incoming authentication and register requests.
@@ -41,11 +42,10 @@ public class AuthenticationController {
      *
      * @param request The request model with the credentials provided by the client.
      * @return ResponseEntity with either a JWT or an error.
-     * @throws Exception Throws exception when one occurs.
      * {@code @PostMapping}   /register
      */
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody RegistrationRequestModel request) throws Exception {
+    public ResponseEntity register(@RequestBody CredentialsRequestModel request) {
         AccountCredentials credentials = new AccountCredentials(request.getUserId(), request.getPassword());
 
         ExceptionHandler exceptionHandler = new ExceptionHandler();
@@ -56,6 +56,27 @@ public class AuthenticationController {
         if (exceptionHandler.didCatchException() || token == null) {
             return ResponseEntity.status(exceptionHandler.getStatusCode()).body(exceptionHandler.getErrorMessage());
         }
+        return ResponseEntity.ok(token);
+    }
+
+    /**
+     * Mapping that processes an incoming request for authentication.
+     *
+     * @param request The request model with the credentials provided by the client.
+     * @return ResponseEntity with either a JWT or an error.
+     */
+    @PostMapping("/authenticate")
+    public ResponseEntity authenticate(@RequestBody CredentialsRequestModel request) {
+        AccountCredentials credentials = new AccountCredentials(request.getUserId(), request.getPassword());
+        ExceptionHandler exceptionHandler = new ExceptionHandler();
+        CreateToken createToken = ChainCreator.createAuthenticationChain(exceptionHandler, accountsRepo, jwtSecret,
+                credentials);
+
+        String token = createToken.getToken();
+        if (exceptionHandler.didCatchException() || token == null) {
+            return ResponseEntity.status(exceptionHandler.getStatusCode()).body(exceptionHandler.getErrorMessage());
+        }
+
         return ResponseEntity.ok(token);
     }
 }
