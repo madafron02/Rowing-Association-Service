@@ -4,6 +4,7 @@ import nl.tudelft.sem.template.auth.application.handlers.CreateAccount;
 import nl.tudelft.sem.template.auth.application.handlers.CreateToken;
 import nl.tudelft.sem.template.auth.application.handlers.ExceptionHandler;
 import nl.tudelft.sem.template.auth.application.handlers.SanitizeCredentials;
+import nl.tudelft.sem.template.auth.application.handlers.VerifyCredentials;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -82,5 +83,56 @@ public class ChainCreatorTest {
         verify(mockedSanitizeCredentials.constructed().get(0), times(1))
                 .handle(credentials);
         assertThat(returnedHandler).isEqualTo(mockedCreateToken.constructed().get(0));
+
+        mockedSanitizeCredentials.close();
+        mockedCreateAccount.close();
+        mockedCreateToken.close();
+    }
+
+    @Test
+    void testCorrectAuthenticationChain() {
+        MockedConstruction<SanitizeCredentials> mockedSanitizeCredentials =
+                Mockito.mockConstruction(SanitizeCredentials.class,
+                        (mock, context) -> {
+                            doNothing().when(mock).setNext(any());
+                            doNothing().when(mock).setExceptionHandler(any());
+                            doNothing().when(mock).handle(any());
+                        });
+        MockedConstruction<VerifyCredentials> mockedVerifyCredentials = Mockito.mockConstruction(VerifyCredentials.class,
+                (mock, context) -> {
+                    doNothing().when(mock).setNext(any());
+                    doNothing().when(mock).setExceptionHandler(any());
+                    doNothing().when(mock).handle(any());
+                });
+        MockedConstruction<CreateToken> mockedCreateToken = Mockito.mockConstruction(CreateToken.class,
+                (mock, context) -> {
+                    doNothing().when(mock).setNext(any());
+                    doNothing().when(mock).setExceptionHandler(any());
+                    doNothing().when(mock).handle(any());
+                    when(mock.getToken()).thenReturn("this is the token");
+                });
+
+        CreateToken returnedHandler = ChainCreator.createAuthenticationChain(exceptionHandler, mockRepo, testSecret,
+                credentials);
+
+        assertThat(mockedSanitizeCredentials.constructed().isEmpty()).isFalse();
+        assertThat(mockedVerifyCredentials.constructed().isEmpty()).isFalse();
+        assertThat(mockedCreateToken.constructed().isEmpty()).isFalse();
+        verify(mockedSanitizeCredentials.constructed().get(0), times(1))
+                .setNext(mockedVerifyCredentials.constructed().get(0));
+        verify(mockedVerifyCredentials.constructed().get(0), times(1))
+                .setNext(mockedCreateToken.constructed().get(0));
+        verify(mockedSanitizeCredentials.constructed().get(0), times(1))
+                .setExceptionHandler(exceptionHandler);
+        verify(mockedVerifyCredentials.constructed().get(0), times(1))
+                .setExceptionHandler(exceptionHandler);
+        verify(mockedCreateToken.constructed().get(0), times(1))
+                .setExceptionHandler(exceptionHandler);
+        verify(mockedSanitizeCredentials.constructed().get(0), times(1))
+                .handle(credentials);
+        assertThat(returnedHandler).isEqualTo(mockedCreateToken.constructed().get(0));
+        mockedSanitizeCredentials.close();
+        mockedVerifyCredentials.close();
+        mockedCreateToken.close();
     }
 }
