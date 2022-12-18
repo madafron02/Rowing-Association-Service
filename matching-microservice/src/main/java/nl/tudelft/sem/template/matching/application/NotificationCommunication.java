@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.matching.application;
 
 import jakarta.ws.rs.core.HttpHeaders;
 import lombok.NoArgsConstructor;
+import nl.tudelft.sem.template.matching.models.NotificationActivityModified;
 import nl.tudelft.sem.template.matching.models.NotificationRequestModelOwner;
 import nl.tudelft.sem.template.matching.models.NotificationRequestModelParticipant;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
@@ -47,6 +48,23 @@ public class NotificationCommunication {
     public String sendNotificationToParticipant(NotificationRequestModelParticipant request) {
         return new ResteasyClientBuilder().build()
                 .target(SERVER).path("notification/participant")
+                .request(APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer "
+                        + SecurityContextHolder.getContext().getAuthentication().getCredentials())
+                .accept(APPLICATION_JSON)
+                .post(Entity.entity(request, APPLICATION_JSON), String.class);
+    }
+
+    /**
+     * Method for calling an API request to the Notification microservice to send a notification to users
+     * about the match being discard due to an activity change.
+     *
+     * @param request - DTO containing participantId and activityId
+     * @return String containing information whether the notification was successful
+     */
+    public String activityModifiedNotification(NotificationActivityModified request) {
+        return new ResteasyClientBuilder().build()
+                .target(SERVER).path("notification/modification")
                 .request(APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer "
                         + SecurityContextHolder.getContext().getAuthentication().getCredentials())
