@@ -14,42 +14,6 @@ public class NotificationRequestModelParticipant {
     private long activityId;
     private Timeslot timeslot;
     private boolean decision;
-
-    /**
-     * Gets participant email.
-     *
-     * @return email of participant
-     */
-    public String getParticipantId() {
-        return participantId;
-    }
-
-    /**
-     * Gets activity id.
-     *
-     * @return id of activity
-     */
-    public long getActivityId() {
-        return activityId;
-    }
-
-    /**
-     * Gets timeslot.
-     *
-     * @return timeslot chosen bu participant
-     */
-    public Timeslot getTimeslot() {
-        return timeslot;
-    }
-
-    /**
-     * Gets decision.
-     *
-     * @return decision of owner
-     */
-    public boolean isDecision() {
-        return decision;
-    }
 }
 
 

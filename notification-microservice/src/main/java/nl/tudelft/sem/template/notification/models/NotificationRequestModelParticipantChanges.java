@@ -13,31 +13,4 @@ public class NotificationRequestModelParticipantChanges {
     private String participantId;
     private long activityId;
     private Timeslot timeslot;
-
-    /**
-     * Gets email of participant.
-     *
-     * @return email of participant
-     */
-    public String getParticipantId() {
-        return participantId;
-    }
-
-    /**
-     * Gets activity id.
-     *
-     * @return id of activity
-     */
-    public long getActivityId() {
-        return activityId;
-    }
-
-    /**
-     * Gets timeslot.
-     *
-     * @return timeslot chosen by participant
-     */
-    public Timeslot getTimeslot() {
-        return timeslot;
-    }
 }
