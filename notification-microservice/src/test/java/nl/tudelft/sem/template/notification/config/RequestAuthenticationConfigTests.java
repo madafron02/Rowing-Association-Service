@@ -51,7 +51,7 @@ public class RequestAuthenticationConfigTests {
             verify(httpSecurity).exceptionHandling()
                     .authenticationEntryPoint(jwtAuthenticationEntryPoint);
             verify(httpSecurity).addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-        } catch(Exception e) {
+        } catch (Exception e) {
             assertThat(e).isNotNull();
         }
     }
