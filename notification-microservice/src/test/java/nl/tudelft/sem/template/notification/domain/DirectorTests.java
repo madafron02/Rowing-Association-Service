@@ -4,6 +4,8 @@ import nl.tudelft.sem.template.notification.builders.Builder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
 import java.time.LocalDateTime;
@@ -22,6 +24,11 @@ public class DirectorTests {
         builder = Mockito.mock(Builder.class);
         director = new Director(builder);
         timeslot = new Timeslot(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
+    }
+
+    @Test
+    public void constructorTest() {
+        assertThat(director).isNotNull();
     }
 
     @Test
