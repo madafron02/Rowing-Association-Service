@@ -129,4 +129,17 @@ public class MatchingController {
     public ResponseEntity<Boolean> validateCertificate(@RequestBody String certificate) {
         return ResponseEntity.ok(certificateRepo.getCertificateByName(certificate).isPresent());
     }
+
+    /**
+     * API Endpoint used by the Notification microservice to discard all the matches done
+     * for a modified activity.
+     *
+     * @param activityId the id of the activity modifies
+     * @return an okay response entity
+     */
+    @PostMapping("/activity/modified")
+    public ResponseEntity discardMatchesByActivity(@RequestBody Long activityId) {
+        service.discardMatchesByActivity(activityId);
+        return ResponseEntity.ok().build();
+    }
 }
