@@ -7,6 +7,9 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Tests for Timeslot class.
+ */
 public class TimeslotTests {
     private transient Timeslot timeslot;
     private transient Timeslot sameTimeslot;
@@ -14,6 +17,9 @@ public class TimeslotTests {
     private transient LocalDateTime start;
     private transient LocalDateTime end;
 
+    /**
+     * General setup for tests.
+     */
     @BeforeEach
     public void setup() {
         start = LocalDateTime.now();

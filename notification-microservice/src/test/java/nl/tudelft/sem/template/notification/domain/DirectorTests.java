@@ -10,6 +10,9 @@ import static org.mockito.Mockito.verify;
 
 import java.time.LocalDateTime;
 
+/**
+ * Tests for Director class.
+ */
 public class DirectorTests {
     private transient Director director;
     private transient Builder builder;
@@ -18,7 +21,9 @@ public class DirectorTests {
     private transient Timeslot timeslot;
     private transient String dash = " - ";
 
-
+    /**
+     * General setup for tests.
+     */
     @BeforeEach
     public void setup() {
         builder = Mockito.mock(Builder.class);

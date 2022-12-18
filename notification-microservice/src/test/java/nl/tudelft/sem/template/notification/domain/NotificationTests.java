@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Tests for Notification class.
+ */
 public class NotificationTests {
     private transient Notification notification;
     private transient String receiverEmail = "test@gmail.com";
@@ -13,7 +16,9 @@ public class NotificationTests {
     private transient Notification otherNotification =
             new Notification("other@gmail.com", "other message");
 
-
+    /**
+     * General setup for tests.
+     */
     @BeforeEach
     public void setup() {
         notification = new Notification(receiverEmail, message);
