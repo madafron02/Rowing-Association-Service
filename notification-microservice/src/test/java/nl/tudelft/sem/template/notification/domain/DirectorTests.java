@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 public class DirectorTests {
     private transient Director director;
     private transient Builder builder;
-    private transient String participantId;
-    private transient long activityId;
+    private transient String participantId = "test@gmail.com";
+    private transient long activityId = 999;
     private transient Timeslot timeslot;
     private transient String dash = " - ";
 
@@ -21,8 +21,6 @@ public class DirectorTests {
     public void setup() {
         builder = Mockito.mock(Builder.class);
         director = new Director(builder);
-        participantId = "test@gmail.com";
-        activityId = 999;
         timeslot = new Timeslot(LocalDateTime.now(), LocalDateTime.now().plusHours(1));
     }
 
