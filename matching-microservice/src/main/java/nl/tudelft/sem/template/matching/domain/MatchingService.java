@@ -12,6 +12,7 @@ import nl.tudelft.sem.template.matching.domain.handlers.FilteringHandler;
 import nl.tudelft.sem.template.matching.domain.handlers.GenderHandler;
 import nl.tudelft.sem.template.matching.domain.handlers.OrganisationHandler;
 import nl.tudelft.sem.template.matching.domain.handlers.PositionHandler;
+import nl.tudelft.sem.template.matching.domain.handlers.TimeConstraintHandler;
 import nl.tudelft.sem.template.matching.domain.handlers.TypeOfActivityHandler;
 import nl.tudelft.sem.template.matching.models.ActivityReponse;
 import nl.tudelft.sem.template.matching.models.MatchingResponseModel;
@@ -71,8 +72,10 @@ public class MatchingService {
         this.filteringHandler = new PositionHandler();
         FilteringHandler certificateHandler = new CertificateHandler(certificateRepo);
         this.filteringHandler.setNext(certificateHandler);
+        FilteringHandler timeConstraintHandler = new TimeConstraintHandler();
+        certificateHandler.setNext(timeConstraintHandler);
         FilteringHandler typeOfActivityHandler = new TypeOfActivityHandler();
-        certificateHandler.setNext(typeOfActivityHandler);
+        timeConstraintHandler.setNext(typeOfActivityHandler);
         FilteringHandler organisationHandler = new OrganisationHandler();
         typeOfActivityHandler.setNext(organisationHandler);
         FilteringHandler genderHandler = new GenderHandler();
@@ -93,7 +96,7 @@ public class MatchingService {
     public MatchingResponseModel submitAvailability(TimeslotApp timeslot, String position) {
         UserApp user = usersCommunication.getUserDetails(auth.getUserId());
         List<ActivityApp> activities = activityCommunication.getActivitiesByAvailability(timeslot).getAvailableActivities();
-        return new MatchingResponseModel(filterActivities(activities, user, position));
+        return new MatchingResponseModel(filterActivities(activities, timeslot, user, position));
     }
 
     /**
@@ -105,8 +108,11 @@ public class MatchingService {
      * @param position   teh position they can fill in
      * @return the positions the user is matched with
      */
-    public List<ActivityReponse> filterActivities(List<ActivityApp> activities, UserApp user, String position) {
-        return activities.stream().filter(a -> this.filteringHandler.handle(new MatchFilter(a, user, position)))
+    public List<ActivityReponse> filterActivities(List<ActivityApp> activities,
+                                                  TimeslotApp timeslot,
+                                                  UserApp user,
+                                                  String position) {
+        return activities.stream().filter(a -> this.filteringHandler.handle(new MatchFilter(a, user, position, timeslot)))
                 .map(a -> matchUserToActivity(user, position, a))
                 .collect(Collectors.toList());
     }

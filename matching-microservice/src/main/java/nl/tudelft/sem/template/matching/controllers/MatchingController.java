@@ -67,7 +67,7 @@ public class MatchingController {
      * @param decision DTO containing the matchId and the decision
      * @return message containing whether this action was successful
      */
-    @PostMapping("/accept")
+    @PostMapping("/decide")
     public ResponseEntity<String> acceptOrDenyRequest(@RequestBody DecisionModel decision) {
         if (!service.acceptOrDenyRequest(decision.getMatchId(), decision.isDecision())) {
             return ResponseEntity.badRequest().build();
