@@ -22,4 +22,7 @@ public interface MatchingRepo extends JpaRepository<Match, Long> {
 
     List<Match> getMatchesByOwnerIdAndStatus(String ownerId, Status status);
 
+    void deleteMatchesByActivityId(Long activityId);
+
+    List<Match> getMatchesByActivityId(Long activityId);
 }

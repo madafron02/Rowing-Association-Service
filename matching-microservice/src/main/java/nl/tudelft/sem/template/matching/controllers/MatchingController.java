@@ -67,7 +67,7 @@ public class MatchingController {
      * @param decision DTO containing the matchId and the decision
      * @return message containing whether this action was successful
      */
-    @PostMapping("/accept")
+    @PostMapping("/decide")
     public ResponseEntity<String> acceptOrDenyRequest(@RequestBody DecisionModel decision) {
         if (!service.acceptOrDenyRequest(decision.getMatchId(), decision.isDecision())) {
             return ResponseEntity.badRequest().build();
@@ -128,5 +128,18 @@ public class MatchingController {
     @PostMapping("/certificate/validate")
     public ResponseEntity<Boolean> validateCertificate(@RequestBody String certificate) {
         return ResponseEntity.ok(certificateRepo.getCertificateByName(certificate).isPresent());
+    }
+
+    /**
+     * API Endpoint used by the Notification microservice to discard all the matches done
+     * for a modified activity.
+     *
+     * @param activityId the id of the activity modifies
+     * @return an okay response entity
+     */
+    @PostMapping("/activity/modified")
+    public ResponseEntity discardMatchesByActivity(@RequestBody Long activityId) {
+        service.discardMatchesByActivity(activityId);
+        return ResponseEntity.ok().build();
     }
 }
