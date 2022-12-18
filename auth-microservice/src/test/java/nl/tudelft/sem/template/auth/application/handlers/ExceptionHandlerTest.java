@@ -4,13 +4,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
+
+/**
+ * Tests for the ExceptionHandler.
+ */
 class ExceptionHandlerTest {
 
     private ExceptionHandler exceptionHandler;
+
     @BeforeEach
-    void setUp(){
+    void setUp() {
         exceptionHandler = new ExceptionHandler();
     }
 
@@ -20,56 +24,56 @@ class ExceptionHandlerTest {
     }
 
     @Test
-    void testEmptyConstructor() {
+    void testNewConstructor() {
         assertThat(new ExceptionHandler()).isNotNull();
     }
 
     @Test
-    void testUnexpectedError(){
+    void testUnexpectedError() {
         assertThat(exceptionHandler.getErrorMessage()).isEqualTo("An unexpected error has occurred. Please try again.");
     }
 
     @Test
-    void testNoException(){
+    void testNoException() {
         assertThat(exceptionHandler.didCatchException()).isFalse();
     }
 
     @Test
-    void testException(){
+    void testException() {
         exceptionHandler.handleException(new RuntimeException());
         assertThat(exceptionHandler.didCatchException()).isTrue();
     }
 
     @Test
-    void testGetException(){
+    void testGetException() {
         Exception exception = new RuntimeException();
         exceptionHandler.handleException(exception);
         assertThat(exceptionHandler.getException()).isEqualTo(exception);
     }
 
     @Test
-    void testGetException2(){
+    void testGetException2() {
         Exception exception = new RuntimeException();
         exceptionHandler.handleException(exception, "Test exception!", 400);
         assertThat(exceptionHandler.getException()).isEqualTo(exception);
     }
 
     @Test
-    void testGetMessage(){
+    void testGetMessage() {
         Exception exception = new RuntimeException();
         exceptionHandler.handleException(exception, "Test exception!", 400);
         assertThat(exceptionHandler.getErrorMessage()).isEqualTo("Test exception!");
     }
 
     @Test
-    void testDefaultStatus(){
+    void testDefaultStatus() {
         Exception exception = new RuntimeException();
         exceptionHandler.handleException(exception);
         assertThat(exceptionHandler.getStatusCode()).isEqualTo(500);
     }
 
     @Test
-    void testCustomStatus(){
+    void testCustomStatus() {
         Exception exception = new RuntimeException();
         exceptionHandler.handleException(exception, "Test exception!", 42);
         assertThat(exceptionHandler.getStatusCode()).isEqualTo(42);
