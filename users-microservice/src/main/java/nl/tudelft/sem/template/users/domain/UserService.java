@@ -50,4 +50,43 @@ public class UserService {
         repo.save(newUser);
         return newUser;
     }
+
+    /**
+     * Saves user in database if the user has a valid email and there isn't already a user with that email in the db.
+     *
+     * @param newUser user to save
+     * @return user entity saved
+     * @throws EmailAlreadyInUseException if email already in use
+     */
+    public User saveUser(User newUser) throws EmailAlreadyInUseException {
+        if (repo.existsUserByEmail(newUser.getEmail())) {
+            throw new EmailAlreadyInUseException(newUser.getEmail());
+        }
+        repo.save(newUser);
+        return newUser;
+    }
+
+    public boolean userExists(String email) {
+        return repo.existsUserByEmail(email);
+    }
+
+    /**
+     * Updates the user attributes that are not null in the user argument.
+     * Note that when calling save with the updated entity, spring will actually do an update
+     *
+     * @param user - user with updates data
+     * @return the updated user entity
+     */
+    public User updateUser(User user) {
+        User existingUser = repo.getUserByEmail(user.getEmail());
+
+        existingUser.setGender(user.getGender() == null ? existingUser.getGender() : user.getGender());
+        existingUser.setCertificate(user.getCertificate() == null ? existingUser.getCertificate() : user.getCertificate());
+        existingUser.setOrganization(user.getOrganization() == null ? existingUser.getOrganization()
+                : user.getOrganization());
+        existingUser.setCompetitive(user.isCompetitive());
+
+        repo.save(existingUser);
+        return existingUser;
+    }
 }
