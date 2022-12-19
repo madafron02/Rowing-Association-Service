@@ -1,11 +1,9 @@
 package nl.tudelft.sem.template.matching.domain;
 
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class UserAppTest {
     UserApp user;
@@ -13,8 +11,8 @@ class UserAppTest {
     @BeforeEach
     void setup() {
         user = new UserApp("test", "C4+", "Male", "SEM", true);
-
     }
+
     @Test
     void getId() {
         assertThat(user.getId()).isEqualTo("test");
@@ -89,6 +87,8 @@ class UserAppTest {
 
     @Test
     void testToString() {
-        assertThat(user.toString()).isEqualTo("UserApp(id=test, certificate=C4+, gender=Male, organisation=SEM, competitiveness=true)");
+        assertThat(user.toString())
+                .isEqualTo("UserApp(id=test, certificate=C4+,"
+                        + " gender=Male, organisation=SEM, competitiveness=true)");
     }
 }

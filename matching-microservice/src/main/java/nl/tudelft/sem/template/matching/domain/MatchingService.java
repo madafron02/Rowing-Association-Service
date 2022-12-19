@@ -36,7 +36,7 @@ public class MatchingService {
     private final transient UsersCommunication usersCommunication;
     private final transient NotificationCommunication notificationCommunication;
     private final transient ActivityCommunication activityCommunication;
-    private transient FilteringHandler filteringHandler;
+    public transient FilteringHandler filteringHandler;
     private final transient CertificateRepo certificateRepo;
 
 
