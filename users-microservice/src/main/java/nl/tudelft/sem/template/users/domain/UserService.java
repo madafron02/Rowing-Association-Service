@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.users.domain;
 
+import nl.tudelft.sem.template.users.application.MatchingCommunication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,15 +13,19 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final transient UserRepo repo;
+    private final transient MatchingCommunication matchingCommunication;
+
 
     /**
      * Default constructor.
      *
      * @param repo the user repository
+     * @param matchingCommunication communication to the matching microservice
      */
     @Autowired
-    public UserService(UserRepo repo) {
+    public UserService(UserRepo repo, MatchingCommunication matchingCommunication) {
         this.repo = repo;
+        this.matchingCommunication = matchingCommunication;
     }
 
     /**
@@ -36,20 +41,6 @@ public class UserService {
         return repo.getUserByEmail(id);
     }
 
-    /**
-     * Method for creating a new user with given id and adding them to user repository.
-     *
-     * @param email id of the new user
-     * @return the user entity if successfully created, null if unsuccessful
-     */
-    public User createUser(String email) {
-        if (email == null || repo.existsUserByEmail(email)) {
-            return null;
-        }
-        User newUser = new User(email);
-        repo.save(newUser);
-        return newUser;
-    }
 
     /**
      * Saves user in database if the user has a valid email and there isn't already a user with that email in the db.
@@ -57,10 +48,17 @@ public class UserService {
      * @param newUser user to save
      * @return user entity saved
      * @throws EmailAlreadyInUseException if email already in use
+     * @throws InvalidUserDetailsException if user has invalid data
      */
-    public User saveUser(User newUser) throws EmailAlreadyInUseException {
+    public User saveUser(User newUser) throws EmailAlreadyInUseException, InvalidUserDetailsException {
         if (repo.existsUserByEmail(newUser.getEmail())) {
             throw new EmailAlreadyInUseException(newUser.getEmail());
+        }
+        if (!newUser.validateUserInfo()) {
+            throw new InvalidUserDetailsException(newUser.getEmail());
+        }
+        if (newUser.getCertificate() != null && !matchingCommunication.validateCertificate(newUser.getCertificate())) {
+            throw new InvalidUserDetailsException(newUser.getCertificate());
         }
         repo.save(newUser);
         return newUser;
@@ -74,17 +72,26 @@ public class UserService {
      * Updates the user attributes that are not null in the user argument.
      * Note that when calling save with the updated entity, spring will actually do an update
      *
-     * @param user - user with updates data
+     * @param newData - user with updates data
      * @return the updated user entity
      */
-    public User updateUser(User user) {
-        User existingUser = repo.getUserByEmail(user.getEmail());
+    public User updateUser(User newData) throws InvalidUserDetailsException {
+        if (!newData.validateUserInfo()) {
+            throw new InvalidUserDetailsException(newData.getEmail());
+        }
+        if (newData.getCertificate() != null && !matchingCommunication.validateCertificate(newData.getCertificate())) {
+            throw new InvalidUserDetailsException(newData.getCertificate());
+        }
 
-        existingUser.setGender(user.getGender() == null ? existingUser.getGender() : user.getGender());
-        existingUser.setCertificate(user.getCertificate() == null ? existingUser.getCertificate() : user.getCertificate());
-        existingUser.setOrganisation(user.getOrganisation() == null ? existingUser.getOrganisation()
-                : user.getOrganisation());
-        existingUser.setCompetitiveness(user.isCompetitive());
+        User existingUser = repo.getUserByEmail(newData.getEmail());
+
+        existingUser.setGender(newData.getGender() == null ? existingUser.getGender() : newData.getGender());
+        existingUser.setCertificate(newData.getCertificate() == null ? existingUser.getCertificate()
+                : newData.getCertificate());
+        existingUser.setOrganisation(newData.getOrganisation() == null ? existingUser.getOrganisation()
+                : newData.getOrganisation());
+        existingUser.setCompetitiveness(newData.isCompetitive());
+
 
         repo.save(existingUser);
         return existingUser;

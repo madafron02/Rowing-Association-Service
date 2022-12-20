@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.users.controllers;
 
 import nl.tudelft.sem.template.users.authentication.AuthManager;
 import nl.tudelft.sem.template.users.domain.EmailAlreadyInUseException;
+import nl.tudelft.sem.template.users.domain.InvalidUserDetailsException;
 import nl.tudelft.sem.template.users.domain.User;
 import nl.tudelft.sem.template.users.domain.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,6 +87,8 @@ public class UserController {
             return ResponseEntity.ok(newUser);
         } catch (EmailAlreadyInUseException e) {
             return new ResponseEntity("User with the email:" + user.getEmail() + " already exists.", HttpStatus.CONFLICT);
+        } catch (InvalidUserDetailsException e) {
+            return new ResponseEntity("The user details you entered are invalid. " + e.getMessage(), HttpStatus.CONFLICT);
         }
     }
 
@@ -102,6 +105,10 @@ public class UserController {
         } else if (!userService.userExists(user.getEmail())) {
             return new ResponseEntity("This user does not exist, please create a user account first.", HttpStatus.CONFLICT);
         }
-        return ResponseEntity.ok(userService.updateUser(user));
+        try {
+            return ResponseEntity.ok(userService.updateUser(user));
+        } catch (InvalidUserDetailsException e) {
+            return new ResponseEntity("The user details you entered are invalid.", HttpStatus.CONFLICT);
+        }
     }
 }
