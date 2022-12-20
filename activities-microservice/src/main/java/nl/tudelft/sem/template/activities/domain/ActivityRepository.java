@@ -17,4 +17,6 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
     List<Activity> findActivitiesByTimeslot(
             LocalDateTime startTime, LocalDateTime endTime
     );
+
+    List<Activity> findActivitiesByOwnerId(String ownerId);
 }
