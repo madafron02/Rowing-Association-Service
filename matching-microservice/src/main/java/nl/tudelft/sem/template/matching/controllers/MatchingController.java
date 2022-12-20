@@ -146,14 +146,14 @@ public class MatchingController {
     }
 
     /**
-     * API Endpoint for adding a new certificate to the certificate repository
+     * API Endpoint for adding a new certificate to the certificate repository.
      *
      * @param certificate the name of the certificate to be added
      * @return a response entity with a String containing a success/failure message for the client
      */
     @PostMapping("/certificate/add")
     public ResponseEntity addNewCertificate(@RequestBody String certificate) {
-        if(certificateRepo.getCertificateByName(certificate).isPresent()) {
+        if (certificateRepo.getCertificateByName(certificate).isPresent()) {
             return new ResponseEntity("Certificate already added!", HttpStatus.BAD_REQUEST);
         } else {
             certificateRepo.save(new Certificate(certificate));
