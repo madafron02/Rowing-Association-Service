@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.matching.controllers;
 
+import nl.tudelft.sem.template.matching.domain.Certificate;
 import nl.tudelft.sem.template.matching.domain.Match;
 import nl.tudelft.sem.template.matching.domain.MatchingService;
 import nl.tudelft.sem.template.matching.domain.Status;
@@ -8,6 +9,7 @@ import nl.tudelft.sem.template.matching.models.DecisionModel;
 import nl.tudelft.sem.template.matching.models.MatchingRequestModel;
 import nl.tudelft.sem.template.matching.models.MatchingResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -141,5 +143,21 @@ public class MatchingController {
     public ResponseEntity discardMatchesByActivity(@RequestBody Long activityId) {
         service.discardMatchesByActivity(activityId);
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * API Endpoint for adding a new certificate to the certificate repository.
+     *
+     * @param certificate the name of the certificate to be added
+     * @return a response entity with a String containing a success/failure message for the client
+     */
+    @PostMapping("/certificate/add")
+    public ResponseEntity addNewCertificate(@RequestBody String certificate) {
+        if (certificateRepo.getCertificateByName(certificate).isPresent()) {
+            return new ResponseEntity("Certificate already added!", HttpStatus.BAD_REQUEST);
+        } else {
+            certificateRepo.save(new Certificate(certificate));
+            return new ResponseEntity("Certificate successfully added!", HttpStatus.OK);
+        }
     }
 }
