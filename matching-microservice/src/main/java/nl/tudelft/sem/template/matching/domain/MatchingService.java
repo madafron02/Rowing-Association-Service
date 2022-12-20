@@ -112,7 +112,11 @@ public class MatchingService {
                                                   TimeslotApp timeslot,
                                                   UserApp user,
                                                   String position) {
-        return activities.stream().filter(a -> this.filteringHandler.handle(new MatchFilter(a, user, position, timeslot)))
+        return activities
+                .stream()
+                .distinct()
+                .filter(a -> this.filteringHandler.handle(new MatchFilter(a, user, position, timeslot)))
+                .filter(a -> matchingRepo.getMatchesByActivityIdAndParticipantId(a.getId(), user.getEmail()).isEmpty())
                 .map(a -> matchUserToActivity(user, position, a))
                 .collect(Collectors.toList());
     }
