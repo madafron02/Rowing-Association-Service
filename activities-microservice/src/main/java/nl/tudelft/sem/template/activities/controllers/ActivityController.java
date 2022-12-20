@@ -57,7 +57,6 @@ public class ActivityController {
         return ResponseEntity.ok(activity.get().getTimeslot());
     }
 
-
     /**
      * Gets all activities within a given timeslot.
      *

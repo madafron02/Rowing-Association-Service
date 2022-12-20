@@ -26,58 +26,58 @@ class PositionsTest {
     }
 
     @Test
-    void getCoxCountTest() {
-        assertThat(positions.getCoxCount()).isEqualTo(null);
+    void getCoxTest() {
+        assertThat(positions.getCox()).isEqualTo(null);
     }
 
     @Test
-    void getCoachCountTest() {
-        assertThat(positions.getCoachCount()).isEqualTo(8);
+    void getCoachTest() {
+        assertThat(positions.getCoach()).isEqualTo(8);
     }
 
     @Test
-    void getPortSideRowerCountTest() {
-        assertThat(positions.getPortSideRowerCount()).isEqualTo(null);
+    void getPortSideRowerTest() {
+        assertThat(positions.getPort()).isEqualTo(null);
     }
 
     @Test
-    void getStarboardSideRowerCountTest() {
-        assertThat(positions.getStarboardSideRowerCount()).isEqualTo(3);
+    void getStarboardSideRowerTest() {
+        assertThat(positions.getStarboard()).isEqualTo(3);
     }
 
     @Test
-    void getScullingRowerCountTest() {
-        assertThat(positions.getScullingRowerCount()).isEqualTo(0);
+    void getScullingRowerTest() {
+        assertThat(positions.getSculling()).isEqualTo(0);
     }
 
     @Test
-    void setCoxCountTest() {
-        positions.setCoxCount(2);
-        assertThat(positions.getCoxCount()).isEqualTo(2);
+    void setCoxTest() {
+        positions.setCox(2);
+        assertThat(positions.getCox()).isEqualTo(2);
     }
 
     @Test
-    void setCoachCountTest() {
-        positions.setCoachCount(2);
-        assertThat(positions.getCoachCount()).isEqualTo(2);
+    void setCoachTest() {
+        positions.setCoach(2);
+        assertThat(positions.getCoach()).isEqualTo(2);
     }
 
     @Test
-    void setPortSideRowerCountTest() {
-        positions.setPortSideRowerCount(2);
-        assertThat(positions.getPortSideRowerCount()).isEqualTo(2);
+    void setPortSideRowerTest() {
+        positions.setPort(2);
+        assertThat(positions.getPort()).isEqualTo(2);
     }
 
     @Test
-    void setStarboardSideRowerCountTest() {
-        positions.setStarboardSideRowerCount(2);
-        assertThat(positions.getStarboardSideRowerCount()).isEqualTo(2);
+    void setStarboardSideRowerTest() {
+        positions.setStarboard(2);
+        assertThat(positions.getStarboard()).isEqualTo(2);
     }
 
     @Test
-    void setScullingRowerCountTest() {
-        positions.setScullingRowerCount(2);
-        assertThat(positions.getScullingRowerCount()).isEqualTo(2);
+    void setScullingRowerTest() {
+        positions.setSculling(2);
+        assertThat(positions.getSculling()).isEqualTo(2);
     }
 
     @Test
