@@ -7,16 +7,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
- * A DDD JPA repository for the Activity entity.
+ * A DDD JPA repository for the Training entity.
  */
 @Repository
-public interface ActivityRepository extends JpaRepository<Activity, Long> {
+public interface TrainingRepository extends JpaRepository<Training, Long> {
 
-    @Query(value = "SELECT * FROM activities WHERE start_time >= ?1 AND end_time <= ?2",
+    @Query(value = "SELECT * FROM trainings WHERE start_time >= ?1 AND end_time <= ?2",
             nativeQuery = true)
-    List<Activity> findActivitiesByTimeslot(
+    List<Training> findTrainingsByTimeslot(
             LocalDateTime startTime, LocalDateTime endTime
     );
 
-    List<Activity> findActivitiesByOwnerId(String ownerId);
+    List<Training> findTrainingsByOwnerId(String ownerId);
 }

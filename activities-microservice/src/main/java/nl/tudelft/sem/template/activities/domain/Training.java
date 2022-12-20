@@ -2,7 +2,6 @@ package nl.tudelft.sem.template.activities.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Embedded;
@@ -17,19 +16,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * A DDD entity representing an activity in our domain.
+ * A DDD entity representing a training in our domain.
  */
 @Entity
-@Table(name = "activities")
+@Table(name = "trainings")
 @NoArgsConstructor
 @EqualsAndHashCode
 @Getter
 @Setter
-public class Activity {
+public class Training {
 
     public static final List<String> CERTIFICATE_TYPES = List.of("C4", "4+", "8+");
-
-    public static final List<String> GENDER_TYPES = List.of("Male", "Female");
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -37,25 +34,19 @@ public class Activity {
     private long id;
 
     @Column(name = "ownerId", nullable = false)
-    private String ownerId;
+    protected String ownerId;
 
     @Embedded
-    private Positions positions;
+    protected Positions positions;
 
     @Embedded
-    private Timeslot timeslot;
+    protected Timeslot timeslot;
 
     @Column(name = "certificate")
-    private String certificate;
-
-    @Column(name = "competition", nullable = false)
-    private Boolean competition;
-
-    @Column(name = "gender")
-    private String gender;
+    protected String certificate;
 
     /**
-     * Creates a new Activity.
+     * Creates a new Training.
      *
      * @param ownerId the email of the user that created the activity
      * @param coxCount number of needed coxes
@@ -66,23 +57,19 @@ public class Activity {
      * @param startTime starting time of the activity
      * @param endTime ending time of the activity
      * @param certificate the boat type
-     * @param competition true if it is a competition and false otherwise
-     * @param gender the gender of the needed participants, null if not needed
      */
-    public Activity(String ownerId, Integer coxCount, Integer coachCount, Integer portSideRowerCount,
+    public Training(String ownerId, Integer coxCount, Integer coachCount, Integer portSideRowerCount,
                     Integer starboardSideRowerCount, Integer scullingRowerCount, LocalDateTime startTime,
-                    LocalDateTime endTime, String certificate, Boolean competition, String gender) {
+                    LocalDateTime endTime, String certificate) {
         this.ownerId = ownerId;
         this.positions = new Positions(coxCount, coachCount, portSideRowerCount, starboardSideRowerCount,
                 scullingRowerCount);
         this.timeslot = new Timeslot(startTime, endTime);
         this.certificate = certificate;
-        this.competition = Objects.requireNonNullElse(competition, false);
-        this.gender = gender;
     }
 
     /**
-     * Checks if this activity has valid data.
+     * Checks if this training has valid data.
      *
      * @return true if this is valid and false otherwise
      */
@@ -97,12 +84,10 @@ public class Activity {
         if (!CERTIFICATE_TYPES.contains(certificate)) {
             return false;
         }
-        if (competition && (gender == null || !GENDER_TYPES.contains(gender))) {
-            return false;
-        }
         LocalDateTime now = LocalDateTime.now();
         boolean timeslotExists = timeslot != null && timeslot.getStartTime() != null && timeslot.getEndTime() != null;
         return timeslotExists && timeslot.getStartTime().isBefore(timeslot.getEndTime())
                 && timeslot.getEndTime().isAfter(now);
     }
 }
+

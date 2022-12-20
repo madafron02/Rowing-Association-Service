@@ -10,7 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 /**
- * An embeddable class for storing required positions of an Activity.
+ * An embeddable class for storing required positions of a training or a competition.
  */
 @Embeddable
 @AllArgsConstructor
