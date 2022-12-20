@@ -13,7 +13,7 @@ public class AuthManager {
      *
      * @return The name of the user.
      */
-    public String getUsername() {
+    public String getUserId() {
         return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 }

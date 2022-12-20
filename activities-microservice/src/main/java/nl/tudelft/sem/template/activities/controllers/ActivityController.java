@@ -72,7 +72,7 @@ public class ActivityController {
      */
     @GetMapping("/list")
     public ResponseEntity<ActivityListResponseModel> getAllActivitiesByOwner() {
-        List<Activity> activities = activityRepository.findActivitiesByOwnerId(authManager.getUsername());
+        List<Activity> activities = activityRepository.findActivitiesByOwnerId(authManager.getUserId());
         return ResponseEntity.ok(new ActivityListResponseModel(activities));
     }
 
@@ -86,7 +86,7 @@ public class ActivityController {
         if (!request.checkIfValid()) {
             return ResponseEntity.badRequest().build();
         }
-        request.setOwnerId(authManager.getUsername());
+        request.setOwnerId(authManager.getUserId());
         activityRepository.save(request);
         return ResponseEntity.ok("Activity created successfully!");
     }
@@ -106,7 +106,7 @@ public class ActivityController {
         if (toDelete.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-        if (!toDelete.get().getOwnerId().equals(authManager.getUsername())) {
+        if (!toDelete.get().getOwnerId().equals(authManager.getUserId())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
         activityRepository.delete(toDelete.get());
