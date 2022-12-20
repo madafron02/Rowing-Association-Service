@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.notification.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import nl.tudelft.sem.template.notification.domain.Timeslot;
 
 /**
@@ -9,35 +10,9 @@ import nl.tudelft.sem.template.notification.domain.Timeslot;
  */
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class NotificationRequestModelParticipantChanges {
     private String participantId;
     private long activityId;
     private Timeslot timeslot;
-
-    /**
-     * Gets email of participant.
-     *
-     * @return email of participant
-     */
-    public String getParticipantId() {
-        return participantId;
-    }
-
-    /**
-     * Gets activity id.
-     *
-     * @return id of activity
-     */
-    public long getActivityId() {
-        return activityId;
-    }
-
-    /**
-     * Gets timeslot.
-     *
-     * @return timeslot chosen by participant
-     */
-    public Timeslot getTimeslot() {
-        return timeslot;
-    }
 }

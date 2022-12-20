@@ -139,7 +139,7 @@ public class NotificationController {
      * @param notification notification to be sent
      * @throws MailException if the notification cannot be sent
      */
-    private void sendNotification(Notification notification) throws MailException {
+    public void sendNotification(Notification notification) throws MailException {
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setTo(notification.getReceiverEmail());
         mail.setSubject("New notification regarding rowing competitions");
