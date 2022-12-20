@@ -22,8 +22,9 @@ import java.time.LocalDateTime;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -92,12 +93,12 @@ public class NotificationControllerTests {
         notificationRequestModelParticipant = new NotificationRequestModelParticipant(
                 random, 999, new Timeslot(
                 LocalDateTime.now(), LocalDateTime.now().plusHours(1)), true);
-
+        doThrow(new RuntimeException()).when(javaMailSender).send(isA(SimpleMailMessage.class));
         try {
             ResponseEntity response = notificationController
                     .sendNotificationToPlayer(notificationRequestModelParticipant);
             assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             assertThat(e).isNotNull();
         }
     }
@@ -120,12 +121,12 @@ public class NotificationControllerTests {
         notificationRequestModelParticipantChanges = new NotificationRequestModelParticipantChanges(
                 random, 999, new Timeslot(
                 LocalDateTime.now(), LocalDateTime.now().plusHours(1)));
-
+        doThrow(new RuntimeException()).when(javaMailSender).send(isA(SimpleMailMessage.class));
         try {
             ResponseEntity response = notificationController
                     .sendNotificationToPlayerChanges(notificationRequestModelParticipantChanges);
             assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             assertThat(e).isNotNull();
         }
     }
@@ -148,12 +149,12 @@ public class NotificationControllerTests {
         notificationRequestModelOwner = new NotificationRequestModelOwner(
                 random, random, 999, new Timeslot(
                 LocalDateTime.now(), LocalDateTime.now().plusHours(1)));
-
+        doThrow(new RuntimeException()).when(javaMailSender).send(isA(SimpleMailMessage.class));
         try {
             ResponseEntity response = notificationController
                     .sendNotificationToPublisher(notificationRequestModelOwner);
             assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             assertThat(e).isNotNull();
         }
     }
