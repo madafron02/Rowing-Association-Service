@@ -3,7 +3,6 @@ package nl.tudelft.sem.template.matching.controllers;
 import nl.tudelft.sem.template.matching.domain.Match;
 import nl.tudelft.sem.template.matching.domain.MatchingService;
 import nl.tudelft.sem.template.matching.domain.Status;
-import nl.tudelft.sem.template.matching.domain.TimeslotApp;
 import nl.tudelft.sem.template.matching.domain.database.CertificateRepo;
 import nl.tudelft.sem.template.matching.models.DecisionModel;
 import nl.tudelft.sem.template.matching.models.MatchingRequestModel;
@@ -11,6 +10,7 @@ import nl.tudelft.sem.template.matching.models.MatchingResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,17 +50,12 @@ public class MatchingController {
      * @return list of suitable activities
      */
     @PostMapping("/submit")
-    public ResponseEntity<TimeslotApp> submitAvailability(@RequestBody MatchingRequestModel request) {
-        return ResponseEntity.ok(request.getTimeslot());
-//        try {
-//            if (!service.verifyPosition(request.getPosition())) {
-//                return ResponseEntity.badRequest().build();
-//            }
-//            return ResponseEntity.ok(service.submitAvailability(request.getTimeslot(), request.getPosition()));
-//        } catch (Exception e) {
-//            System.err.println(Arrays.toString(e.getStackTrace()));
-//            return ResponseEntity.badRequest().build();
-//        }
+    public ResponseEntity<MatchingResponseModel> submitAvailability(@RequestBody MatchingRequestModel request) {
+        if (!service.verifyPosition(request.getPosition())) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(service.submitAvailability(request.getTimeslot(), request.getPosition()));
+
     }
 
     /**
@@ -86,7 +81,7 @@ public class MatchingController {
      *         was successfully picked
      */
     @PostMapping("/pick")
-    public ResponseEntity<String> pickActivity(@RequestBody long matchId) {
+    public ResponseEntity<String> pickActivity(@RequestBody Long matchId) {
         if (service.verifyMatch(matchId)) {
             service.pickActivity(matchId);
             return ResponseEntity.ok("Application sent");
@@ -117,8 +112,9 @@ public class MatchingController {
      * @return a list with all the matches of the user that have the required status
      */
     @GetMapping("/match/{status}")
-    public ResponseEntity<List<Match>> getMatches(@RequestParam Status status) {
-        return ResponseEntity.ok(service.getMatches(status));
+    public ResponseEntity<List<Match>> getMatches(@PathVariable("status") String status) {
+        Status statusEnum = Status.valueOf(status);
+        return ResponseEntity.ok(service.getMatches(statusEnum));
     }
 
     /**

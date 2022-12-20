@@ -1,18 +1,18 @@
 package nl.tudelft.sem.template.activities.controllers;
 
-import java.util.List;
 import nl.tudelft.sem.template.activities.authentication.AuthManager;
 import nl.tudelft.sem.template.activities.domain.Activity;
 import nl.tudelft.sem.template.activities.domain.ActivityRepository;
+import nl.tudelft.sem.template.activities.domain.Timeslot;
 import nl.tudelft.sem.template.activities.model.ActivityListResponseModel;
-import nl.tudelft.sem.template.activities.model.TimeslotDataModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * Activity querying controller.
@@ -45,7 +45,7 @@ public class ActivityController {
      * @return response entity containing every activity in the timeslot
      */
     @PostMapping("/within-timeslot")
-    public ResponseEntity<ActivityListResponseModel> getAllActivitiesWithinTimeslot(@RequestBody TimeslotDataModel request) {
+    public ResponseEntity<ActivityListResponseModel> getAllActivitiesWithinTimeslot(@RequestBody Timeslot request) {
         List<Activity> activities = activityRepository.findActivitiesByTimeslot(
                 request.getStartTime(), request.getEndTime()
         );

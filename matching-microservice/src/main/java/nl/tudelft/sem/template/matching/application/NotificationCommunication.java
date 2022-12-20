@@ -31,7 +31,7 @@ public class NotificationCommunication {
      */
     public String sendReminderToOwner(NotificationRequestModelOwner request) {
         return new ResteasyClientBuilder().build()
-                .target(SERVER).path("notification/reminder")
+                .target(SERVER).path("notification/publisher")
                 .request(APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer "
                         + SecurityContextHolder.getContext().getAuthentication().getCredentials())

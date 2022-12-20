@@ -126,7 +126,7 @@ public class MatchingService {
      * @return the ActivityResponse entity to be sent to the client
      */
     private ActivityReponse matchUserToActivity(UserApp user, String position, ActivityApp activity) {
-        Match matchMade = new Match(user.getEmail(), activity.getActivityId(), activity.getOwnerId(), position);
+        Match matchMade = new Match(user.getEmail(), activity.getId(), activity.getOwnerId(), position);
         matchingRepo.save(matchMade);
         return new ActivityReponse(matchMade.getMatchId(), activity.getType(), activity.getTimeslot());
     }

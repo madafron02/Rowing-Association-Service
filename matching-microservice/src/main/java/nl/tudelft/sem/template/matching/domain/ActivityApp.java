@@ -13,7 +13,7 @@ import java.util.HashMap;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ActivityApp {
-    private long activityId;
+    private long id;
     private String ownerId;
     private TimeslotApp timeslot;
     private String gender;
