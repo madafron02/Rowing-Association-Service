@@ -59,7 +59,7 @@ public class UserController {
      *
      * @return User entity of user specified by email.
      */
-    @GetMapping("/details")
+    @PostMapping("/details")
     public ResponseEntity<User> getUserDataById(@RequestBody String email) {
         User user = userService.getByEmail(email);
         if (user == null) {

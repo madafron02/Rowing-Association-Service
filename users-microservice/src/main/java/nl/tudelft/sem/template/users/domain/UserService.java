@@ -82,9 +82,9 @@ public class UserService {
 
         existingUser.setGender(user.getGender() == null ? existingUser.getGender() : user.getGender());
         existingUser.setCertificate(user.getCertificate() == null ? existingUser.getCertificate() : user.getCertificate());
-        existingUser.setOrganization(user.getOrganization() == null ? existingUser.getOrganization()
-                : user.getOrganization());
-        existingUser.setCompetitive(user.isCompetitive());
+        existingUser.setOrganisation(user.getOrganisation() == null ? existingUser.getOrganisation()
+                : user.getOrganisation());
+        existingUser.setCompetitiveness(user.isCompetitive());
 
         repo.save(existingUser);
         return existingUser;
