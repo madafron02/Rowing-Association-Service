@@ -45,8 +45,8 @@ public class UserTest {
     }
 
     @Test
-    void testGetOrganization() {
-        assertThat(user.getOrganization()).isEqualTo("proteus");
+    void testGetOrganisation() {
+        assertThat(user.getOrganisation()).isEqualTo("proteus");
     }
 
     @Test
@@ -56,8 +56,8 @@ public class UserTest {
     }
 
     @Test
-    void testSetCompetitive() {
-        user.setCompetitive(false);
+    void testSetCompetitiveness() {
+        user.setCompetitiveness(false);
         assertThat(user.isCompetitive()).isFalse();
     }
 
@@ -68,9 +68,9 @@ public class UserTest {
     }
 
     @Test
-    void testSetOrganization() {
-        user.setOrganization("laga");
-        assertThat(user.getOrganization()).isEqualTo("laga");
+    void testSetOrganisation() {
+        user.setOrganisation("laga");
+        assertThat(user.getOrganisation()).isEqualTo("laga");
     }
 
     @Test
