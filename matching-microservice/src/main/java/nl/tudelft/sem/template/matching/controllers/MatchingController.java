@@ -3,6 +3,7 @@ package nl.tudelft.sem.template.matching.controllers;
 import nl.tudelft.sem.template.matching.domain.Match;
 import nl.tudelft.sem.template.matching.domain.MatchingService;
 import nl.tudelft.sem.template.matching.domain.Status;
+import nl.tudelft.sem.template.matching.domain.TimeslotApp;
 import nl.tudelft.sem.template.matching.domain.database.CertificateRepo;
 import nl.tudelft.sem.template.matching.models.DecisionModel;
 import nl.tudelft.sem.template.matching.models.MatchingRequestModel;
@@ -49,16 +50,17 @@ public class MatchingController {
      * @return list of suitable activities
      */
     @PostMapping("/submit")
-    public ResponseEntity<MatchingResponseModel> submitAvailability(@RequestBody MatchingRequestModel request) {
-        try {
-            if (!service.verifyPosition(request.getPosition())) {
-                return ResponseEntity.badRequest().build();
-            }
-            return ResponseEntity.ok(service.submitAvailability(request.getTimeslot(), request.getPosition()));
-        } catch (Exception e) {
-            System.err.println(Arrays.toString(e.getStackTrace()));
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<TimeslotApp> submitAvailability(@RequestBody MatchingRequestModel request) {
+        return ResponseEntity.ok(request.getTimeslot());
+//        try {
+//            if (!service.verifyPosition(request.getPosition())) {
+//                return ResponseEntity.badRequest().build();
+//            }
+//            return ResponseEntity.ok(service.submitAvailability(request.getTimeslot(), request.getPosition()));
+//        } catch (Exception e) {
+//            System.err.println(Arrays.toString(e.getStackTrace()));
+//            return ResponseEntity.badRequest().build();
+//        }
     }
 
     /**

@@ -15,8 +15,8 @@ public class TimeConstraintHandler implements FilteringHandler {
     public boolean handle(MatchFilter matchFilter) {
         switch (matchFilter.getActivityApp().getType()) {
             case TRAINING: {
-                if (matchFilter.getTimeslot().getStart().plusMinutes(30)
-                        .isBefore(matchFilter.getActivityApp().getTimeslot().getStart())) {
+                if (matchFilter.getTimeslot().getStartTime().plusMinutes(30)
+                        .isBefore(matchFilter.getActivityApp().getTimeslot().getStartTime())) {
                     if (next != null) {
                         return next.handle(matchFilter);
                     } else {
@@ -27,8 +27,8 @@ public class TimeConstraintHandler implements FilteringHandler {
                 }
             }
             case COMPETITION: {
-                if (matchFilter.getTimeslot().getStart().plusDays(1)
-                        .isBefore(matchFilter.getActivityApp().getTimeslot().getStart())) {
+                if (matchFilter.getTimeslot().getStartTime().plusDays(1)
+                        .isBefore(matchFilter.getActivityApp().getTimeslot().getStartTime())) {
                     if (next != null) {
                         return next.handle(matchFilter);
                     } else {

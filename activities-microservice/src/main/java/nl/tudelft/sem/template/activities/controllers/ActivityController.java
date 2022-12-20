@@ -44,7 +44,7 @@ public class ActivityController {
      *
      * @return response entity containing every activity in the timeslot
      */
-    @GetMapping("/within-timeslot")
+    @PostMapping("/within-timeslot")
     public ResponseEntity<ActivityListResponseModel> getAllActivitiesWithinTimeslot(@RequestBody TimeslotDataModel request) {
         List<Activity> activities = activityRepository.findActivitiesByTimeslot(
                 request.getStartTime(), request.getEndTime()

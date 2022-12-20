@@ -34,10 +34,10 @@ public class User {
      * @param certificate the highest priority certificate of the user
      * @param organization the organization of the user
      */
-    public User(String email, String gender, boolean competitive, String certificate, String organization) {
+    public User(String email, String gender, boolean competitiveness, String certificate, String organization) {
         this.email = email;
         this.gender = gender;
-        this.competitiveness = competitive;
+        this.competitiveness = competitiveness;
         this.certificate = certificate;
         this.organisation = organization;
     }

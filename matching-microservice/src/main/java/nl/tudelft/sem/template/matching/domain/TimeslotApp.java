@@ -1,7 +1,9 @@
 package nl.tudelft.sem.template.matching.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -10,29 +12,13 @@ import java.time.LocalDateTime;
  */
 @AllArgsConstructor
 @EqualsAndHashCode
+@NoArgsConstructor
+@Data
 public class TimeslotApp {
 
-    private final LocalDateTime start;
+    private LocalDateTime startTime;
 
-    private final LocalDateTime end;
-
-    /**
-     * Getter for start time.
-     *
-     * @return start time
-     */
-    public LocalDateTime getStart() {
-        return start;
-    }
-
-    /**
-     * Getter for end time.
-     *
-     * @return end time
-     */
-    public LocalDateTime getEnd() {
-        return end;
-    }
+    private LocalDateTime endTime;
 
     /**
      * Method that generates a String containing start and end time.
@@ -41,6 +27,6 @@ public class TimeslotApp {
      */
     @Override
     public String toString() {
-        return getStart().toString() + "--" + getEnd().toString();
+        return getStartTime().toString() + "--" + getEndTime().toString();
     }
 }

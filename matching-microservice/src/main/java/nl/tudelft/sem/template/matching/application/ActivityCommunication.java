@@ -30,7 +30,7 @@ public class ActivityCommunication {
     public ActivityAvailabilityResponseModel getActivitiesByAvailability(TimeslotApp availability) {
         return new ResteasyClientBuilder().build()
                 .target(SERVER)
-                .path("/activity/availability")
+                .path("/activities/within-timeslot")
                 .request(APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer "
                         + SecurityContextHolder.getContext().getAuthentication().getCredentials())

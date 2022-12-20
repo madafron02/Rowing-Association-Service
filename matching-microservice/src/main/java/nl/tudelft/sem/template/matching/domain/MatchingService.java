@@ -95,7 +95,7 @@ public class MatchingService {
      */
     public MatchingResponseModel submitAvailability(TimeslotApp timeslot, String position) {
         UserApp user = usersCommunication.getUserDetails(auth.getUserId());
-        List<ActivityApp> activities = activityCommunication.getActivitiesByAvailability(timeslot).getAvailableActivities();
+        List<ActivityApp> activities = activityCommunication.getActivitiesByAvailability(timeslot).getActivities();
         return new MatchingResponseModel(filterActivities(activities, timeslot, user, position));
     }
 
@@ -126,7 +126,7 @@ public class MatchingService {
      * @return the ActivityResponse entity to be sent to the client
      */
     private ActivityReponse matchUserToActivity(UserApp user, String position, ActivityApp activity) {
-        Match matchMade = new Match(user.getId(), activity.getActivityId(), activity.getPublisherId(), position);
+        Match matchMade = new Match(user.getEmail(), activity.getActivityId(), activity.getOwnerId(), position);
         matchingRepo.save(matchMade);
         return new ActivityReponse(matchMade.getMatchId(), activity.getType(), activity.getTimeslot());
     }
