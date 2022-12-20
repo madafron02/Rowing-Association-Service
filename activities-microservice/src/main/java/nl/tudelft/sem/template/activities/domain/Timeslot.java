@@ -10,6 +10,9 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.time.LocalDateTime;
 
+/**
+ * An embeddable class for storing the timeslot of an Activity.
+ */
 @Embeddable
 @AllArgsConstructor
 @NoArgsConstructor
