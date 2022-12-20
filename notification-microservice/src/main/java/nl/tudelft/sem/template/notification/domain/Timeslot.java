@@ -1,33 +1,25 @@
 package nl.tudelft.sem.template.notification.domain;
 
+import lombok.AllArgsConstructor;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
  * Timeslot object meant to specify start time and end time of an activity.
  */
+@AllArgsConstructor
 public class Timeslot {
-    private final LocalDateTime start;
-    private final LocalDateTime end;
-
-    /**
-     * Constructor of a timeslot.
-     *
-     * @param start start time
-     * @param end end time
-     */
-    public Timeslot(LocalDateTime start, LocalDateTime end) {
-        this.start = start;
-        this.end = end;
-    }
+    private final LocalDateTime startTime;
+    private final LocalDateTime endTime;
 
     /**
      * Gets start time.
      *
      * @return the start time
      */
-    public LocalDateTime getStart() {
-        return start;
+    public LocalDateTime getStartTime() {
+        return startTime;
     }
 
     /**
@@ -35,8 +27,8 @@ public class Timeslot {
      *
      * @return the end time
      */
-    public LocalDateTime getEnd() {
-        return end;
+    public LocalDateTime getEndTime() {
+        return endTime;
     }
 
     /**
@@ -54,7 +46,7 @@ public class Timeslot {
             return false;
         }
         Timeslot timeslot = (Timeslot) o;
-        return Objects.equals(start, timeslot.start) && Objects.equals(end, timeslot.end);
+        return Objects.equals(startTime, timeslot.startTime) && Objects.equals(endTime, timeslot.endTime);
     }
 
     /**
@@ -64,7 +56,7 @@ public class Timeslot {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(start, end);
+        return Objects.hash(startTime, endTime);
     }
 
     /**
@@ -75,8 +67,8 @@ public class Timeslot {
     @Override
     public String toString() {
         return "Timeslot{"
-                + "start=" + start
-                + ", end=" + end
+                + "start=" + startTime
+                + ", end=" + endTime
                 + '}';
     }
 }

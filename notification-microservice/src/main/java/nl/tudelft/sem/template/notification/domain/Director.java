@@ -1,22 +1,15 @@
 package nl.tudelft.sem.template.notification.domain;
 
+import lombok.AllArgsConstructor;
 import nl.tudelft.sem.template.notification.builders.Builder;
 
 /**
  * The director corresponding to the builder design pattern, it decides which scenario to use
  * when building a concrete Notification object.
  */
+@AllArgsConstructor
 public class Director {
     private transient Builder builder;
-
-    /**
-     * Constructor of the director.
-     *
-     * @param builder chosen builder
-     */
-    public Director(Builder builder) {
-        this.builder = builder;
-    }
 
     /**
      * Sets values of the builder when constructing a notification for the player
@@ -34,12 +27,12 @@ public class Director {
 
         if (decision) {
             message = "Congratulations! You have been accepted for activity " + activityId
-                    + ". You are expected to be there between " + timeslot.getStart().toString()
-                    + dash + timeslot.getEnd().toString() + ".";
+                    + ". You are expected to be there between " + timeslot.getStartTime().toString()
+                    + dash + timeslot.getEndTime().toString() + ".";
         } else {
             message = "Unfortunately, you have been denied for activity " + activityId
-                    + ", happening between " + timeslot.getStart().toString()
-                    + dash + timeslot.getEnd().toString()
+                    + ", happening between " + timeslot.getStartTime().toString()
+                    + dash + timeslot.getEndTime().toString()
                     + ". We advise you to not give up and try another timeslot or activity.";
         }
 
@@ -61,8 +54,8 @@ public class Director {
 
         builder.setReceiverEmail(participantId);
         builder.setMessage("Unfortunately, the details for activity " + activityId
-                + ", happening between " + timeslot.getStart().toString()
-                + dash + timeslot.getEnd().toString()
+                + ", happening between " + timeslot.getStartTime().toString()
+                + dash + timeslot.getEndTime().toString()
                 + "have been changed and you have been unenrolled. "
                 + "We advise you to try another timeslot or activity.");
     }
@@ -83,8 +76,8 @@ public class Director {
         builder.setReceiverEmail(ownerId);
         builder.setMessage("You have a new request: user "
                 + participantId + " wants to participate in activity " + activityId
-                + " between " + timeslot.getStart().toString() + dash
-                + timeslot.getEnd().toString() + ". Please decide as soon as possible"
+                + " between " + timeslot.getStartTime().toString() + dash
+                + timeslot.getEndTime().toString() + ". Please decide as soon as possible"
                 + " whether you accept this request or not.");
     }
 }
