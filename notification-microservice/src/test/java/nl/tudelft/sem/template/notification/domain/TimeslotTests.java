@@ -37,12 +37,12 @@ public class TimeslotTests {
 
     @Test
     public void getStartTest() {
-        assertThat(timeslot.getStart()).isEqualTo(start);
+        assertThat(timeslot.getStartTime()).isEqualTo(start);
     }
 
     @Test
     public void getEndTest() {
-        assertThat(timeslot.getEnd()).isEqualTo(end);
+        assertThat(timeslot.getEndTime()).isEqualTo(end);
     }
 
     @Test
