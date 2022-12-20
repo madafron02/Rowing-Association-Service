@@ -9,6 +9,9 @@ import lombok.Setter;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+/**
+ * An embeddable class for storing required positions of an Activity.
+ */
 @Embeddable
 @AllArgsConstructor
 @NoArgsConstructor
