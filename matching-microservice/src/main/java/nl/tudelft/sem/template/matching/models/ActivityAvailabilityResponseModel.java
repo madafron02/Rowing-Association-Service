@@ -15,5 +15,5 @@ import java.util.List;
 @AllArgsConstructor
 public class ActivityAvailabilityResponseModel {
 
-    private List<ActivityApp> availableActivities;
+    private List<ActivityApp> activities;
 }

@@ -95,7 +95,7 @@ public class MatchingService {
      */
     public MatchingResponseModel submitAvailability(TimeslotApp timeslot, String position) {
         UserApp user = usersCommunication.getUserDetails(auth.getUserId());
-        List<ActivityApp> activities = activityCommunication.getActivitiesByAvailability(timeslot).getAvailableActivities();
+        List<ActivityApp> activities = activityCommunication.getActivitiesByAvailability(timeslot).getActivities();
         return new MatchingResponseModel(filterActivities(activities, timeslot, user, position));
     }
 
@@ -112,7 +112,11 @@ public class MatchingService {
                                                   TimeslotApp timeslot,
                                                   UserApp user,
                                                   String position) {
-        return activities.stream().filter(a -> this.filteringHandler.handle(new MatchFilter(a, user, position, timeslot)))
+        return activities
+                .stream()
+                .distinct()
+                .filter(a -> this.filteringHandler.handle(new MatchFilter(a, user, position, timeslot)))
+                .filter(a -> matchingRepo.getMatchesByActivityIdAndParticipantId(a.getId(), user.getEmail()).isEmpty())
                 .map(a -> matchUserToActivity(user, position, a))
                 .collect(Collectors.toList());
     }
@@ -126,7 +130,7 @@ public class MatchingService {
      * @return the ActivityResponse entity to be sent to the client
      */
     private ActivityReponse matchUserToActivity(UserApp user, String position, ActivityApp activity) {
-        Match matchMade = new Match(user.getId(), activity.getActivityId(), activity.getPublisherId(), position);
+        Match matchMade = new Match(user.getEmail(), activity.getId(), activity.getOwnerId(), position);
         matchingRepo.save(matchMade);
         return new ActivityReponse(matchMade.getMatchId(), activity.getType(), activity.getTimeslot());
     }

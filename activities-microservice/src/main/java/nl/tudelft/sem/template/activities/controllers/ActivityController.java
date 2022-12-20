@@ -1,18 +1,21 @@
 package nl.tudelft.sem.template.activities.controllers;
 
-import java.util.List;
 import nl.tudelft.sem.template.activities.authentication.AuthManager;
 import nl.tudelft.sem.template.activities.domain.Activity;
 import nl.tudelft.sem.template.activities.domain.ActivityRepository;
+import nl.tudelft.sem.template.activities.domain.Timeslot;
 import nl.tudelft.sem.template.activities.model.ActivityListResponseModel;
-import nl.tudelft.sem.template.activities.model.TimeslotDataModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Activity querying controller.
@@ -40,12 +43,27 @@ public class ActivityController {
     }
 
     /**
+     * Returns the timeslot of an Activity given its id.
+     *
+     * @param id the id of an Activity
+     * @return the Timeslot of the Activity
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<Timeslot> getActivityTimeslotById(@PathVariable("id") long id) {
+        Optional<Activity> activity = activityRepository.findById(id);
+        if (activity.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(activity.get().getTimeslot());
+    }
+
+    /**
      * Gets all activities within a given timeslot.
      *
      * @return response entity containing every activity in the timeslot
      */
-    @GetMapping("/within-timeslot")
-    public ResponseEntity<ActivityListResponseModel> getAllActivitiesWithinTimeslot(@RequestBody TimeslotDataModel request) {
+    @PostMapping("/within-timeslot")
+    public ResponseEntity<ActivityListResponseModel> getAllActivitiesWithinTimeslot(@RequestBody Timeslot request) {
         List<Activity> activities = activityRepository.findActivitiesByTimeslot(
                 request.getStartTime(), request.getEndTime()
         );

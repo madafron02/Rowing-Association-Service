@@ -17,18 +17,18 @@ import javax.persistence.Embeddable;
 @EqualsAndHashCode
 public class Positions {
 
-    @Column(name = "coxCount")
-    private Integer coxCount;
+    @Column(name = "cox")
+    private Integer cox;
 
-    @Column(name = "coachCount")
-    private Integer coachCount;
+    @Column(name = "coach")
+    private Integer coach;
 
-    @Column(name = "portSideRowerCount")
-    private Integer portSideRowerCount;
+    @Column(name = "port")
+    private Integer port;
 
-    @Column(name = "starboardSideRowerCount")
-    private Integer starboardSideRowerCount;
+    @Column(name = "starboard")
+    private Integer starboard;
 
-    @Column(name = "scullingRowerCount")
-    private Integer scullingRowerCount;
+    @Column(name = "sculling")
+    private Integer sculling;
 }

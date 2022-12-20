@@ -21,9 +21,9 @@ public class User {
     @Column(name = "id", nullable = false, unique = true)
     private String email;
     private String gender;
-    private boolean competitive;
+    private boolean competitiveness;
     private String certificate;
-    private String organization;
+    private String organisation;
 
     /**
      * Constructor for the User entity.
@@ -34,12 +34,12 @@ public class User {
      * @param certificate the highest priority certificate of the user
      * @param organization the organization of the user
      */
-    public User(String email, String gender, boolean competitive, String certificate, String organization) {
+    public User(String email, String gender, boolean competitiveness, String certificate, String organization) {
         this.email = email;
         this.gender = gender;
-        this.competitive = competitive;
+        this.competitiveness = competitiveness;
         this.certificate = certificate;
-        this.organization = organization;
+        this.organisation = organization;
     }
 
     /**
@@ -75,7 +75,7 @@ public class User {
      * @return TRUE if the user is competitive, FALSE if the user is not competitive
      */
     public boolean isCompetitive() {
-        return competitive;
+        return competitiveness;
     }
 
     /**
@@ -92,8 +92,8 @@ public class User {
      *
      * @return the organization of a user
      */
-    public String getOrganization() {
-        return organization;
+    public String getOrganisation() {
+        return organisation;
     }
 
     /**
@@ -108,10 +108,10 @@ public class User {
     /**
      * Setter for the competitiveness of a user.
      *
-     * @param competitive the competitiveness of the user
+     * @param competitiveness the competitiveness of the user
      */
-    public void setCompetitive(boolean competitive) {
-        this.competitive = competitive;
+    public void setCompetitiveness(boolean competitiveness) {
+        this.competitiveness = competitiveness;
     }
 
     /**
@@ -126,10 +126,10 @@ public class User {
     /**
      * Setter for the organization of a user.
      *
-     * @param organization the organization of a user
+     * @param organisation the organization of a user
      */
-    public void setOrganization(String organization) {
-        this.organization = organization;
+    public void setOrganisation(String organisation) {
+        this.organisation = organisation;
     }
 
     /**

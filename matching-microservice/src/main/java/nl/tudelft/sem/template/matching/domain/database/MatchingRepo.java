@@ -25,4 +25,6 @@ public interface MatchingRepo extends JpaRepository<Match, Long> {
     void deleteMatchesByActivityId(Long activityId);
 
     List<Match> getMatchesByActivityId(Long activityId);
+
+    Optional<Match> getMatchesByActivityIdAndParticipantId(Long activityId, String participantId);
 }
