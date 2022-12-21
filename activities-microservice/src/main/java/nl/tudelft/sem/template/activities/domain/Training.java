@@ -3,6 +3,9 @@ package nl.tudelft.sem.template.activities.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Embedded;
 import javax.persistence.GeneratedValue;
@@ -22,7 +25,9 @@ import lombok.Setter;
  */
 @Entity
 @Table(name = "trainings")
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(discriminatorType = DiscriminatorType.STRING, name = "TYPE")
+@DiscriminatorValue("TRAINING")
 @NoArgsConstructor
 @EqualsAndHashCode
 @Getter

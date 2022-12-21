@@ -2,8 +2,8 @@ package nl.tudelft.sem.template.activities.domain;
 
 import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -14,22 +14,22 @@ import lombok.Setter;
  * A DDD entity representing a competition in our domain.
  */
 @Entity
-@Table(name = "competitions")
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@DiscriminatorValue("COMPETITION")
 @Getter
 @Setter
 public class Competition extends Training {
 
-    public static final List<String> GENDER_TYPES = List.of("Male", "Female", "Other");
+    public static final List<String> GENDER_TYPES = List.of("Male", "Female");
 
-    @Column(name = "gender", nullable = false)
+    @Column(name = "gender")
     private String gender;
 
-    @Column(name = "competitiveness", nullable = false)
+    @Column(name = "competitiveness")
     private boolean competitiveness;
 
-    @Column(name = "organisation", nullable = false)
+    @Column(name = "organisation")
     private String organisation;
 
     /**
@@ -64,6 +64,9 @@ public class Competition extends Training {
      */
     public boolean checkIfValid() {
         if (gender == null || !GENDER_TYPES.contains(gender)) {
+            return false;
+        }
+        if (organisation == null) {
             return false;
         }
         return super.checkIfValid();
