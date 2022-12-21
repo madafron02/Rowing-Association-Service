@@ -6,12 +6,16 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "Users")
 @NoArgsConstructor
 public class User {
+
+    public static final List<String> GENDER_OPTIONS = List.of("Male", "Female", "Other");
+
 
     /**
      * Entity that represents the users in the system.
@@ -30,16 +34,16 @@ public class User {
      *
      * @param email the email of the user
      * @param gender the gender of the user
-     * @param competitive TRUE if user is competitive, FALSE if user is not competitive
+     * @param competitiveness TRUE if user is competitive, FALSE if user is not competitive
      * @param certificate the highest priority certificate of the user
-     * @param organization the organization of the user
+     * @param organisation the organization of the user
      */
-    public User(String email, String gender, boolean competitive, String certificate, String organization) {
+    public User(String email, String gender, boolean competitiveness, String certificate, String organisation) {
         this.email = email;
         this.gender = gender;
-        this.competitiveness = competitive;
+        this.competitiveness = competitiveness;
         this.certificate = certificate;
-        this.organisation = organization;
+        this.organisation = organisation;
     }
 
     /**
@@ -130,6 +134,17 @@ public class User {
      */
     public void setOrganisation(String organisation) {
         this.organisation = organisation;
+    }
+
+    /**
+     * validates user gender and email.
+     *
+     * @return whether the user info is valid
+     */
+    public boolean validateUserInfo() {
+        boolean validGender = (gender == null || GENDER_OPTIONS.contains(gender));
+        boolean validEmail = EmailValidator.validateEmail(email);
+        return validGender && validEmail;
     }
 
     /**
