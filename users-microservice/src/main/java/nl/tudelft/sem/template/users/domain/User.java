@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 @Entity
@@ -15,7 +14,7 @@ import java.util.Objects;
 @NoArgsConstructor
 public class User {
 
-    public static final List<String> GENDER_OPTIONS = List.of("male", "female", "other");
+    public static final List<String> GENDER_OPTIONS = List.of("Male", "Female", "Other");
 
 
     /**
@@ -41,7 +40,7 @@ public class User {
      */
     public User(String email, String gender, boolean competitiveness, String certificate, String organisation) {
         this.email = email;
-        this.gender = gender.toLowerCase(Locale.getDefault());
+        this.gender = gender;
         this.competitiveness = competitiveness;
         this.certificate = certificate;
         this.organisation = organisation;
@@ -107,7 +106,7 @@ public class User {
      * @param gender the gender of the user
      */
     public void setGender(String gender) {
-        this.gender = gender.toLowerCase(Locale.getDefault());
+        this.gender = gender;
     }
 
     /**
