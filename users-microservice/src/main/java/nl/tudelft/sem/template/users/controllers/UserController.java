@@ -46,9 +46,9 @@ public class UserController {
      */
     @GetMapping("/mydata")
     public ResponseEntity<User> getUserData() {
-        User user = userService.getByEmail(authManager.getNetId());
+        User user = userService.getByEmail(authManager.getUserId());
         if (user == null) {
-            return new ResponseEntity("User with the email: " + authManager.getNetId() + " was not found.",
+            return new ResponseEntity("User with the email: " + authManager.getUserId() + " was not found.",
                     HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(user);
@@ -78,7 +78,7 @@ public class UserController {
     public ResponseEntity<User> createNewUser(@RequestBody User user)
             throws Exception {
 
-        if (!user.getEmail().equals(authManager.getNetId())) {
+        if (!user.getEmail().equals(authManager.getUserId())) {
             return new ResponseEntity("You are not authenticated with the email: " + user.getEmail(), HttpStatus.CONFLICT);
         }
         try {
@@ -97,7 +97,7 @@ public class UserController {
      */
     @PostMapping("/updatemydata")
     public ResponseEntity<User> updateUser(@RequestBody User user) {
-        if (!user.getEmail().equals(authManager.getNetId())) {
+        if (!user.getEmail().equals(authManager.getUserId())) {
             return new ResponseEntity("You are not authenticated with the email: " + user.getEmail(), HttpStatus.CONFLICT);
         } else if (!userService.userExists(user.getEmail())) {
             return new ResponseEntity("This user does not exist, please create a user account first.", HttpStatus.CONFLICT);
