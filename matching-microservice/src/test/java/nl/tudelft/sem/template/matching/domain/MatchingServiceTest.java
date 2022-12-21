@@ -7,10 +7,12 @@ import nl.tudelft.sem.template.matching.authentication.AuthManager;
 import nl.tudelft.sem.template.matching.domain.database.CertificateRepo;
 import nl.tudelft.sem.template.matching.domain.database.MatchingRepo;
 import nl.tudelft.sem.template.matching.models.ActivityAvailabilityResponseModel;
+import nl.tudelft.sem.template.matching.models.ActivityReponse;
 import nl.tudelft.sem.template.matching.models.MatchingResponseModel;
 import nl.tudelft.sem.template.matching.models.NotificationActivityModified;
 import nl.tudelft.sem.template.matching.models.NotificationRequestModelOwner;
 import nl.tudelft.sem.template.matching.models.NotificationRequestModelParticipant;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -54,11 +57,12 @@ class MatchingServiceTest {
 
     @BeforeEach
     void setUp() {
+        matchingRepo.deleteAll();
         service = new MatchingService(authManager, matchingRepo,
                 usersCommunication, notificationCommunication,
                 activityCommunication, certificateRepo);
-        timeslot = new TimeslotApp(LocalDateTime.parse("2022-12-08T10:15"),
-                LocalDateTime.parse("2022-12-08T17:00"));
+        timeslot = new TimeslotApp(LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1).plusHours(4));
         position = "cox";
         user = new UserApp("d.micloiu@icloud.com", "C4",
                 "Female", "SEM", true);
@@ -66,6 +70,11 @@ class MatchingServiceTest {
                 2L,
                 "l.tosa@tudelft.nl",
                 "cox");
+    }
+
+    @AfterEach
+    void cleanUp() {
+        matchingRepo.deleteAll();
     }
 
     @Test
@@ -91,39 +100,39 @@ class MatchingServiceTest {
         ArrayList<ActivityApp> activities = new ArrayList<>();
         activities.add(new ActivityApp(1L,
                 "l.tosa@tudelft.nl",
-                new TimeslotApp(LocalDateTime.parse("2022-12-08T10:15"),
-                        LocalDateTime.parse("2022-12-08T11:00")),
+                new TimeslotApp(LocalDateTime.now().plusMinutes(45),
+                        LocalDateTime.now().plusHours(3)),
                 "", "", positions, false, TypeOfActivity.TRAINING, "C4"));
         activities.add(new ActivityApp(2L,
                 "l.tosa@tudelft.nl",
-                new TimeslotApp(LocalDateTime.parse("2022-12-08T12:15"),
-                        LocalDateTime.parse("2022-12-08T15:00")),
+                new TimeslotApp(LocalDateTime.now(),
+                        LocalDateTime.now().plusMinutes(45)),
                 "", "", positions, false, TypeOfActivity.TRAINING, "C4"));
 
         activities.add(new ActivityApp(3L,
                 "l.tosa@tudelft.nl",
-                new TimeslotApp(LocalDateTime.parse("2022-12-08T13:15"),
-                        LocalDateTime.parse("2022-12-08T14:00")),
+                new TimeslotApp(LocalDateTime.now().plusDays(1),
+                        LocalDateTime.now().plusDays(1).plusHours(1)),
                 "Female", "SEM", positions, false, TypeOfActivity.COMPETITION, "4+"));
 
         activities.add(new ActivityApp(4L,
                 "l.tosa@tudelft.nl",
-                new TimeslotApp(LocalDateTime.parse("2022-12-08T13:15"),
-                        LocalDateTime.parse("2022-12-08T14:00")),
+                new TimeslotApp(LocalDateTime.now().plusHours(10),
+                        LocalDateTime.now().plusDays(1)),
                 "Female", "SEM", positions, false, TypeOfActivity.COMPETITION, "C4"));
 
 
         when(certificateRepo.getCertificateByName("C4")).thenReturn(Optional.of(1L));
         when(certificateRepo.getCertificateByName("4+")).thenReturn(Optional.of(2L));
         // one because one of the activities is 30 min after the timeslot given by the user
-        assertThat(service.filterActivities(activities, timeslot, user, "cox").size())
-                .isEqualTo(1);
+        List<ActivityReponse> result = service.filterActivities(activities, timeslot, user, "cox");
+        assertThat(result.size()).isEqualTo(1);
 
         Match matchMade = new Match("d.micloiu@tudelft.nl",
                 2L,
                 "l.tosa@tudelft.nl",
                 "cox");
-        verify(matchingRepo).save(matchMade);
+        verify(matchingRepo, times(1)).save(matchMade);
     }
 
     @Test

@@ -15,7 +15,7 @@ class UserAppTest {
 
     @Test
     void getId() {
-        assertThat(user.getId()).isEqualTo("test");
+        assertThat(user.getEmail()).isEqualTo("test");
     }
 
     @Test
@@ -35,13 +35,13 @@ class UserAppTest {
 
     @Test
     void isCompetitiveness() {
-        assertThat(user.isCompetitiveness()).isTrue();
+        assertThat(user.isCompetitive()).isTrue();
     }
 
     @Test
     void setId() {
-        user.setId("test2");
-        assertThat(user.getId()).isEqualTo("test2");
+        user.setEmail("test2");
+        assertThat(user.getEmail()).isEqualTo("test2");
     }
 
     @Test
@@ -64,8 +64,8 @@ class UserAppTest {
 
     @Test
     void setCompetitiveness() {
-        user.setCompetitiveness(false);
-        assertThat(user.isCompetitiveness()).isFalse();
+        user.setCompetitive(false);
+        assertThat(user.isCompetitive()).isFalse();
     }
 
     @Test
@@ -88,7 +88,7 @@ class UserAppTest {
     @Test
     void testToString() {
         assertThat(user.toString())
-                .isEqualTo("UserApp(id=test, certificate=C4+,"
-                        + " gender=Male, organisation=SEM, competitiveness=true)");
+                .isEqualTo("UserApp(email=test, certificate=C4+,"
+                        + " gender=Male, organisation=SEM, competitive=true)");
     }
 }
