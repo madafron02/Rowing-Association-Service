@@ -1,10 +1,14 @@
 package nl.tudelft.sem.template.users.controllers;
 
 import nl.tudelft.sem.template.users.authentication.AuthManager;
-import nl.tudelft.sem.template.users.domain.EmailAlreadyInUseException;
-import nl.tudelft.sem.template.users.domain.InvalidUserDetailsException;
-import nl.tudelft.sem.template.users.domain.User;
 import nl.tudelft.sem.template.users.domain.UserService;
+import nl.tudelft.sem.template.users.domain.User;
+import nl.tudelft.sem.template.users.domain.Organisation;
+import nl.tudelft.sem.template.users.domain.InvalidUserDetailsException;
+import nl.tudelft.sem.template.users.domain.EmailAlreadyInUseException;
+
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
@@ -108,7 +112,23 @@ public class UserController {
         try {
             return ResponseEntity.ok(userService.updateUser(user));
         } catch (InvalidUserDetailsException e) {
-            return new ResponseEntity("The user details you entered are invalid.", HttpStatus.CONFLICT);
+            return new ResponseEntity("The user details you entered are invalid. " + e.getMessage(), HttpStatus.CONFLICT);
+        }
+    }
+
+    /**
+     * Post mapping for adding a new organisation to the set of legitimate organisations recognized by the system.
+     *
+     * @param organisationName - name or new organisation
+     * @return http status OK if the organisation did not already exist, otherwise bad request status.
+     */
+    @PostMapping("/organisation/add")
+    public ResponseEntity<String> addNewOrganisation(@RequestBody String organisationName) {
+        if (userService.validateOrganisation(organisationName)) {
+            return new ResponseEntity("Organisation already present in system.", HttpStatus.BAD_REQUEST);
+        } else {
+            userService.addOrganisation(new Organisation(organisationName));
+            return ResponseEntity.ok("Organisation successfully added to system");
         }
     }
 }

@@ -12,19 +12,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-    private final transient UserRepo repo;
+    private final transient UserRepo userRepo;
+    private final transient OrganisationRepo organisationRepo;
     private final transient MatchingCommunication matchingCommunication;
 
 
     /**
      * Default constructor.
      *
-     * @param repo the user repository
+     * @param userRepo the user repository
+     * @param organisationRepo the organisation name repository
      * @param matchingCommunication communication to the matching microservice
      */
     @Autowired
-    public UserService(UserRepo repo, MatchingCommunication matchingCommunication) {
-        this.repo = repo;
+    public UserService(UserRepo userRepo, OrganisationRepo organisationRepo, MatchingCommunication matchingCommunication) {
+        this.userRepo = userRepo;
+        this.organisationRepo = organisationRepo;
         this.matchingCommunication = matchingCommunication;
     }
 
@@ -35,10 +38,10 @@ public class UserService {
      * @return the user object
      */
     public User getByEmail(String id) {
-        if (!repo.existsUserByEmail(id)) {
+        if (!userRepo.existsUserByEmail(id)) {
             return null;
         }
-        return repo.getUserByEmail(id);
+        return userRepo.getUserByEmail(id);
     }
 
 
@@ -51,7 +54,7 @@ public class UserService {
      * @throws InvalidUserDetailsException if user has invalid data
      */
     public User saveUser(User newUser) throws EmailAlreadyInUseException, InvalidUserDetailsException {
-        if (repo.existsUserByEmail(newUser.getEmail())) {
+        if (userRepo.existsUserByEmail(newUser.getEmail())) {
             throw new EmailAlreadyInUseException(newUser.getEmail());
         }
         if (!newUser.validateUserInfo()) {
@@ -60,12 +63,15 @@ public class UserService {
         if (newUser.getCertificate() != null && !matchingCommunication.validateCertificate(newUser.getCertificate())) {
             throw new InvalidUserDetailsException(newUser.getCertificate());
         }
-        repo.save(newUser);
+        if (newUser.getOrganisation() != null && !validateOrganisation(newUser.getOrganisation())) {
+            throw new InvalidUserDetailsException(newUser.getOrganisation());
+        }
+        userRepo.save(newUser);
         return newUser;
     }
 
     public boolean userExists(String email) {
-        return repo.existsUserByEmail(email);
+        return userRepo.existsUserByEmail(email);
     }
 
     /**
@@ -82,8 +88,11 @@ public class UserService {
         if (newData.getCertificate() != null && !matchingCommunication.validateCertificate(newData.getCertificate())) {
             throw new InvalidUserDetailsException(newData.getCertificate());
         }
+        if (newData.getOrganisation() != null && !validateOrganisation(newData.getOrganisation())) {
+            throw new InvalidUserDetailsException(newData.getOrganisation());
+        }
 
-        User existingUser = repo.getUserByEmail(newData.getEmail());
+        User existingUser = userRepo.getUserByEmail(newData.getEmail());
 
         existingUser.setGender(newData.getGender() == null ? existingUser.getGender() : newData.getGender());
         existingUser.setCertificate(newData.getCertificate() == null ? existingUser.getCertificate()
@@ -92,8 +101,15 @@ public class UserService {
                 : newData.getOrganisation());
         existingUser.setCompetitiveness(newData.isCompetitive());
 
-
-        repo.save(existingUser);
+        userRepo.save(existingUser);
         return existingUser;
+    }
+
+    public boolean validateOrganisation(String organisationName) {
+        return organisationRepo.existsOrganisationByName(organisationName);
+    }
+
+    public void addOrganisation(Organisation newOrganisation) {
+        organisationRepo.save(newOrganisation);
     }
 }
