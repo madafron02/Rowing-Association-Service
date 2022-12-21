@@ -34,4 +34,50 @@ public class Positions {
 
     @Column(name = "scullingRowerCount")
     private Integer scullingRowerCount;
+
+    /**
+     * Reduces the value of remaining spots for a certain position by one.
+     *
+     * @param positionName the name of the position to reduce
+     * @return true if it was reduced and false otherwise
+     */
+    public boolean reduceByOne(String positionName) {
+        String[] parts = positionName.split("\"");
+        String name = parts[3];
+        switch (name) {
+            case "cox":
+                if (this.getCoxCount() > 0) {
+                    this.setCoxCount(this.getCoxCount() - 1);
+                    return true;
+                }
+                break;
+            case "coach":
+                if (this.getCoachCount() > 0) {
+                    this.setCoachCount(this.getCoachCount() - 1);
+                    return true;
+                }
+                break;
+            case "port":
+                if (this.getPortSideRowerCount() > 0) {
+                    this.setPortSideRowerCount(this.getPortSideRowerCount() - 1);
+                    return true;
+                }
+                break;
+            case "starboard":
+                if (this.getPortSideRowerCount() > 0) {
+                    this.setStarboardSideRowerCount(this.getStarboardSideRowerCount() - 1);
+                    return true;
+                }
+                break;
+            case "sculling":
+                if (this.getScullingRowerCount() > 0) {
+                    this.setScullingRowerCount(this.getScullingRowerCount() - 1);
+                    return true;
+                }
+                break;
+            default:
+                break;
+        }
+        return false;
+    }
 }
