@@ -21,7 +21,7 @@ public class User {
     @Column(name = "id", nullable = false, unique = true)
     private String email;
     private String gender;
-    private boolean competitiveness;
+    private boolean competitive;
     private String certificate;
     private String organisation;
 
@@ -34,10 +34,10 @@ public class User {
      * @param certificate the highest priority certificate of the user
      * @param organization the organization of the user
      */
-    public User(String email, String gender, boolean competitiveness, String certificate, String organization) {
+    public User(String email, String gender, boolean competitive, String certificate, String organization) {
         this.email = email;
         this.gender = gender;
-        this.competitiveness = competitiveness;
+        this.competitive = competitive;
         this.certificate = certificate;
         this.organisation = organization;
     }
@@ -75,7 +75,7 @@ public class User {
      * @return TRUE if the user is competitive, FALSE if the user is not competitive
      */
     public boolean isCompetitive() {
-        return competitiveness;
+        return competitive;
     }
 
     /**
@@ -111,7 +111,7 @@ public class User {
      * @param competitiveness the competitiveness of the user
      */
     public void setCompetitiveness(boolean competitiveness) {
-        this.competitiveness = competitiveness;
+        this.competitive = competitiveness;
     }
 
     /**
