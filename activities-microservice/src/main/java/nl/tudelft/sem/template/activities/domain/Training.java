@@ -91,4 +91,3 @@ public class Training {
                 && timeslot.getEndTime().isAfter(now);
     }
 }
-

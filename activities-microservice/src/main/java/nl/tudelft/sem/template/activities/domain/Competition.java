@@ -1,6 +1,5 @@
 package nl.tudelft.sem.template.activities.domain;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -59,27 +58,14 @@ public class Competition extends Training {
     }
 
     /**
-     * Checks if this activity has valid data.
+     * Checks if this competition has valid data.
      *
      * @return true if this is valid and false otherwise
      */
     public boolean checkIfValid() {
-        boolean requiresRowers = positions.getCoxCount() != null || positions.getCoachCount() != null
-                || positions.getPortSideRowerCount() != null || positions.getStarboardSideRowerCount() != null
-                || positions.getScullingRowerCount() != null;
-        boolean nonNull = ownerId != null && requiresRowers;
-        if (!nonNull) {
-            return false;
-        }
-        if (!CERTIFICATE_TYPES.contains(certificate)) {
-            return false;
-        }
         if (gender == null || !GENDER_TYPES.contains(gender)) {
             return false;
         }
-        LocalDateTime now = LocalDateTime.now();
-        boolean timeslotExists = timeslot != null && timeslot.getStartTime() != null && timeslot.getEndTime() != null;
-        return timeslotExists && timeslot.getStartTime().isBefore(timeslot.getEndTime())
-                && timeslot.getEndTime().isAfter(now);
+        return super.checkIfValid();
     }
 }
