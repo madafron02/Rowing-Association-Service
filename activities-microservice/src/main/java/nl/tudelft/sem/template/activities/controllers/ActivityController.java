@@ -4,7 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import nl.tudelft.sem.template.activities.authentication.AuthManager;
-import nl.tudelft.sem.template.activities.domain.*;
+import nl.tudelft.sem.template.activities.domain.Training;
+import nl.tudelft.sem.template.activities.domain.Competition;
+import nl.tudelft.sem.template.activities.domain.TrainingRepository;
+import nl.tudelft.sem.template.activities.domain.MatchingClient;
+import nl.tudelft.sem.template.activities.domain.Timeslot;
+import nl.tudelft.sem.template.activities.domain.CompetitionRepository;
 import nl.tudelft.sem.template.activities.model.ActivityListResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -81,7 +86,7 @@ public class ActivityController {
     }
 
     /**
-     * Creates a new Competition
+     * Creates a new Competition.
      *
      * @return a response entity showing if the Competition was created
      */
@@ -96,7 +101,7 @@ public class ActivityController {
     }
 
     /**
-     * Creates a new Training
+     * Creates a new Training.
      *
      * @return a response entity showing if the Training was created
      */

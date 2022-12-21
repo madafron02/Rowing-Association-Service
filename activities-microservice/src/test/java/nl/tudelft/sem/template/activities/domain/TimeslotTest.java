@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class TimeslotTest {
 
-    private Timeslot timeslot;
+    private transient Timeslot timeslot;
 
     private LocalDateTime startTime = LocalDateTime.of(2042, 12, 12, 20, 15);
 
@@ -22,8 +22,7 @@ class TimeslotTest {
 
     @Test
     void emptyConstructorTest() {
-        Timeslot empty = new Timeslot();
-        assertThat(timeslot).isNotNull();
+        assertThat(new Timeslot()).isNotNull();
     }
 
     @Test

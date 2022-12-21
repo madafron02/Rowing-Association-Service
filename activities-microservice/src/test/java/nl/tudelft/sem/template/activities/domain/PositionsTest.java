@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class PositionsTest {
 
-    private Positions positions;
+    private transient Positions positions;
 
     @BeforeEach
     void setUp() {

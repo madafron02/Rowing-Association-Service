@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TrainingRepositoryTest {
 
     @Autowired
-    private TrainingRepository trainingRepository;
+    private transient TrainingRepository trainingRepository;
 
     @BeforeEach
     void setUp() {
