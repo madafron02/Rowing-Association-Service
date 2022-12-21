@@ -1,9 +1,14 @@
 package nl.tudelft.sem.template.auth.application.handlers;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureException;
 import nl.tudelft.sem.template.auth.domain.AccountCredentials;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+
+import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -45,6 +50,16 @@ public class CreateTokenTest {
     }
 
     @Test
+    void userIdTest() {
+        createToken.handle(new AccountCredentials("hello", "world"));
+        String token = createToken.getToken();
+        Claims claims = Jwts.parser().setSigningKey("Secret123").parseClaimsJws(token).getBody();
+        Function<Claims, String> claimsResolver = Claims::getSubject;
+        String userId = claimsResolver.apply(claims);
+        assertThat(userId).isEqualTo("hello");
+    }
+
+    @Test
     void testNoExceptions() {
         createToken.handle(new AccountCredentials("hello", "world"));
         assertThat(exceptionHandler.didCatchException()).isFalse();
@@ -56,4 +71,19 @@ public class CreateTokenTest {
         String token = createToken.getToken();
         assertThat(token.substring(0, 20)).isEqualTo("eyJhbGciOiJIUzUxMiJ9");
     }
+
+    @Test
+    void wrongSecretTest() {
+        createToken.handle(new AccountCredentials("hello", "world"));
+        String token = createToken.getToken();
+        try {
+            Claims claims = Jwts.parser().setSigningKey("WrongSecret").parseClaimsJws(token).getBody();
+        } catch (Exception e) {
+            assertThat(e).isInstanceOf(SignatureException.class);
+            return;
+        }
+        assertThat(false).isTrue();
+    }
+
+
 }
