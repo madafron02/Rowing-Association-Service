@@ -1,7 +1,7 @@
 package nl.tudelft.sem.template.users;
 
 import nl.tudelft.sem.template.users.domain.Organisation;
-import nl.tudelft.sem.template.users.domain.OrganisationRepo;
+import nl.tudelft.sem.template.users.domain.database.OrganisationRepo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;

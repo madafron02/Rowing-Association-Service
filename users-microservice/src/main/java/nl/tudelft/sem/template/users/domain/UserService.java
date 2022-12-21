@@ -1,6 +1,16 @@
 package nl.tudelft.sem.template.users.domain;
 
 import nl.tudelft.sem.template.users.application.MatchingCommunication;
+import nl.tudelft.sem.template.users.domain.database.OrganisationRepo;
+import nl.tudelft.sem.template.users.domain.database.UserRepo;
+import nl.tudelft.sem.template.users.domain.handlers.UserValidationHandler;
+import nl.tudelft.sem.template.users.domain.handlers.OrganisationValidationHandler;
+import nl.tudelft.sem.template.users.domain.handlers.EmailValidationHandler;
+import nl.tudelft.sem.template.users.domain.handlers.CertificateValidationHandler;
+import nl.tudelft.sem.template.users.domain.handlers.GenderValidationHandler;
+
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +25,8 @@ public class UserService {
     private final transient UserRepo userRepo;
     private final transient OrganisationRepo organisationRepo;
     private final transient MatchingCommunication matchingCommunication;
+    private transient UserValidationHandler userValidationHandler;
+
 
 
     /**
@@ -29,6 +41,20 @@ public class UserService {
         this.userRepo = userRepo;
         this.organisationRepo = organisationRepo;
         this.matchingCommunication = matchingCommunication;
+        userValidationHandlerSetUp();
+    }
+
+    /**
+     * Sets up the chain of responsibility for validating user details that a client enters into the system.
+     */
+    public final void userValidationHandlerSetUp() {
+        this.userValidationHandler = new EmailValidationHandler(userRepo);
+        UserValidationHandler genderValidationHandler = new GenderValidationHandler();
+        this.userValidationHandler.setNext(genderValidationHandler);
+        UserValidationHandler organisationValidationHandler = new OrganisationValidationHandler(organisationRepo);
+        genderValidationHandler.setNext(organisationValidationHandler);
+        UserValidationHandler certificateValidationHandler = new CertificateValidationHandler(matchingCommunication);
+        organisationValidationHandler.setNext(certificateValidationHandler);
     }
 
     /**
@@ -50,24 +76,17 @@ public class UserService {
      *
      * @param newUser user to save
      * @return user entity saved
-     * @throws EmailAlreadyInUseException if email already in use
-     * @throws InvalidUserDetailsException if user has invalid data
      */
-    public User saveUser(User newUser) throws EmailAlreadyInUseException, InvalidUserDetailsException {
-        if (userRepo.existsUserByEmail(newUser.getEmail())) {
-            throw new EmailAlreadyInUseException(newUser.getEmail());
+    public User saveUser(User newUser) throws IllegalArgumentException {
+        try {
+            if (userValidationHandler.handle(newUser)) {
+                userRepo.save(newUser);
+                return newUser;
+            }
+        } catch (IllegalArgumentException e) {
+            throw e;
         }
-        if (!newUser.validateUserInfo()) {
-            throw new InvalidUserDetailsException(newUser.getEmail());
-        }
-        if (newUser.getCertificate() != null && !matchingCommunication.validateCertificate(newUser.getCertificate())) {
-            throw new InvalidUserDetailsException(newUser.getCertificate());
-        }
-        if (newUser.getOrganisation() != null && !validateOrganisation(newUser.getOrganisation())) {
-            throw new InvalidUserDetailsException(newUser.getOrganisation());
-        }
-        userRepo.save(newUser);
-        return newUser;
+        return new User();
     }
 
     public boolean userExists(String email) {
@@ -81,35 +100,24 @@ public class UserService {
      * @param newData - user with updates data
      * @return the updated user entity
      */
-    public User updateUser(User newData) throws InvalidUserDetailsException {
-        if (!newData.validateUserInfo()) {
-            throw new InvalidUserDetailsException(newData.getEmail());
+    public User updateUser(User newData) {
+        try {
+            if (userValidationHandler.handle(newData)) {
+                User existingUser = userRepo.getUserByEmail(newData.getEmail());
+
+                existingUser.setGender(newData.getGender() == null ? existingUser.getGender() : newData.getGender());
+                existingUser.setCertificate(newData.getCertificate() == null ? existingUser.getCertificate()
+                        : newData.getCertificate());
+                existingUser.setOrganisation(newData.getOrganisation() == null ? existingUser.getOrganisation()
+                        : newData.getOrganisation());
+                existingUser.setCompetitiveness(newData.isCompetitive());
+
+                userRepo.save(existingUser);
+                return existingUser;
+            }
+        } catch (IllegalArgumentException e) {
+            throw e;
         }
-        if (newData.getCertificate() != null && !matchingCommunication.validateCertificate(newData.getCertificate())) {
-            throw new InvalidUserDetailsException(newData.getCertificate());
-        }
-        if (newData.getOrganisation() != null && !validateOrganisation(newData.getOrganisation())) {
-            throw new InvalidUserDetailsException(newData.getOrganisation());
-        }
-
-        User existingUser = userRepo.getUserByEmail(newData.getEmail());
-
-        existingUser.setGender(newData.getGender() == null ? existingUser.getGender() : newData.getGender());
-        existingUser.setCertificate(newData.getCertificate() == null ? existingUser.getCertificate()
-                : newData.getCertificate());
-        existingUser.setOrganisation(newData.getOrganisation() == null ? existingUser.getOrganisation()
-                : newData.getOrganisation());
-        existingUser.setCompetitiveness(newData.isCompetitive());
-
-        userRepo.save(existingUser);
-        return existingUser;
-    }
-
-    public boolean validateOrganisation(String organisationName) {
-        return organisationRepo.existsOrganisationByName(organisationName);
-    }
-
-    public void addOrganisation(Organisation newOrganisation) {
-        organisationRepo.save(newOrganisation);
+        return new User();
     }
 }

@@ -4,11 +4,10 @@ import nl.tudelft.sem.template.users.authentication.AuthManager;
 import nl.tudelft.sem.template.users.domain.UserService;
 import nl.tudelft.sem.template.users.domain.User;
 import nl.tudelft.sem.template.users.domain.Organisation;
-import nl.tudelft.sem.template.users.domain.InvalidUserDetailsException;
-import nl.tudelft.sem.template.users.domain.EmailAlreadyInUseException;
 
 
 
+import nl.tudelft.sem.template.users.domain.database.OrganisationRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
@@ -31,6 +30,7 @@ public class UserController {
 
     private final transient AuthManager authManager;
     private final transient UserService userService;
+    private final transient OrganisationRepo organisationRepo;
 
     /**
      * Instantiates a new controller.
@@ -39,9 +39,10 @@ public class UserController {
      * @param userService Service for handling user data
      */
     @Autowired
-    public UserController(AuthManager authManager, UserService userService) {
+    public UserController(AuthManager authManager, UserService userService, OrganisationRepo organisationRepo) {
         this.authManager = authManager;
         this.userService = userService;
+        this.organisationRepo = organisationRepo;
     }
 
     /**
@@ -80,19 +81,19 @@ public class UserController {
      * @return user entity created, or error if a user with that email already exists or email is invalid
      */
     @PostMapping("/newuser")
-    public ResponseEntity<User> createNewUser(@RequestBody User user)
-            throws Exception {
+    public ResponseEntity<User> createNewUser(@RequestBody User user) {
 
         if (!user.getEmail().equals(authManager.getNetId())) {
             return new ResponseEntity("You are not authenticated with the email: " + user.getEmail(), HttpStatus.CONFLICT);
         }
+        if (userService.userExists(user.getEmail())) {
+            return new ResponseEntity("The following e-mail is already in use: " + user.getEmail(), HttpStatus.CONFLICT);
+        }
         try {
             User newUser = userService.saveUser(user);
             return ResponseEntity.ok(newUser);
-        } catch (EmailAlreadyInUseException e) {
-            return new ResponseEntity("User with the email:" + user.getEmail() + " already exists.", HttpStatus.CONFLICT);
-        } catch (InvalidUserDetailsException e) {
-            return new ResponseEntity("The user details you entered are invalid. " + e.getMessage(), HttpStatus.CONFLICT);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
         }
     }
 
@@ -111,8 +112,8 @@ public class UserController {
         }
         try {
             return ResponseEntity.ok(userService.updateUser(user));
-        } catch (InvalidUserDetailsException e) {
-            return new ResponseEntity("The user details you entered are invalid. " + e.getMessage(), HttpStatus.CONFLICT);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
         }
     }
 
@@ -124,10 +125,10 @@ public class UserController {
      */
     @PostMapping("/organisation/add")
     public ResponseEntity<String> addNewOrganisation(@RequestBody String organisationName) {
-        if (userService.validateOrganisation(organisationName)) {
+        if (organisationRepo.existsOrganisationByName(organisationName)) {
             return new ResponseEntity("Organisation already present in system.", HttpStatus.BAD_REQUEST);
         } else {
-            userService.addOrganisation(new Organisation(organisationName));
+            organisationRepo.save(new Organisation(organisationName));
             return ResponseEntity.ok("Organisation successfully added to system");
         }
     }
