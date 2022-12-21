@@ -70,7 +70,8 @@ public class ActivityController {
         List<Training> trainings = trainingRepository.findTrainingsByTimeslot(
                 request.getStartTime(), request.getEndTime()
         );
-        return ResponseEntity.ok(new ActivityListResponseModel(competitions, trainings));
+        trainings.addAll(competitions);
+        return ResponseEntity.ok(new ActivityListResponseModel(trainings));
     }
 
     /**
@@ -82,7 +83,8 @@ public class ActivityController {
     public ResponseEntity<ActivityListResponseModel> getAllActivitiesByOwner() {
         List<Competition> competitions = competitionRepository.findCompetitionsByOwnerId(authManager.getUserId());
         List<Training> trainings = trainingRepository.findTrainingsByOwnerId(authManager.getUserId());
-        return ResponseEntity.ok(new ActivityListResponseModel(competitions, trainings));
+        trainings.addAll(competitions);
+        return ResponseEntity.ok(new ActivityListResponseModel(trainings));
     }
 
     /**

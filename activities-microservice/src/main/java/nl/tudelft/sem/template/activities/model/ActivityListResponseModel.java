@@ -12,6 +12,5 @@ import nl.tudelft.sem.template.activities.domain.Training;
 @Data
 @AllArgsConstructor
 public class ActivityListResponseModel {
-    private List<Competition> competitions;
-    private List<Training> trainings;
+    private List<Training> activities;
 }
