@@ -36,22 +36,6 @@ public class MatchingClient {
     }
 
     /**
-     * Informs the matching service to delete all matches for this competition.
-     *
-     * @param competitionId the id of the activity to be deleted
-     */
-    public void deleteAllMatchesForCompetition(Long competitionId) {
-        new ResteasyClientBuilder().build()
-                .target(SERVER)
-                .path("/activity/modified")
-                .request(APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer "
-                        + SecurityContextHolder.getContext().getAuthentication().getCredentials())
-                .accept(APPLICATION_JSON)
-                .post(Entity.entity(competitionId, APPLICATION_JSON));
-    }
-
-    /**
      * Calls the matching API endpoint for checking if a certificate is valid.
      *
      * @param certificate the certificate to check
