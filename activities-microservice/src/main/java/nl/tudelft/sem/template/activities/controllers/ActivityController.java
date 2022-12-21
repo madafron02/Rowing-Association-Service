@@ -9,7 +9,6 @@ import nl.tudelft.sem.template.activities.domain.Competition;
 import nl.tudelft.sem.template.activities.domain.TrainingRepository;
 import nl.tudelft.sem.template.activities.domain.MatchingClient;
 import nl.tudelft.sem.template.activities.domain.Timeslot;
-import nl.tudelft.sem.template.activities.domain.CompetitionRepository;
 import nl.tudelft.sem.template.activities.model.ActivityListResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,7 +33,6 @@ public class ActivityController {
 
     private final transient AuthManager authManager;
 
-    private final transient CompetitionRepository competitionRepository;
     private final transient TrainingRepository trainingRepository;
 
     private final transient MatchingClient matchingClient;
@@ -47,12 +45,10 @@ public class ActivityController {
     @Autowired
     public ActivityController(
             AuthManager authManager,
-            CompetitionRepository competitionRepository,
             TrainingRepository trainingRepository,
             MatchingClient matchingClient
     ) {
         this.authManager = authManager;
-        this.competitionRepository = competitionRepository;
         this.trainingRepository = trainingRepository;
         this.matchingClient = matchingClient;
     }
@@ -64,13 +60,9 @@ public class ActivityController {
      */
     @GetMapping("/within-timeslot")
     public ResponseEntity<ActivityListResponseModel> getAllActivitiesWithinTimeslot(@RequestBody Timeslot request) {
-        List<Competition> competitions = competitionRepository.findCompetitionsByTimeslot(
-                request.getStartTime(), request.getEndTime()
-        );
         List<Training> trainings = trainingRepository.findTrainingsByTimeslot(
                 request.getStartTime(), request.getEndTime()
         );
-        trainings.addAll(competitions);
         return ResponseEntity.ok(new ActivityListResponseModel(trainings));
     }
 
@@ -81,9 +73,7 @@ public class ActivityController {
      */
     @GetMapping("/list")
     public ResponseEntity<ActivityListResponseModel> getAllActivitiesByOwner() {
-        List<Competition> competitions = competitionRepository.findCompetitionsByOwnerId(authManager.getUserId());
         List<Training> trainings = trainingRepository.findTrainingsByOwnerId(authManager.getUserId());
-        trainings.addAll(competitions);
         return ResponseEntity.ok(new ActivityListResponseModel(trainings));
     }
 
@@ -94,11 +84,11 @@ public class ActivityController {
      */
     @PostMapping("/publish-competition")
     public ResponseEntity<String> createCompetition(@RequestBody Competition request) {
+        request.setOwnerId(authManager.getUserId());
         if (!request.checkIfValid()) {
             return ResponseEntity.badRequest().build();
         }
-        request.setOwnerId(authManager.getUserId());
-        competitionRepository.save(request);
+        trainingRepository.save(request);
         return ResponseEntity.ok("Competition created successfully!");
     }
 
@@ -109,35 +99,12 @@ public class ActivityController {
      */
     @PostMapping("/publish-training")
     public ResponseEntity<String> createTraining(@RequestBody Training request) {
+        request.setOwnerId(authManager.getUserId());
         if (!request.checkIfValid()) {
             return ResponseEntity.badRequest().build();
         }
-        request.setOwnerId(authManager.getUserId());
         trainingRepository.save(request);
         return ResponseEntity.ok("Training created successfully!");
-    }
-
-    /**
-     * Deletes a Competition by its given id.
-     *
-     * @param competitionId the id of the Competition
-     * @return a response entity showing if the Competition was deleted
-     */
-    @DeleteMapping("/delete-competition/{competitionId}")
-    public ResponseEntity<String> deleteCompetition(@PathVariable Long competitionId) {
-        if (competitionId == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        Optional<Competition> toDelete = competitionRepository.findById(competitionId);
-        if (toDelete.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-        if (!toDelete.get().getOwnerId().equals(authManager.getUserId())) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-        competitionRepository.delete(toDelete.get());
-        matchingClient.deleteAllMatchesForCompetition(competitionId);
-        return ResponseEntity.ok("Competition with the id " + competitionId + " has been deleted successfully!");
     }
 
     /**
@@ -151,7 +118,7 @@ public class ActivityController {
         if (trainingId == null) {
             return ResponseEntity.badRequest().build();
         }
-        Optional<Competition> toDelete = competitionRepository.findById(trainingId);
+        Optional<Training> toDelete = trainingRepository.findById(trainingId);
         if (toDelete.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
