@@ -104,6 +104,7 @@ public class MatchingService {
      * in order to match a user.
      *
      * @param activities the activities given by the Activity microservice
+     * @param timeslot   the availability of the user
      * @param user       the user requesting activities
      * @param position   teh position they can fill in
      * @return the positions the user is matched with
