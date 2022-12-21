@@ -5,7 +5,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.NonNull;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -21,23 +20,18 @@ import javax.persistence.Embeddable;
 @EqualsAndHashCode
 public class Positions {
 
-    @Column(name = "coxCount")
-    @NonNull
-    private Integer coxCount;
+    @Column(name = "cox", nullable = false)
+    private Integer cox;
 
-    @Column(name = "coachCount")
-    @NonNull
-    private Integer coachCount;
+    @Column(name = "coach", nullable = false)
+    private Integer coach;
 
-    @Column(name = "portSideRowerCount")
-    @NonNull
-    private Integer portSideRowerCount;
+    @Column(name = "port", nullable = false)
+    private Integer port;
 
-    @Column(name = "starboardSideRowerCount")
-    @NonNull
-    private Integer starboardSideRowerCount;
+    @Column(name = "starboard", nullable = false)
+    private Integer starboard;
 
-    @Column(name = "scullingRowerCount")
-    @NonNull
-    private Integer scullingRowerCount;
+    @Column(name = "sculling", nullable = false)
+    private Integer sculling;
 }

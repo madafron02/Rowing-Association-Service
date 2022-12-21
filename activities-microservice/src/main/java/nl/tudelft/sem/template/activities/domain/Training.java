@@ -52,19 +52,19 @@ public class Training {
      * Creates a new Training.
      *
      * @param ownerId the email of the user that created the activity
-     * @param coxCount number of needed coxes
-     * @param coachCount number of needed coaches
-     * @param portSideRowerCount number of needed port side rowers
-     * @param starboardSideRowerCount number of needed starboard side
-     * @param scullingRowerCount number of needed sculling rowers
+     * @param cox number of needed coxes
+     * @param coach number of needed coaches
+     * @param port number of needed port side rowers
+     * @param starboard number of needed starboard side
+     * @param sculling number of needed sculling rowers
      * @param timeslot the timeslot of a Training
      * @param certificate the boat type
      */
-    public Training(String ownerId, Integer coxCount, Integer coachCount, Integer portSideRowerCount,
-                    Integer starboardSideRowerCount, Integer scullingRowerCount, Timeslot timeslot, String certificate) {
+    public Training(String ownerId, Integer cox, Integer coach, Integer port,
+                    Integer starboard, Integer sculling, Timeslot timeslot, String certificate) {
         this.ownerId = ownerId;
-        this.positions = new Positions(coxCount, coachCount, portSideRowerCount, starboardSideRowerCount,
-                scullingRowerCount);
+        this.positions = new Positions(cox, coach, port, starboard,
+                sculling);
         this.timeslot = timeslot;
         this.certificate = certificate;
     }
@@ -75,9 +75,9 @@ public class Training {
      * @return true if this is valid and false otherwise
      */
     public boolean checkIfValid() {
-        boolean requiresRowers = positions.getCoxCount() != null || positions.getCoachCount() != null
-                || positions.getPortSideRowerCount() != null || positions.getStarboardSideRowerCount() != null
-                || positions.getScullingRowerCount() != null;
+        boolean requiresRowers = positions.getCox() != null || positions.getCoach() != null
+                || positions.getPort() != null || positions.getStarboard() != null
+                || positions.getSculling() != null;
         boolean nonNull = ownerId != null && requiresRowers;
         if (!nonNull) {
             return false;
