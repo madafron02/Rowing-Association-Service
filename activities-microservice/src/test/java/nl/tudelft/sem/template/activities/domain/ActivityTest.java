@@ -33,14 +33,6 @@ class ActivityTest {
     }
 
     @Test
-    void checkIfValidOwnerIdNullTest() {
-        Activity a = new Activity(null, 1, null, 8, 10, null,
-                LocalDateTime.of(2042, 12, 12, 20, 15),
-                LocalDateTime.MAX, "8+", false, null);
-        assertThat(a.checkIfValid()).isFalse();
-    }
-
-    @Test
     void checkIfValidInvalidCertificateTest() {
         Activity a = new Activity("owner@gmail.com", null, null, null, null, null,
                 LocalDateTime.of(2042, 12, 12, 20, 15),

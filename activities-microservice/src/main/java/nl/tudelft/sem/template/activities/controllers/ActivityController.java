@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -134,6 +135,27 @@ public class ActivityController {
         }
         activityRepository.save(activity);
         matchingClient.deleteAllMatches(activity.getId());
+        return ResponseEntity.ok(activity);
+    }
+
+    /**
+     * Reduce the number of remaining spots for a given position of an activity.
+     *
+     * @param activityId the id of an activity
+     * @param position the position which should have the reduced count
+     * @return a response entity containing the activity
+     */
+    @PutMapping("/update/{activityId}")
+    public ResponseEntity<Activity> reduceByOne(@PathVariable Long activityId, @RequestBody String position) {
+        Optional<Activity> toDelete = activityRepository.findById(activityId);
+        if (toDelete.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Activity activity = toDelete.get();
+        if (!activity.getPositions().reduceByOne(position)) {
+            return ResponseEntity.badRequest().build();
+        }
+        activityRepository.save(activity);
         return ResponseEntity.ok(activity);
     }
 }

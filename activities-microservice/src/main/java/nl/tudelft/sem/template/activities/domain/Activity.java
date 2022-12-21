@@ -90,8 +90,7 @@ public class Activity {
         boolean requiresRowers = positions.getCoxCount() != null || positions.getCoachCount() != null
                 || positions.getPortSideRowerCount() != null || positions.getStarboardSideRowerCount() != null
                 || positions.getScullingRowerCount() != null;
-        boolean nonNull = ownerId != null && requiresRowers;
-        if (!nonNull) {
+        if (!requiresRowers) {
             return false;
         }
         if (!CERTIFICATE_TYPES.contains(certificate)) {
