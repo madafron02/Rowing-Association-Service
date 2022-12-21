@@ -10,7 +10,7 @@ class TypeOfActivityTest {
     @Test
     void values() {
         assertThat(TypeOfActivity.values())
-                .isEqualTo(new TypeOfActivity[]{TypeOfActivity.TRAINING, TypeOfActivity.COMPETITION});
+                .isEqualTo(new TypeOfActivity[]{TypeOfActivity.TRAINING, TypeOfActivity.COMPETITION, TypeOfActivity.OTHER});
     }
 
     @Test
