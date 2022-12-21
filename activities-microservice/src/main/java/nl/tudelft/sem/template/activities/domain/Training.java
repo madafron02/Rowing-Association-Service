@@ -8,6 +8,8 @@ import javax.persistence.Embedded;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
 import lombok.EqualsAndHashCode;
@@ -20,6 +22,7 @@ import lombok.Setter;
  */
 @Entity
 @Table(name = "trainings")
+@Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor
 @EqualsAndHashCode
 @Getter

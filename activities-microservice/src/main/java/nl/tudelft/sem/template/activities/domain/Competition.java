@@ -24,13 +24,13 @@ public class Competition extends Training {
 
     public static final List<String> GENDER_TYPES = List.of("Male", "Female", "Other");
 
-    @Column(name = "gender")
+    @Column(name = "gender", nullable = false)
     private String gender;
 
-    @Column(name = "competitiveness")
+    @Column(name = "competitiveness", nullable = false)
     private boolean competitiveness;
 
-    @Column(name = "organisation")
+    @Column(name = "organisation", nullable = false)
     private String organisation;
 
     /**
