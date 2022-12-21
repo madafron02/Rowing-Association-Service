@@ -18,10 +18,10 @@ class TrainingRepositoryTest {
     @BeforeEach
     void setUp() {
         trainingRepository.deleteAll();
-        Training a1 = new Training("owner1@gmail.com", 1, null, null, null, null,
+        Training a1 = new Training("owner1@gmail.com", 1, 0, 0, 0, 0,
                 LocalDateTime.of(2042, 12, 12, 19, 15),
                 LocalDateTime.of(2042, 12, 12, 22, 15), "4+");
-        Training a2 = new Training("owner2@gmail.com", null, 2, 5, 3, 1,
+        Training a2 = new Training("owner2@gmail.com", 0, 2, 5, 3, 1,
                 LocalDateTime.of(2042, 12, 12, 20, 15),
                 LocalDateTime.of(2042, 12, 12, 23, 15), "C4");
         trainingRepository.save(a1);

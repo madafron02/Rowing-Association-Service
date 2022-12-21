@@ -22,7 +22,7 @@ import lombok.Setter;
 @Setter
 public class Competition extends Training {
 
-    public static final List<String> GENDER_TYPES = List.of("Male", "Female");
+    public static final List<String> GENDER_TYPES = List.of("Male", "Female", "Other");
 
     @Column(name = "gender")
     private String gender;

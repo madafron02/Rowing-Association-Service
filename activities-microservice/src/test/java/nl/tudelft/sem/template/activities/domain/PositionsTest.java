@@ -11,7 +11,7 @@ class PositionsTest {
 
     @BeforeEach
     void setUp() {
-        positions = new Positions(null, 8, null, 3, 0);
+        positions = new Positions(0, 8, 0, 3, 0);
     }
 
     @Test
@@ -27,7 +27,7 @@ class PositionsTest {
 
     @Test
     void getCoxCountTest() {
-        assertThat(positions.getCoxCount()).isEqualTo(null);
+        assertThat(positions.getCoxCount()).isEqualTo(0);
     }
 
     @Test
@@ -37,7 +37,7 @@ class PositionsTest {
 
     @Test
     void getPortSideRowerCountTest() {
-        assertThat(positions.getPortSideRowerCount()).isEqualTo(null);
+        assertThat(positions.getPortSideRowerCount()).isEqualTo(0);
     }
 
     @Test
@@ -82,25 +82,25 @@ class PositionsTest {
 
     @Test
     void equalsTrue() {
-        Positions other = new Positions(null, 8, null, 3, 0);
+        Positions other = new Positions(0, 8, 0, 3, 0);
         assertThat(positions.equals(other)).isTrue();
     }
 
     @Test
     void equalsFalse() {
-        Positions other = new Positions(null, 9, null, 3, 0);
+        Positions other = new Positions(0, 9, 0, 3, 0);
         assertThat(positions.equals(other)).isFalse();
     }
 
     @Test
     void hashCodeEquals() {
-        Positions other = new Positions(null, 8, null, 3, 0);
+        Positions other = new Positions(0, 8, 0, 3, 0);
         assertThat(positions.hashCode()).isEqualTo(other.hashCode());
     }
 
     @Test
     void hashCodeNotEquals() {
-        Positions other = new Positions(null, 9, null, 3, 0);
+        Positions other = new Positions(0, 9, 0, 3, 0);
         assertThat(positions.hashCode()).isNotEqualTo(other.hashCode());
     }
 }
