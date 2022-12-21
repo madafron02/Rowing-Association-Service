@@ -18,12 +18,12 @@ class TrainingRepositoryTest {
     @BeforeEach
     void setUp() {
         trainingRepository.deleteAll();
-        Training a1 = new Training("owner1@gmail.com", 1, 0, 0, 0, 0,
-                LocalDateTime.of(2042, 12, 12, 19, 15),
-                LocalDateTime.of(2042, 12, 12, 22, 15), "4+");
-        Training a2 = new Training("owner2@gmail.com", 0, 2, 5, 3, 1,
-                LocalDateTime.of(2042, 12, 12, 20, 15),
-                LocalDateTime.of(2042, 12, 12, 23, 15), "C4");
+        Timeslot timeslot1 = new Timeslot(LocalDateTime.of(2042, 12, 12, 19, 15),
+                LocalDateTime.of(2042, 12, 12, 22, 15));
+        Timeslot timeslot2 = new Timeslot(LocalDateTime.of(2042, 12, 12, 20, 15),
+                LocalDateTime.of(2042, 12, 12, 23, 15));
+        Training a1 = new Training("owner1@gmail.com", 1, 0, 0, 0, 0, timeslot1, "4+");
+        Training a2 = new Training("owner2@gmail.com", 0, 2, 5, 3, 1, timeslot2, "C4");
         trainingRepository.save(a1);
         trainingRepository.save(a2);
     }

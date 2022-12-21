@@ -57,17 +57,15 @@ public class Training {
      * @param portSideRowerCount number of needed port side rowers
      * @param starboardSideRowerCount number of needed starboard side
      * @param scullingRowerCount number of needed sculling rowers
-     * @param startTime starting time of the activity
-     * @param endTime ending time of the activity
+     * @param timeslot the timeslot of a Training
      * @param certificate the boat type
      */
     public Training(String ownerId, Integer coxCount, Integer coachCount, Integer portSideRowerCount,
-                    Integer starboardSideRowerCount, Integer scullingRowerCount, LocalDateTime startTime,
-                    LocalDateTime endTime, String certificate) {
+                    Integer starboardSideRowerCount, Integer scullingRowerCount, Timeslot timeslot, String certificate) {
         this.ownerId = ownerId;
         this.positions = new Positions(coxCount, coachCount, portSideRowerCount, starboardSideRowerCount,
                 scullingRowerCount);
-        this.timeslot = new Timeslot(startTime, endTime);
+        this.timeslot = timeslot;
         this.certificate = certificate;
     }
 

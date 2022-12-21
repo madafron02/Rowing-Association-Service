@@ -42,19 +42,17 @@ public class Competition extends Training {
      * @param portSideRowerCount number of needed port side rowers
      * @param starboardSideRowerCount number of needed starboard side
      * @param scullingRowerCount number of needed sculling rowers
-     * @param startTime starting time of the activity
-     * @param endTime ending time of the activity
+     * @param timeslot the timeslot of a training
      * @param certificate the boat type
      * @param gender the gender of the needed participants, null if not needed
      * @param competitiveness true for competitive, false for amateur
      * @param organisation the organisation of the team
      */
     public Competition(String ownerId, Integer coxCount, Integer coachCount, Integer portSideRowerCount,
-                       Integer starboardSideRowerCount, Integer scullingRowerCount, LocalDateTime startTime,
-                       LocalDateTime endTime, String certificate, String gender, boolean competitiveness,
-                       String organisation) {
+                       Integer starboardSideRowerCount, Integer scullingRowerCount, Timeslot timeslot, String certificate,
+                       String gender, boolean competitiveness, String organisation) {
         super(ownerId, coxCount, coachCount, portSideRowerCount, starboardSideRowerCount,
-                scullingRowerCount, startTime, endTime, certificate);
+                scullingRowerCount, timeslot, certificate);
         this.gender = gender;
         this.competitiveness = competitiveness;
         this.organisation = organisation;
