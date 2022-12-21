@@ -81,6 +81,62 @@ class ActivityTest {
     }
 
     @Test
+    void updateFieldsEmptyActivityNullFieldsTest() {
+        Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
+                LocalDateTime.of(2022, 12, 12, 20, 15),
+                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null);
+        Activity other = new Activity();
+        a.setId(1L);
+        other.setId(1L);
+        a.updateFields(other);
+        assertThat(a.getPositions().equals(new Positions(1, null, 8, 10, null))).isTrue();
+        assertThat(a.getCertificate().equals("8+"));
+    }
+
+    @Test
+    void updateFieldsEmptyActivityOneFieldTest() {
+        Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
+                LocalDateTime.of(2022, 12, 12, 20, 15),
+                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null);
+        Activity other = new Activity();
+        other.setCertificate("4+");
+        a.setId(1L);
+        other.setId(1L);
+        a.updateFields(other);
+        assertThat(a.getPositions().equals(new Positions(1, null, 8, 10, null))).isTrue();
+        assertThat(a.getCertificate().equals("4+"));
+    }
+
+    @Test
+    void updateFieldsEmptyActivityOneObjectTest() {
+        Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
+                LocalDateTime.of(2022, 12, 12, 20, 15),
+                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null);
+        Activity other = new Activity();
+        a.setPositions(new Positions(0, null, 7, 11, null));
+        a.setId(1L);
+        other.setId(1L);
+        a.updateFields(other);
+        assertThat(a.getPositions().equals(new Positions(0, null, 7, 11, null))).isTrue();
+        assertThat(a.getCertificate().equals("8+"));
+    }
+
+    @Test
+    void updateFieldsEmptyActivityAllFieldsTest() {
+        Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
+                LocalDateTime.of(2022, 12, 12, 20, 15),
+                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null);
+        Activity other = new Activity("owner@gmail.com", 0, null, 7, 11, null,
+                LocalDateTime.of(2022, 12, 12, 20, 15),
+                LocalDateTime.of(2022, 12, 12, 20, 20), "4+", false, null);
+        a.setId(1L);
+        other.setId(1L);
+        a.updateFields(other);
+        assertThat(a.getPositions().equals(new Positions(0, null, 7, 11, null))).isTrue();
+        assertThat(a.getCertificate().equals("4+"));
+    }
+
+    @Test
     void checkNoArgsConstructorTest() {
         Activity a = new Activity();
         assertThat(a).isNotNull();
