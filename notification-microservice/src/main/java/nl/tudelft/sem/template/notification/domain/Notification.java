@@ -1,24 +1,16 @@
 package nl.tudelft.sem.template.notification.domain;
 
+import lombok.AllArgsConstructor;
+
 import java.util.Objects;
 
 /**
  * Notification object containing the email address of the receiver and its body (message).
  */
+@AllArgsConstructor
 public class Notification {
     private transient String receiverEmail;
     private transient String message;
-
-    /**
-     * Constructor of a notification.
-     *
-     * @param receiverEmail email of receiver
-     * @param message email body
-     */
-    public Notification(String receiverEmail, String message) {
-        this.receiverEmail = receiverEmail;
-        this.message = message;
-    }
 
     /**
      * Gets receiver email.
