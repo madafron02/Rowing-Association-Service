@@ -1,8 +1,5 @@
 package nl.tudelft.sem.template.activities.controllers;
 
-import java.util.List;
-import java.util.Optional;
-
 import nl.tudelft.sem.template.activities.authentication.AuthManager;
 import nl.tudelft.sem.template.activities.domain.Activity;
 import nl.tudelft.sem.template.activities.domain.ActivityRepository;
@@ -15,12 +12,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Activity querying controller.
@@ -55,11 +55,26 @@ public class ActivityController {
     }
 
     /**
+     * Returns the timeslot of an Activity given its id.
+     *
+     * @param id the id of an Activity
+     * @return the Timeslot of the Activity
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<Timeslot> getActivityTimeslotById(@PathVariable("id") long id) {
+        Optional<Activity> activity = activityRepository.findById(id);
+        if (activity.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(activity.get().getTimeslot());
+    }
+
+    /**
      * Gets all activities within a given timeslot.
      *
      * @return response entity containing every activity in the timeslot
      */
-    @GetMapping("/within-timeslot")
+    @PostMapping("/within-timeslot")
     public ResponseEntity<ActivityListResponseModel> getAllActivitiesWithinTimeslot(@RequestBody Timeslot request) {
         List<Activity> activities = activityRepository.findActivitiesByTimeslot(
                 request.getStartTime(), request.getEndTime()

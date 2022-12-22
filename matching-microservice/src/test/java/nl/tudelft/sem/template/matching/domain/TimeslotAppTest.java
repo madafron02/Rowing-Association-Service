@@ -23,12 +23,12 @@ class TimeslotAppTest {
 
     @Test
     void testGetStart() {
-        assertThat(timeslot.getStart().toString()).isEqualTo("2022-12-08T10:15");
+        assertThat(timeslot.getStartTime().toString()).isEqualTo("2022-12-08T10:15");
     }
 
     @Test
     void testGetEnd() {
-        assertThat(timeslot.getEnd().toString()).isEqualTo("2022-12-08T11:00");
+        assertThat(timeslot.getEndTime().toString()).isEqualTo("2022-12-08T11:00");
     }
 
     @Test
