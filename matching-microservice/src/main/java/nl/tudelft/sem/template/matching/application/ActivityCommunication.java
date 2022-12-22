@@ -67,7 +67,7 @@ public class ActivityCommunication {
     public void updateActivity(long activityId, String position) {
         new ResteasyClientBuilder().build()
                 .target(SERVER)
-                .path("/activity/update/" + activityId)
+                .path("/activities/update/" + activityId)
                 .request(APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer "
                         + SecurityContextHolder.getContext().getAuthentication().getCredentials())

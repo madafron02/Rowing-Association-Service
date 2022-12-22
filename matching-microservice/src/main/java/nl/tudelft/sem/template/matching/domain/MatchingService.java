@@ -218,7 +218,7 @@ public class MatchingService {
             newMatch.setStatus(Status.ACCEPTED);
             activityCommunication.updateActivity(newMatch.getActivityId(), newMatch.getPosition());
         } else {
-            newMatch.setStatus(Status.DECLINE);
+            newMatch.setStatus(Status.DECLINED);
         }
         matchingRepo.save(newMatch);
         notificationCommunication.sendNotificationToParticipant(
@@ -270,7 +270,9 @@ public class MatchingService {
                 .forEach(match ->
                         notificationCommunication
                                 .activityModifiedNotification(new NotificationActivityModified(match.getParticipantId(),
-                                        activityId)));
-        matchingRepo.deleteMatchesByActivityId(activityId);
+                                        activityId, activityCommunication.getActivityTimeslotById(activityId))));
+        matchesModifiedByActivityChange
+                .stream()
+                .forEach(match -> matchingRepo.deleteById(match.getMatchId()));
     }
 }

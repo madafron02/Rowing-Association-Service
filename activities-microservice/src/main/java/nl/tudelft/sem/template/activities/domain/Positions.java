@@ -42,9 +42,7 @@ public class Positions {
      * @return true if it was reduced and false otherwise
      */
     public boolean reduceByOne(String positionName) {
-        String[] parts = positionName.split("\"");
-        String name = parts[3];
-        switch (name) {
+        switch (positionName) {
             case "cox":
                 if (this.getCox() > 0) {
                     this.setCox(this.getCox() - 1);
