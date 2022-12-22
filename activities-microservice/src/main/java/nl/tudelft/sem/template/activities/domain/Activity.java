@@ -90,8 +90,7 @@ public class Activity {
         boolean requiresRowers = positions.getCoxCount() != null || positions.getCoachCount() != null
                 || positions.getPortSideRowerCount() != null || positions.getStarboardSideRowerCount() != null
                 || positions.getScullingRowerCount() != null;
-        boolean nonNull = ownerId != null && requiresRowers;
-        if (!nonNull) {
+        if (!requiresRowers) {
             return false;
         }
         if (!CERTIFICATE_TYPES.contains(certificate)) {
@@ -104,5 +103,28 @@ public class Activity {
         boolean timeslotExists = timeslot != null && timeslot.getStartTime() != null && timeslot.getEndTime() != null;
         return timeslotExists && timeslot.getStartTime().isBefore(timeslot.getEndTime())
                 && timeslot.getEndTime().isAfter(now);
+    }
+
+    /**
+     * Updates the values of this Activity with the values from another Activity.
+     *
+     * @param other the Activity that contains the values to update
+     */
+    public void updateFields(Activity other) {
+        if (other.getPositions() != null) {
+            this.setPositions(other.getPositions());
+        }
+        if (other.getTimeslot() != null) {
+            this.setTimeslot(other.getTimeslot());
+        }
+        if (other.getCertificate() != null) {
+            this.setCertificate(other.getCertificate());
+        }
+        if (other.getCompetition() != null) {
+            this.setCompetition(other.getCompetition());
+        }
+        if (other.getGender() != null) {
+            this.setGender(other.getGender());
+        }
     }
 }
