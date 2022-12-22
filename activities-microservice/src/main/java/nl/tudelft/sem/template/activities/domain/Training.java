@@ -19,6 +19,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import nl.tudelft.sem.template.activities.model.UpdateRequestDataModel;
 
 /**
  * A DDD entity representing a training in our domain.
@@ -79,7 +80,7 @@ public class Training {
      *
      * @param other the Training that contains the values to update
      */
-    public void updateFields(Training other) {
+    public void updateFields(UpdateRequestDataModel other) {
         if (other.getPositions() != null) {
             this.setPositions(other.getPositions());
         }

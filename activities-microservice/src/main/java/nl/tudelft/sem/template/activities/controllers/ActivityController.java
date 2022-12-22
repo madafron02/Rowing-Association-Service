@@ -8,6 +8,7 @@ import nl.tudelft.sem.template.activities.domain.MatchingClient;
 import nl.tudelft.sem.template.activities.domain.Timeslot;
 import nl.tudelft.sem.template.activities.model.ActivityListResponseModel;
 import nl.tudelft.sem.template.activities.model.PositionNameRequestModel;
+import nl.tudelft.sem.template.activities.model.UpdateRequestDataModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -155,7 +156,11 @@ public class ActivityController {
      * @return the Training that was updated
      */
     @PatchMapping("/edit")
-    public ResponseEntity<Training> updateTraining(@RequestBody Training request) {
+    public ResponseEntity<Training> updateTraining(@RequestBody UpdateRequestDataModel request) {
+        if (request.getId() == null) {
+            return new ResponseEntity("Update failed: the id has an incorrect value.",
+                    HttpStatus.BAD_REQUEST);
+        }
         Optional<Training> toUpdate = trainingRepository.findById(request.getId());
         if (toUpdate.isEmpty()) {
             return new ResponseEntity("Activity with the id: " + request.getId() + " was not found.",

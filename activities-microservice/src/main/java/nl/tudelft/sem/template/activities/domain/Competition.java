@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import nl.tudelft.sem.template.activities.model.UpdateRequestDataModel;
 
 /**
  * A DDD entity representing a competition in our domain.
@@ -62,7 +63,7 @@ public class Competition extends Training {
      *
      * @param other the Activity that contains the values to update
      */
-    public void updateFields(Competition other) {
+    public void updateFields(UpdateRequestDataModel other) {
         super.updateFields(other);
         if (other.getGender() != null) {
             this.setGender(other.getGender());
