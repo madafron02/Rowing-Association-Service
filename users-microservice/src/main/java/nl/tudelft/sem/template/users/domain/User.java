@@ -13,6 +13,7 @@ import java.util.Objects;
 @NoArgsConstructor
 public class User {
 
+
     /**
      * Entity that represents the users in the system.
      */
@@ -30,16 +31,16 @@ public class User {
      *
      * @param email the email of the user
      * @param gender the gender of the user
-     * @param competitive TRUE if user is competitive, FALSE if user is not competitive
+     * @param competitiveness TRUE if user is competitive, FALSE if user is not competitive
      * @param certificate the highest priority certificate of the user
-     * @param organization the organization of the user
+     * @param organisation the organization of the user
      */
-    public User(String email, String gender, boolean competitive, String certificate, String organization) {
+    public User(String email, String gender, boolean competitiveness, String certificate, String organisation) {
         this.email = email;
         this.gender = gender;
         this.competitive = competitive;
         this.certificate = certificate;
-        this.organisation = organization;
+        this.organisation = organisation;
     }
 
     /**
