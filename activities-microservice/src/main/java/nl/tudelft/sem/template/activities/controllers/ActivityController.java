@@ -7,6 +7,7 @@ import nl.tudelft.sem.template.activities.domain.TrainingRepository;
 import nl.tudelft.sem.template.activities.domain.MatchingClient;
 import nl.tudelft.sem.template.activities.domain.Timeslot;
 import nl.tudelft.sem.template.activities.model.ActivityListResponseModel;
+import nl.tudelft.sem.template.activities.model.PositionNameRequestModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -179,13 +180,14 @@ public class ActivityController {
      * @return a response entity containing the activity
      */
     @PutMapping("/update/{trainingId}")
-    public ResponseEntity<Training> reduceByOne(@PathVariable Long trainingId, @RequestBody String position) {
-        Optional<Training> toDelete = trainingRepository.findById(trainingId);
-        if (toDelete.isEmpty()) {
+    public ResponseEntity<Training> reduceByOne(@PathVariable Long trainingId,
+                                                @RequestBody PositionNameRequestModel position) {
+        Optional<Training> toUpdate = trainingRepository.findById(trainingId);
+        if (toUpdate.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        Training training = toDelete.get();
-        if (!training.getPositions().reduceByOne(position)) {
+        Training training = toUpdate.get();
+        if (!training.getPositions().reduceByOne(position.getPosition())) {
             return ResponseEntity.badRequest().build();
         }
         trainingRepository.save(training);
