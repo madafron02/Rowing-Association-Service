@@ -13,6 +13,7 @@ import java.util.Objects;
 @NoArgsConstructor
 public class User {
 
+
     /**
      * Entity that represents the users in the system.
      */
@@ -21,7 +22,7 @@ public class User {
     @Column(name = "id", nullable = false, unique = true)
     private String email;
     private String gender;
-    private boolean competitiveness;
+    private boolean competitive;
     private String certificate;
     private String organisation;
 
@@ -32,14 +33,14 @@ public class User {
      * @param gender the gender of the user
      * @param competitive TRUE if user is competitive, FALSE if user is not competitive
      * @param certificate the highest priority certificate of the user
-     * @param organization the organization of the user
+     * @param organisation the organization of the user
      */
-    public User(String email, String gender, boolean competitive, String certificate, String organization) {
+    public User(String email, String gender, boolean competitive, String certificate, String organisation) {
         this.email = email;
         this.gender = gender;
-        this.competitiveness = competitive;
+        this.competitive = competitive;
         this.certificate = certificate;
-        this.organisation = organization;
+        this.organisation = organisation;
     }
 
     /**
@@ -75,7 +76,7 @@ public class User {
      * @return TRUE if the user is competitive, FALSE if the user is not competitive
      */
     public boolean isCompetitive() {
-        return competitiveness;
+        return competitive;
     }
 
     /**
@@ -111,7 +112,7 @@ public class User {
      * @param competitiveness the competitiveness of the user
      */
     public void setCompetitiveness(boolean competitiveness) {
-        this.competitiveness = competitiveness;
+        this.competitive = competitiveness;
     }
 
     /**

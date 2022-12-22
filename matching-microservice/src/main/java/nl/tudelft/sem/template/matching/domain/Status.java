@@ -4,5 +4,5 @@ public enum Status {
     MATCHED,
     PENDING,
     ACCEPTED,
-    DECLINE
+    DECLINED
 }

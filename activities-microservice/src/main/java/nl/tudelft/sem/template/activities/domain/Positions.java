@@ -64,7 +64,7 @@ public class Positions {
                 }
                 break;
             case "starboard":
-                if (this.getPort() > 0) {
+                if (this.getStarboard() > 0) {
                     this.setStarboard(this.getStarboard() - 1);
                     return true;
                 }
