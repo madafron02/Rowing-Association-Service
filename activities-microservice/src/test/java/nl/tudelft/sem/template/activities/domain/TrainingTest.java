@@ -2,56 +2,62 @@ package nl.tudelft.sem.template.activities.domain;
 
 import java.time.LocalDateTime;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class TrainingTest {
 
-    private transient String testEmail = "owner@gmail.com";
+    private transient Training training;
 
-    private transient Timeslot timeslot = new Timeslot(LocalDateTime.of(2042, 12, 12, 20, 15), LocalDateTime.MAX);
+    private final transient String testEmail = "owner@gmail.com";
 
-    @Test
-    void defaultConstructorTest() {
-        Training a = new Training(testEmail, 1, 0, 8, 10,
+    private final transient Timeslot timeslot = new Timeslot(LocalDateTime.of(2042, 12, 12, 20, 15), LocalDateTime.MAX);
+
+    @BeforeEach
+    void setUp() {
+        training = new Training(testEmail, 1, 0, 8, 10,
                 0, timeslot, "8+");
-        assertThat(a).isNotNull();
     }
 
     @Test
-    void checkIfValidTrueTest() {
-        Training a = new Training(testEmail, 1, 0, 8, 10, 0, timeslot, "8+");
-        assertThat(a.checkIfValid()).isTrue();
+    void defaultConstructor() {
+        assertThat(training).isNotNull();
     }
 
     @Test
-    void checkIfValidOwnerIdNullTest() {
+    void checkIfValidTrue() {
+        assertThat(training.checkIfValid()).isTrue();
+    }
+
+    @Test
+    void checkIfValidOwnerIdNull() {
         Training a = new Training(null, 1, 0, 8, 10, 0, timeslot, "8+");
         assertThat(a.checkIfValid()).isFalse();
     }
 
     @Test
-    void checkIfValidInvalidCertificateTest() {
+    void checkIfValidInvalidCertificate() {
         Training a = new Training(testEmail, 0, 0, 0, 0, 0, timeslot, "invalid");
         assertThat(a.checkIfValid()).isFalse();
     }
 
     @Test
-    void checkIfValidNullTimeslotTest() {
+    void checkIfValidNullTimeslot() {
         Training a = new Training(testEmail, 1, 0, 8, 10, 0, null, "8+");
         assertThat(a.checkIfValid()).isFalse();
     }
 
     @Test
-    void checkIfValidInvalidTimeslotTest() {
+    void checkIfValidInvalidTimeslot() {
         Timeslot t = new Timeslot(LocalDateTime.of(2042, 12, 12, 20, 15), null);
         Training a = new Training(testEmail, 1, 0, 8, 10, 0, t, "8+");
         assertThat(a.checkIfValid()).isFalse();
     }
 
     @Test
-    void checkIfValidIncorrectTimeslotTest() {
+    void checkIfValidIncorrectTimeslot() {
         Timeslot t = new Timeslot(LocalDateTime.of(2042, 12, 12, 20, 15),
                 LocalDateTime.of(2042, 12, 12, 20, 14));
         Training a = new Training(testEmail, 1, 0, 8, 10, 0, t, "8+");
@@ -59,7 +65,7 @@ class TrainingTest {
     }
 
     @Test
-    void checkIfValidExpiredActivityTest() {
+    void checkIfValidExpiredActivity() {
         Timeslot t = new Timeslot(LocalDateTime.of(2022, 12, 12, 20, 15),
                 LocalDateTime.of(2022, 12, 12, 20, 20));
         Training a = new Training(testEmail, 1, 0, 8, 10, 0, t, "8+");
@@ -67,35 +73,107 @@ class TrainingTest {
     }
 
     @Test
-    void checkNoArgsConstructorTest() {
+    void checkNoArgsConstructor() {
         Training a = new Training();
         assertThat(a).isNotNull();
     }
 
     @Test
-    void equalsTrueTest() {
-        Training a = new Training(testEmail, 1, 0, 8, 10, 0, timeslot, "8+");
-        assertThat(a.equals(a)).isTrue();
+    void equalsTrueSame() {
+        assertThat(training.equals(training)).isTrue();
     }
 
     @Test
-    void equalsFalseTest() {
+    void equalsTrue() {
         Training a = new Training(testEmail, 1, 0, 8, 10, 0, timeslot, "8+");
+        assertThat(training.equals(a)).isTrue();
+    }
+
+    @Test
+    void equalsFalseTestDifferentEmail() {
         Training b = new Training("different@gmail.com", 1, 0, 8, 10, 0, timeslot, "8+");
-        assertThat(a.equals(b)).isFalse();
+        assertThat(training.equals(b)).isFalse();
     }
 
     @Test
     void hashCodeTestEqual() {
-        Training a = new Training(testEmail, 1, 0, 8, 10, 0, timeslot, "8+");
         Training b = new Training(testEmail, 1, 0, 8, 10, 0, timeslot, "8+");
-        assertThat(a.hashCode()).isEqualTo(b.hashCode());
+        assertThat(training.hashCode()).isEqualTo(b.hashCode());
     }
 
     @Test
-    void hashCodeTestNotEqual() {
-        Training a = new Training(testEmail, 1, 0, 8, 10, 0, timeslot, "8+");
+    void hashCodeTestNotEqualDifferentEmail() {
         Training b = new Training("different@gmail.com", 1, 0, 8, 10, 0, timeslot, "8+");
-        assertThat(a.hashCode()).isNotEqualTo(b.hashCode());
+        assertThat(training.hashCode()).isNotEqualTo(b.hashCode());
+    }
+
+
+    @Test
+    void canEqualTrue() {
+        Training a = new Training();
+        assertThat(training.canEqual(a)).isTrue();
+    }
+
+    @Test
+    void canEqualFalse() {
+        String a = "";
+        assertThat(training.canEqual(a)).isFalse();
+    }
+
+    @Test
+    void getId() {
+        assertThat(training.getId()).isNotNull();
+    }
+
+    @Test
+    void getOwnerId() {
+        assertThat(training.getOwnerId()).isEqualTo(testEmail);
+    }
+
+    @Test
+    void getPositions() {
+        assertThat(training.getPositions()).isNotNull();
+    }
+
+    @Test
+    void getTimeslot() {
+        assertThat(training.getTimeslot()).isNotNull();
+    }
+
+    @Test
+    void getCertificate() {
+        assertThat(training.getCertificate()).isEqualTo("8+");
+    }
+
+    @Test
+    void setId() {
+        training.setId(-1L);
+        assertThat(training.getId()).isEqualTo(-1L);
+    }
+
+    @Test
+    void setOwnerId() {
+        training.setOwnerId("other");
+        assertThat(training.getOwnerId()).isEqualTo("other");
+    }
+
+    @Test
+    void setPositions() {
+        Positions positions = new Positions(10, 8, 6, 5, 0);
+        training.setPositions(positions);
+        assertThat(training.getPositions()).isEqualTo(positions);
+    }
+
+    @Test
+    void setTimeslot() {
+        Timeslot t = new Timeslot();
+        training.setTimeslot(t);
+        assertThat(training.getTimeslot()).isEqualTo(t);
+    }
+
+    @Test
+    void setCertificate() {
+        training.setCertificate(null);
+        assertThat(training.getCertificate()).isEqualTo(null);
     }
 }
