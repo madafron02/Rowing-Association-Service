@@ -102,4 +102,22 @@ public class CreateAccountTest {
                 + " Please try again later");
         verify(mockHandler, times(0)).handle(any());
     }
+
+    @Test
+    void nextNullTest() {
+        CreateAccount createAccount1 = new CreateAccount(mockRepo);
+        createAccount1.setExceptionHandler(exceptionHandler);
+        AccountCredentials credentials = new AccountCredentials("hello.there@world.com", "world");
+        createAccount1.handle(credentials);
+        verify(mockRepo, times(0)).findById(any());
+    }
+
+    @Test
+    void exceptionHandlerNullTest() {
+        CreateAccount createAccount1 = new CreateAccount(mockRepo);
+        createAccount1.setNext(mockHandler);
+        AccountCredentials credentials = new AccountCredentials("hello.there@world.com", "world");
+        createAccount1.handle(credentials);
+        verify(mockRepo, times(0)).findById(any());
+    }
 }

@@ -85,5 +85,12 @@ public class CreateTokenTest {
         assertThat(false).isTrue();
     }
 
+    @Test
+    void exceptionHandlerNullTest() {
+        CreateToken createToken1 = new CreateToken("Secret");
+        createToken1.handle(new AccountCredentials("hello", "world"));
+        assertThat(createToken1.getToken()).isNull();
+    }
+
 
 }
