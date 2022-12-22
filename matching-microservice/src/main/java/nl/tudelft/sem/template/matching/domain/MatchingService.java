@@ -82,7 +82,6 @@ public class MatchingService {
         organisationHandler.setNext(genderHandler);
         FilteringHandler competitivenessHandler = new CompetitivenessHandler();
         genderHandler.setNext(competitivenessHandler);
-
     }
 
     /**
@@ -116,6 +115,8 @@ public class MatchingService {
         return activities
                 .stream()
                 .distinct()
+                .map(a -> a.setTypeOfActivity())
+                .filter(a -> a != null)
                 .filter(a -> this.filteringHandler.handle(new MatchFilter(a, user, position, timeslot)))
                 .filter(a -> matchingRepo.getMatchesByActivityIdAndParticipantId(a.getId(), user.getEmail()).isEmpty())
                 .map(a -> matchUserToActivity(user, position, a))
