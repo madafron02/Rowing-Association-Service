@@ -20,20 +20,20 @@ import javax.persistence.Embeddable;
 @EqualsAndHashCode
 public class Positions {
 
-    @Column(name = "coxCount")
-    private Integer coxCount;
+    @Column(name = "cox")
+    private Integer cox;
 
-    @Column(name = "coachCount")
-    private Integer coachCount;
+    @Column(name = "coach")
+    private Integer coach;
 
-    @Column(name = "portSideRowerCount")
-    private Integer portSideRowerCount;
+    @Column(name = "port")
+    private Integer port;
 
-    @Column(name = "starboardSideRowerCount")
-    private Integer starboardSideRowerCount;
+    @Column(name = "starboard")
+    private Integer starboard;
 
-    @Column(name = "scullingRowerCount")
-    private Integer scullingRowerCount;
+    @Column(name = "sculling")
+    private Integer sculling;
 
     /**
      * Reduces the value of remaining spots for a certain position by one.
@@ -42,36 +42,34 @@ public class Positions {
      * @return true if it was reduced and false otherwise
      */
     public boolean reduceByOne(String positionName) {
-        String[] parts = positionName.split("\"");
-        String name = parts[3];
-        switch (name) {
+        switch (positionName) {
             case "cox":
-                if (this.getCoxCount() > 0) {
-                    this.setCoxCount(this.getCoxCount() - 1);
+                if (this.getCox() > 0) {
+                    this.setCox(this.getCox() - 1);
                     return true;
                 }
                 break;
             case "coach":
-                if (this.getCoachCount() > 0) {
-                    this.setCoachCount(this.getCoachCount() - 1);
+                if (this.getCoach() > 0) {
+                    this.setCoach(this.getCoach() - 1);
                     return true;
                 }
                 break;
             case "port":
-                if (this.getPortSideRowerCount() > 0) {
-                    this.setPortSideRowerCount(this.getPortSideRowerCount() - 1);
+                if (this.getPort() > 0) {
+                    this.setPort(this.getPort() - 1);
                     return true;
                 }
                 break;
             case "starboard":
-                if (this.getPortSideRowerCount() > 0) {
-                    this.setStarboardSideRowerCount(this.getStarboardSideRowerCount() - 1);
+                if (this.getStarboard() > 0) {
+                    this.setStarboard(this.getStarboard() - 1);
                     return true;
                 }
                 break;
             case "sculling":
-                if (this.getScullingRowerCount() > 0) {
-                    this.setScullingRowerCount(this.getScullingRowerCount() - 1);
+                if (this.getSculling() > 0) {
+                    this.setSculling(this.getSculling() - 1);
                     return true;
                 }
                 break;

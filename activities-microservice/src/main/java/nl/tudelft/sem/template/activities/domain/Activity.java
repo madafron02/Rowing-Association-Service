@@ -87,10 +87,11 @@ public class Activity {
      * @return true if this is valid and false otherwise
      */
     public boolean checkIfValid() {
-        boolean requiresRowers = positions.getCoxCount() != null || positions.getCoachCount() != null
-                || positions.getPortSideRowerCount() != null || positions.getStarboardSideRowerCount() != null
-                || positions.getScullingRowerCount() != null;
-        if (!requiresRowers) {
+        boolean requiresRowers = positions.getCox() != null || positions.getCoach() != null
+                || positions.getPort() != null || positions.getStarboard() != null
+                || positions.getSculling() != null;
+        boolean nonNull = ownerId != null && requiresRowers;
+        if (!nonNull) {
             return false;
         }
         if (!CERTIFICATE_TYPES.contains(certificate)) {
