@@ -29,12 +29,13 @@ public class ActivityApp {
      * @return the activity with the type set
      */
     public ActivityApp setTypeOfActivity() {
-        if(getGender() != null && getOrganisation() != null)
+        if (getGender() != null && getOrganisation() != null) {
             setType(TypeOfActivity.COMPETITION);
-        else if(getGender() == null && getOrganisation() == null)
+        } else if (getGender() == null && getOrganisation() == null) {
             setType(TypeOfActivity.TRAINING);
-        else
+        } else {
             return null;
+        }
         return this;
     }
 }

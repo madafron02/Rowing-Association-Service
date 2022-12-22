@@ -13,8 +13,8 @@ public class PositionHandler implements FilteringHandler {
 
     @Override
     public boolean handle(MatchFilter matchFilter) {
-        if (matchFilter.getActivityApp().getPositions().containsKey(matchFilter.getPosition()) &&
-                matchFilter.getActivityApp().getPositions().get(matchFilter.getPosition()) > 0) {
+        if (matchFilter.getActivityApp().getPositions().containsKey(matchFilter.getPosition())
+                && matchFilter.getActivityApp().getPositions().get(matchFilter.getPosition()) > 0) {
             if (next != null) {
                 return next.handle(matchFilter);
             } else {
