@@ -13,9 +13,9 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -93,5 +93,23 @@ public class VerifyCredentialsTest {
         assertThat(exceptionHandler.didCatchException()).isTrue();
         assertThat(exceptionHandler.getErrorMessage())
                 .isEqualTo("UserId or password incorrect. Please try again.");
+    }
+
+    @Test
+    void nextNullTest() {
+        VerifyCredentials verifyCredentials1 = new VerifyCredentials(mockRepo);
+        verifyCredentials1.setExceptionHandler(exceptionHandler);
+        AccountCredentials credentials = new AccountCredentials("Foo", "Bar");
+        verifyCredentials1.handle(credentials);
+        verify(mockRepo, times(0)).findById(any());
+    }
+
+    @Test
+    void exceptionHandlerNullTest() {
+        VerifyCredentials verifyCredentials1 = new VerifyCredentials(mockRepo);
+        verifyCredentials1.setNext(mockHandler);
+        AccountCredentials credentials = new AccountCredentials("Foo", "Bar");
+        verifyCredentials1.handle(credentials);
+        verify(mockRepo, times(0)).findById(any());
     }
 }
