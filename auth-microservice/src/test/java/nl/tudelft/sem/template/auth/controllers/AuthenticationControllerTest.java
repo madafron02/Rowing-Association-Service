@@ -139,7 +139,7 @@ public class AuthenticationControllerTest {
             request.setPassword("Bar");
             Exception exception = null;
             ResponseEntity response = null;
-            mockChainCreator.when(() -> ChainCreator.createRegistrationChain(any(), any(), any(), any()))
+            mockChainCreator.when(() -> ChainCreator.createAuthenticationChain(any(), any(), any(), any()))
                     .thenReturn(mockCreateToken);
             when(mockCreateToken.getToken()).thenReturn("This is a Token");
 
@@ -148,7 +148,7 @@ public class AuthenticationControllerTest {
                         when(mock.didCatchException()).thenReturn(false);
                     });
             try {
-                response = authenticationController.register(request);
+                response = authenticationController.authenticate(request);
             } catch (Exception e) {
                 exception = e;
             }
@@ -167,7 +167,7 @@ public class AuthenticationControllerTest {
             request.setPassword("Bar");
             Exception exception = null;
             ResponseEntity response = null;
-            mockChainCreator.when(() -> ChainCreator.createRegistrationChain(any(), any(), any(), any()))
+            mockChainCreator.when(() -> ChainCreator.createAuthenticationChain(any(), any(), any(), any()))
                     .thenReturn(mockCreateToken);
             when(mockCreateToken.getToken()).thenReturn("This is a Token");
 
@@ -178,7 +178,7 @@ public class AuthenticationControllerTest {
                         when(mock.getStatusCode()).thenReturn(404);
                     });
             try {
-                response = authenticationController.register(request);
+                response = authenticationController.authenticate(request);
             } catch (Exception e) {
                 exception = e;
             }
@@ -197,7 +197,7 @@ public class AuthenticationControllerTest {
             request.setPassword("Bar");
             Exception exception = null;
             ResponseEntity response = null;
-            mockChainCreator.when(() -> ChainCreator.createRegistrationChain(any(), any(), any(), any()))
+            mockChainCreator.when(() -> ChainCreator.createAuthenticationChain(any(), any(), any(), any()))
                     .thenReturn(mockCreateToken);
             when(mockCreateToken.getToken()).thenReturn(null);
 
@@ -208,7 +208,7 @@ public class AuthenticationControllerTest {
                         when(mock.getStatusCode()).thenReturn(500);
                     });
             try {
-                response = authenticationController.register(request);
+                response = authenticationController.authenticate(request);
             } catch (Exception e) {
                 exception = e;
             }
