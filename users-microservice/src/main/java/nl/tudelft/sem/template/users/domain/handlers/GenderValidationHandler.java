@@ -8,7 +8,7 @@ public class GenderValidationHandler implements UserValidationHandler {
 
     private transient UserValidationHandler next;
 
-    public static final List<String> GENDER_OPTIONS = List.of("Male", "Female", "Other");
+    public static final List<String> GENDER_OPTIONS = List.of("Male", "Female");
 
 
     @Override
@@ -26,6 +26,6 @@ public class GenderValidationHandler implements UserValidationHandler {
             }
 
         }
-        throw new IllegalArgumentException("Please enter your gender as 'Male', 'Female' or 'Other'.");
+        throw new IllegalArgumentException("Please enter your gender as 'Male' or 'Female'");
     }
 }

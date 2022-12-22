@@ -124,12 +124,13 @@ public class UserController {
      * @return http status OK if the organisation did not already exist, otherwise bad request status.
      */
     @PostMapping("/organisation/add")
-    public ResponseEntity<String> addNewOrganisation(@RequestBody String organisationName) {
+    public ResponseEntity<Organisation> addNewOrganisation(@RequestBody String organisationName) {
         if (organisationRepo.existsOrganisationByName(organisationName)) {
-            return new ResponseEntity("Organisation already present in system.", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("Organisation already present in system.", HttpStatus.CONFLICT);
         } else {
-            organisationRepo.save(new Organisation(organisationName));
-            return ResponseEntity.ok("Organisation successfully added to system");
+            Organisation newOrganisation = new Organisation(organisationName);
+            organisationRepo.save(newOrganisation);
+            return ResponseEntity.ok(newOrganisation);
         }
     }
 }

@@ -25,7 +25,7 @@ public class UserService {
     private final transient UserRepo userRepo;
     private final transient OrganisationRepo organisationRepo;
     private final transient MatchingCommunication matchingCommunication;
-    private transient UserValidationHandler userValidationHandler;
+    public transient UserValidationHandler userValidationHandler;
 
 
 
@@ -48,7 +48,7 @@ public class UserService {
      * Sets up the chain of responsibility for validating user details that a client enters into the system.
      */
     public final void userValidationHandlerSetUp() {
-        this.userValidationHandler = new EmailValidationHandler(userRepo);
+        this.userValidationHandler = new EmailValidationHandler();
         UserValidationHandler genderValidationHandler = new GenderValidationHandler();
         this.userValidationHandler.setNext(genderValidationHandler);
         UserValidationHandler organisationValidationHandler = new OrganisationValidationHandler(organisationRepo);
@@ -79,14 +79,12 @@ public class UserService {
      */
     public User saveUser(User newUser) throws IllegalArgumentException {
         try {
-            if (userValidationHandler.handle(newUser)) {
-                userRepo.save(newUser);
-                return newUser;
-            }
+            userValidationHandler.handle(newUser);
+            userRepo.save(newUser);
+            return newUser;
         } catch (IllegalArgumentException e) {
             throw e;
         }
-        return new User();
     }
 
     public boolean userExists(String email) {
@@ -102,22 +100,20 @@ public class UserService {
      */
     public User updateUser(User newData) {
         try {
-            if (userValidationHandler.handle(newData)) {
-                User existingUser = userRepo.getUserByEmail(newData.getEmail());
+            userValidationHandler.handle(newData);
+            User existingUser = userRepo.getUserByEmail(newData.getEmail());
 
-                existingUser.setGender(newData.getGender() == null ? existingUser.getGender() : newData.getGender());
-                existingUser.setCertificate(newData.getCertificate() == null ? existingUser.getCertificate()
-                        : newData.getCertificate());
-                existingUser.setOrganisation(newData.getOrganisation() == null ? existingUser.getOrganisation()
-                        : newData.getOrganisation());
-                existingUser.setCompetitiveness(newData.isCompetitive());
+            existingUser.setGender(newData.getGender() == null ? existingUser.getGender() : newData.getGender());
+            existingUser.setCertificate(newData.getCertificate() == null ? existingUser.getCertificate()
+                    : newData.getCertificate());
+            existingUser.setOrganisation(newData.getOrganisation() == null ? existingUser.getOrganisation()
+                    : newData.getOrganisation());
+            existingUser.setCompetitiveness(newData.isCompetitive());
 
-                userRepo.save(existingUser);
-                return existingUser;
-            }
+            userRepo.save(existingUser);
+            return existingUser;
         } catch (IllegalArgumentException e) {
             throw e;
         }
-        return new User();
     }
 }

@@ -1,5 +1,6 @@
-package nl.tudelft.sem.template.users.domain;
+package nl.tudelft.sem.template.users.domain.database;
 
+import nl.tudelft.sem.template.users.domain.User;
 import nl.tudelft.sem.template.users.domain.database.UserRepo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ public class UserRepoTest {
 
     @Test
     public void getUserByTest() {
-        User newUser = new User("ldicaprio@tudelft.nl");
+        User newUser = new User("ldicaprio@tudelft.nl", null, false, null, null);
         repo.save(newUser);
         assertThat(repo.getUserByEmail("ldicaprio@tudelft.nl")).isEqualTo(newUser);
     }

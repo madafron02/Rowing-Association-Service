@@ -91,6 +91,16 @@ public class UserTest {
     }
 
     @Test
+    void testNotEqualNull() {
+        assertThat(user.equals(null)).isFalse();
+    }
+
+    @Test
+    void testNotEqualOtherClass() {
+        assertThat(user.equals(new Organisation())).isFalse();
+    }
+
+    @Test
     void testHash() {
         User otherUser = new User("ealstad@tudelft.nl", "female", false, "8+", "rowpro");
         assertThat(user.hashCode()).isEqualTo(otherUser.hashCode());

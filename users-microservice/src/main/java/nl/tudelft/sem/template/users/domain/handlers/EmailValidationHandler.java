@@ -1,18 +1,10 @@
 package nl.tudelft.sem.template.users.domain.handlers;
 
 import nl.tudelft.sem.template.users.domain.User;
-import nl.tudelft.sem.template.users.domain.database.UserRepo;
 
 public class EmailValidationHandler implements UserValidationHandler {
 
     private transient UserValidationHandler next;
-    private final transient UserRepo userRepo;
-
-
-    public EmailValidationHandler(UserRepo userRepo) {
-        this.userRepo = userRepo;
-    }
-
 
     @Override
     public void setNext(UserValidationHandler handler) {
