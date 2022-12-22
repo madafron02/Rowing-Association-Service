@@ -15,7 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -128,5 +130,50 @@ public class ActivityController {
         trainingRepository.delete(toDelete.get());
         matchingClient.deleteAllMatchesForTraining(trainingId);
         return ResponseEntity.ok("Training with the id " + trainingId + " has been deleted successfully!");
+    }
+
+    /**
+     * Updates the attributes of an Activity.
+     *
+     * @param request the values which will be used for updating the Training
+     * @return the Training that was updated
+     */
+    @PatchMapping("/edit")
+    public ResponseEntity<Training> updateTraining(@RequestBody Training request) {
+        Optional<Training> toUpdate = trainingRepository.findById(request.getId());
+        if (toUpdate.isEmpty()) {
+            return new ResponseEntity("Activity with the id: " + request.getId() + " was not found.",
+                    HttpStatus.NOT_FOUND);
+        }
+        Training training = toUpdate.get();
+        training.updateFields(request);
+        if (!training.checkIfValid()) {
+            return new ResponseEntity("Update failed: the at least one of the attributes has incorrect values.",
+                    HttpStatus.BAD_REQUEST);
+        }
+        trainingRepository.save(training);
+        matchingClient.deleteAllMatchesForTraining(training.getId());
+        return ResponseEntity.ok(training);
+    }
+
+    /**
+     * Reduce the number of remaining spots for a given position of an activity.
+     *
+     * @param trainingId the id of an activity
+     * @param position the position which should have the reduced count
+     * @return a response entity containing the activity
+     */
+    @PutMapping("/update/{trainingId}")
+    public ResponseEntity<Training> reduceByOne(@PathVariable Long trainingId, @RequestBody String position) {
+        Optional<Training> toDelete = trainingRepository.findById(trainingId);
+        if (toDelete.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Training training = toDelete.get();
+        if (!training.getPositions().reduceByOne(position)) {
+            return ResponseEntity.badRequest().build();
+        }
+        trainingRepository.save(training);
+        return ResponseEntity.ok(training);
     }
 }

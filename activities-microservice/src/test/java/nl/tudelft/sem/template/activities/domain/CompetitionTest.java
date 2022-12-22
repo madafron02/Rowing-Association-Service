@@ -93,8 +93,8 @@ class CompetitionTest {
     }
 
     @Test
-    void isCompetitiveness() {
-        assertThat(competition.isCompetitiveness()).isEqualTo(false);
+    void getCompetitiveness() {
+        assertThat(competition.getCompetitiveness()).isEqualTo(false);
     }
 
     @Test
@@ -111,7 +111,7 @@ class CompetitionTest {
     @Test
     void setCompetitiveness() {
         competition.setCompetitiveness(true);
-        assertThat(competition.isCompetitiveness()).isEqualTo(true);
+        assertThat(competition.getCompetitiveness()).isEqualTo(true);
     }
 
     @Test

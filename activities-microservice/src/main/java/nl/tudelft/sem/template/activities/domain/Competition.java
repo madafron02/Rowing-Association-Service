@@ -27,7 +27,7 @@ public class Competition extends Training {
     private String gender;
 
     @Column(name = "competitiveness")
-    private boolean competitiveness;
+    private Boolean competitiveness;
 
     @Column(name = "organisation")
     private String organisation;
@@ -58,6 +58,24 @@ public class Competition extends Training {
     }
 
     /**
+     * Updates the values of this Activity with the values from another Activity.
+     *
+     * @param other the Activity that contains the values to update
+     */
+    public void updateFields(Competition other) {
+        super.updateFields(other);
+        if (other.getGender() != null) {
+            this.setGender(other.getGender());
+        }
+        if (other.getCompetitiveness() != null) {
+            this.setCompetitiveness(other.getCompetitiveness());
+        }
+        if (other.getOrganisation() != null) {
+            this.setOrganisation(other.getOrganisation());
+        }
+    }
+
+    /**
      * Checks if this competition has valid data.
      *
      * @return true if this is valid and false otherwise
@@ -66,7 +84,7 @@ public class Competition extends Training {
         if (gender == null || !GENDER_TYPES.contains(gender)) {
             return false;
         }
-        if (organisation == null) {
+        if (competitiveness == null || organisation == null) {
             return false;
         }
         return super.checkIfValid();

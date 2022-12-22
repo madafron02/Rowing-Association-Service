@@ -75,6 +75,23 @@ public class Training {
     }
 
     /**
+     * Updates the values of this Training with the values from another Training.
+     *
+     * @param other the Training that contains the values to update
+     */
+    public void updateFields(Training other) {
+        if (other.getPositions() != null) {
+            this.setPositions(other.getPositions());
+        }
+        if (other.getTimeslot() != null) {
+            this.setTimeslot(other.getTimeslot());
+        }
+        if (other.getCertificate() != null) {
+            this.setCertificate(other.getCertificate());
+        }
+    }
+
+    /**
      * Checks if this training has valid data.
      *
      * @return true if this is valid and false otherwise
