@@ -20,14 +20,36 @@ class PositionsTest {
     }
 
     @Test
-    void reduceByOneTestCox() {
+    void reduceByOneTestNone() {
+        boolean result = positions.reduceByOne("none");
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    void reduceByOneTestCoxFalse() {
         boolean result = positions.reduceByOne("cox");
         assertThat(positions.getCox()).isEqualTo(0);
         assertThat(result).isFalse();
     }
 
     @Test
-    void reduceByOneTestCoach() {
+    void reduceByOneTestCoxTrue() {
+        positions.setCox(1);
+        boolean result = positions.reduceByOne("cox");
+        assertThat(positions.getCox()).isEqualTo(0);
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void reduceByOneTestCoachFalse() {
+        positions.setCoach(0);
+        boolean result = positions.reduceByOne("coach");
+        assertThat(positions.getCoach()).isEqualTo(0);
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    void reduceByOneTestCoachTrue() {
         assertThat(positions.getCoach()).isEqualTo(8);
         boolean result = positions.reduceByOne("coach");
         assertThat(positions.getCoach()).isEqualTo(7);
@@ -35,24 +57,48 @@ class PositionsTest {
     }
 
     @Test
-    void reduceByOneTestPort() {
+    void reduceByOneTestPortFalse() {
         boolean result = positions.reduceByOne("port");
         assertThat(positions.getPort()).isEqualTo(0);
         assertThat(result).isFalse();
     }
 
     @Test
-    void reduceByOneTestStarboard() {
+    void reduceByOneTestPortTrue() {
+        positions.setPort(2);
+        boolean result = positions.reduceByOne("port");
+        assertThat(positions.getPort()).isEqualTo(1);
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void reduceByOneTestStarboardFalse() {
+        positions.setStarboard(0);
+        boolean result = positions.reduceByOne("starboard");
+        assertThat(positions.getStarboard()).isEqualTo(0);
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    void reduceByOneTestStarboardTrue() {
         boolean result = positions.reduceByOne("starboard");
         assertThat(positions.getStarboard()).isEqualTo(2);
         assertThat(result).isTrue();
     }
 
     @Test
-    void reduceByOneTestSculling() {
+    void reduceByOneTestScullingFalse() {
         boolean result = positions.reduceByOne("sculling");
         assertThat(positions.getSculling()).isEqualTo(0);
         assertThat(result).isFalse();
+    }
+
+    @Test
+    void reduceByOneTestScullingTrue() {
+        positions.setSculling(1000);
+        boolean result = positions.reduceByOne("sculling");
+        assertThat(positions.getSculling()).isEqualTo(999);
+        assertThat(result).isTrue();
     }
 
     @Test
