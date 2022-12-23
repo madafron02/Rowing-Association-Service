@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.notification.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import nl.tudelft.sem.template.notification.domain.Timeslot;
 
 /**
@@ -9,6 +10,7 @@ import nl.tudelft.sem.template.notification.domain.Timeslot;
  */
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class NotificationRequestModelOwner {
     private String ownerId;
     private String participantId;

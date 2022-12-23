@@ -46,6 +46,17 @@ public class AccountCredentialsTest {
     }
 
     @Test
+    void testEqualsSame() {
+        assertThat(accountCredentials.equals(accountCredentials)).isTrue();
+    }
+
+    @Test
+    void testEqualsOtherInstance() {
+        String other = "string";
+        assertThat(accountCredentials.equals(other)).isFalse();
+    }
+
+    @Test
     void testEqualsFalseUserId() {
         AccountCredentials other = new AccountCredentials("Foo", "Password");
         assertThat(accountCredentials.equals(other)).isFalse();

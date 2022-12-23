@@ -51,7 +51,7 @@ public class NotificationController {
      */
     @GetMapping("/hello")
     public ResponseEntity<String> helloWorld() {
-        return ResponseEntity.ok("Hello " + authManager.getNetId() + ", this is the notification microservice.");
+        return ResponseEntity.ok("Hello " + authManager.getUserId() + ", this is the notification microservice.");
     }
 
     /**

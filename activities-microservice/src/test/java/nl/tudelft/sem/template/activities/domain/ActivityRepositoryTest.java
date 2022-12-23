@@ -20,10 +20,10 @@ class ActivityRepositoryTest {
         activityRepository.deleteAll();
         Activity a1 = new Activity("owner1@gmail.com", 1, null, null, null, null,
                 LocalDateTime.of(2042, 12, 12, 19, 15),
-                LocalDateTime.of(2042, 12, 12, 22, 15), "4+", false, null);
+                LocalDateTime.of(2042, 12, 12, 22, 15), "4+", false, null, "Laga");
         Activity a2 = new Activity("owner2@gmail.com", null, 2, 5, 3, 1,
                 LocalDateTime.of(2042, 12, 12, 20, 15),
-                LocalDateTime.of(2042, 12, 12, 23, 15), "C4", false, null);
+                LocalDateTime.of(2042, 12, 12, 23, 15), "C4", false, null, "Laga");
         activityRepository.save(a1);
         activityRepository.save(a2);
     }
@@ -47,5 +47,15 @@ class ActivityRepositoryTest {
         LocalDateTime startTime = LocalDateTime.of(2042, 12, 12, 19, 15);
         LocalDateTime endTime = LocalDateTime.of(2042, 12, 12, 23, 15);
         assertThat(activityRepository.findActivitiesByTimeslot(startTime, endTime).size()).isEqualTo(2);
+    }
+
+    @Test
+    void findActivityByOwnerIdTest() {
+        assertThat(activityRepository.findActivitiesByOwnerId("owner1@gmail.com").size()).isEqualTo(1);
+    }
+
+    @Test
+    void findActivityByOwnerIdNotFoundTest() {
+        assertThat(activityRepository.findActivitiesByOwnerId("non-existent@gmail.com").size()).isEqualTo(0);
     }
 }
