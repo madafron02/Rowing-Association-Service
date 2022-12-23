@@ -89,7 +89,7 @@ class ActivityTest {
     void updateFieldsEmptyActivityOneFieldTest() {
         Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
                 LocalDateTime.of(2022, 12, 12, 20, 15),
-                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null,null);
+                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null, null);
         Activity other = new Activity();
         other.setCertificate("4+");
         a.setId(1L);
