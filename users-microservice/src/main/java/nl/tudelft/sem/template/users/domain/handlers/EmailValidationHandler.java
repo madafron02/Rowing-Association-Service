@@ -6,11 +6,23 @@ public class EmailValidationHandler implements UserValidationHandler {
 
     private transient UserValidationHandler next;
 
+    /**
+     * Sets next handler in chain of responsibility.
+     *
+     * @param handler next handler in chain
+     */
     @Override
     public void setNext(UserValidationHandler handler) {
         this.next = handler;
     }
 
+    /**
+     * verifies whether email exists and is valid.
+     *
+     * @param user user with email to validate
+     * @return true if email is validated and this is the last handler in chain, passes to next handler if validated
+     *     and this is not the last handler. Throws exception if email is not validated.
+     */
     @Override
     public boolean handle(User user) {
         if (user.getEmail() != null && validateEmail(user.getEmail())) {

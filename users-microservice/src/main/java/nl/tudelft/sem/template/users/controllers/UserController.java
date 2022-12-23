@@ -37,6 +37,7 @@ public class UserController {
      *
      * @param authManager Spring Security component used to authenticate and authorize the user
      * @param userService Service for handling user data
+     * @param organisationRepo repository for storing recognized organisations
      */
     @Autowired
     public UserController(AuthManager authManager, UserService userService, OrganisationRepo organisationRepo) {
@@ -78,7 +79,7 @@ public class UserController {
      * Post mapping for creating a new user, specified by email.
      *
      * @param user new user entity
-     * @return user entity created, or error if a user with that email already exists or email is invalid
+     * @return user entity created, or error if a user with that email already exists or details are invalid
      */
     @PostMapping("/newuser")
     public ResponseEntity<User> createNewUser(@RequestBody User user) {
@@ -101,7 +102,7 @@ public class UserController {
      * Post mapping for updating a users data, specified by email.
      *
      * @param user user entity with updated data
-     * @return updated user entity, or error if a user with that email doesn't exist
+     * @return updated user entity, or error if a user doesn't exist, unauthenticated or invalid data
      */
     @PostMapping("/updatemydata")
     public ResponseEntity<User> updateUser(@RequestBody User user) {
@@ -120,8 +121,8 @@ public class UserController {
     /**
      * Post mapping for adding a new organisation to the set of legitimate organisations recognized by the system.
      *
-     * @param organisationName - name or new organisation
-     * @return http status OK if the organisation did not already exist, otherwise bad request status.
+     * @param organisationName name of new organisation
+     * @return organisation that was added if successful, otherwise error.
      */
     @PostMapping("/organisation/add")
     public ResponseEntity<Organisation> addNewOrganisation(@RequestBody String organisationName) {

@@ -60,22 +60,23 @@ public class UserService {
     /**
      * Method for getting the User object from the repository from the user's id.
      *
-     * @param id the users email
+     * @param email the users email
      * @return the user object
      */
-    public User getByEmail(String id) {
-        if (!userRepo.existsUserByEmail(id)) {
+    public User getByEmail(String email) {
+        if (!userRepo.existsUserByEmail(email)) {
             return null;
         }
-        return userRepo.getUserByEmail(id);
+        return userRepo.getUserByEmail(email);
     }
 
 
     /**
-     * Saves user in database if the user has a valid email and there isn't already a user with that email in the db.
+     * Saves user in database if the user has a valid email and there isn't already a user with that email in the db
+     * and the user details are valid.
      *
      * @param newUser user to save
-     * @return user entity saved
+     * @return user entity saved if successful, otherwise throws exception.
      */
     public User saveUser(User newUser) throws IllegalArgumentException {
         try {
@@ -87,16 +88,22 @@ public class UserService {
         }
     }
 
+    /**
+     * Checks whether user is present in user repository by email.
+     *
+     * @param email email of user to check presence of
+     * @return whether user is present in user repository
+     */
     public boolean userExists(String email) {
         return userRepo.existsUserByEmail(email);
     }
 
     /**
-     * Updates the user attributes that are not null in the user argument.
-     * Note that when calling save with the updated entity, spring will actually do an update
+     * Updates the user attributes that are not null in the user argument, if the new details are valid.
+     * Note that when calling save with the updated entity, spring will actually do an update.
      *
      * @param newData - user with updates data
-     * @return the updated user entity
+     * @return the updated user entity if successful, otherwise throws exception.
      */
     public User updateUser(User newData) {
         try {

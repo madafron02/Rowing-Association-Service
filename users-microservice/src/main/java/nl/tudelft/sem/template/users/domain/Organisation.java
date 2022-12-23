@@ -21,6 +21,11 @@ public class Organisation {
     @Column(name = "organisation", nullable = false)
     private String name;
 
+    /**
+     * Constructor for Organisation entity, only requires a name.
+     *
+     * @param name name of organisation
+     */
     public Organisation(String name) {
         this.name = name;
     }
