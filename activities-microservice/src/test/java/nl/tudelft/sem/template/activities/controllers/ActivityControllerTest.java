@@ -4,6 +4,7 @@ import nl.tudelft.sem.template.activities.authentication.AuthManager;
 import nl.tudelft.sem.template.activities.domain.Activity;
 import nl.tudelft.sem.template.activities.domain.ActivityRepository;
 import nl.tudelft.sem.template.activities.domain.MatchingClient;
+import nl.tudelft.sem.template.activities.domain.Positions;
 import nl.tudelft.sem.template.activities.domain.Timeslot;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -133,6 +134,15 @@ class ActivityControllerTest {
     }
 
     @Test
+    void createActivityInvalid() {
+        t1.setPositions(new Positions());
+        when(matchingClient.validateCertificate(t1.getCertificate())).thenReturn(false);
+        when(authManager.getUserId()).thenReturn(t1.getOwnerId());
+        activityController.createActivity(t1).getBody();
+        verify(activityRepository, never()).save(any());
+    }
+
+    @Test
     void deleteActivity() {
         when(activityRepository.findById(1L)).thenReturn(Optional.of(c1));
         when(authManager.getUserId()).thenReturn(c1.getOwnerId());
@@ -140,6 +150,30 @@ class ActivityControllerTest {
         assertThat(response).isEqualTo("Activity with the id 1 has been deleted successfully!");
         verify(activityRepository).delete(c1);
         verify(matchingClient).deleteAllMatches(anyLong());
+    }
+
+    @Test
+    void deleteActivityNullId() {
+        activityController.deleteActivity(null).getBody();
+        verify(activityRepository, never()).delete(c1);
+        verify(matchingClient, never()).deleteAllMatches(anyLong());
+    }
+
+    @Test
+    void deleteActivityNotFound() {
+        when(activityRepository.findById(1L)).thenReturn(Optional.empty());
+        activityController.deleteActivity(1L).getBody();
+        verify(activityRepository, never()).delete(c1);
+        verify(matchingClient, never()).deleteAllMatches(anyLong());
+    }
+
+    @Test
+    void deleteActivityIdMismatch() {
+        when(activityRepository.findById(1L)).thenReturn(Optional.of(c1));
+        when(authManager.getUserId()).thenReturn("an ID that does not match");
+        activityController.deleteActivity(1L).getBody();
+        verify(activityRepository, never()).delete(c1);
+        verify(matchingClient, never()).deleteAllMatches(anyLong());
     }
 
     @Test
@@ -152,8 +186,42 @@ class ActivityControllerTest {
         when(matchingClient.validateCertificate(any())).thenReturn(true);
         activityController.updateActivity(request).toString();
         verify(activityRepository).save(any());
-        //verify(matchingClient).validateCertificate(c1.getCertificate());
         verify(matchingClient).deleteAllMatches(anyLong());
+    }
+
+    @Test
+    void updateActivityNotFound() {
+        Activity request = new Activity();
+        request.setId(1L);
+        request.setGender("Female");
+        when(activityRepository.findById(1L)).thenReturn(Optional.empty());
+        when(authManager.getUserId()).thenReturn(c1.getOwnerId());
+        when(matchingClient.validateCertificate(any())).thenReturn(true);
+        activityController.updateActivity(request);
+        verify(activityRepository, never()).save(any());
+        verify(matchingClient, never()).deleteAllMatches(anyLong());
+    }
+
+    @Test
+    void updateActivityiInvalid() {
+        when(activityRepository.findById(1L)).thenReturn(Optional.empty());
+        when(authManager.getUserId()).thenReturn(c1.getOwnerId());
+        when(matchingClient.validateCertificate(any())).thenReturn(false);
+        Activity request = new Activity();
+        activityController.updateActivity(request);
+        verify(activityRepository, never()).save(any());
+        verify(matchingClient, never()).deleteAllMatches(anyLong());
+    }
+
+    @Test
+    void updateActivityiInvalidIdMismatch() {
+        when(activityRepository.findById(1L)).thenReturn(Optional.empty());
+        when(authManager.getUserId()).thenReturn("a mismatching id");
+        when(matchingClient.validateCertificate(any())).thenReturn(false);
+        Activity request = new Activity();
+        activityController.updateActivity(request);
+        verify(activityRepository, never()).save(any());
+        verify(matchingClient, never()).deleteAllMatches(anyLong());
     }
 
     @Test
@@ -178,7 +246,15 @@ class ActivityControllerTest {
     void reduceByOneTestButZero() {
         when(activityRepository.findById(1L)).thenReturn(Optional.of(t1));
         String name = "coach";
-        //name.setPosition("coach");
+        Activity training =  activityController.reduceByOne(1L, name).getBody();
+        assertThat(t1.getPositions().getCoach()).isEqualTo(0);
+        verify(activityRepository, never()).save(any());
+    }
+
+    @Test
+    void reduceByOneTestButNotFound() {
+        when(activityRepository.findById(1L)).thenReturn(Optional.empty());
+        String name = "coach";
         Activity training =  activityController.reduceByOne(1L, name).getBody();
         assertThat(t1.getPositions().getCoach()).isEqualTo(0);
         verify(activityRepository, never()).save(any());
