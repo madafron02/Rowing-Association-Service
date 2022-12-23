@@ -67,7 +67,7 @@ class MatchTest {
     }
 
     @Test
-    void testEqualsDifferent() {
+    void testEqualsDifferentButSameId() {
         Match newMatch = new Match("d.micloiu@tudelft.nl", 1L,
                 "l.tosa@tudelft.nl", "starboard");
         assertThat(match.equals(newMatch)).isTrue();
@@ -78,7 +78,12 @@ class MatchTest {
         Match newMatch = new Match("d.micloiu@tudelft.nl", 1L,
                 "l.tosa@tudelft.nl", "starboard");
 
-
         assertThat(match.hashCode() == newMatch.hashCode()).isTrue();
+    }
+
+    @Test
+    void testEqualsDifferentObject() {
+        TypeOfActivity type = TypeOfActivity.COMPETITION;
+        assertThat(match.equals(type)).isFalse();
     }
 }
