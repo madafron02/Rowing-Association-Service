@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.matching.domain.handlers;
 
 import nl.tudelft.sem.template.matching.domain.ActivityApp;
+import nl.tudelft.sem.template.matching.domain.Certificate;
 import nl.tudelft.sem.template.matching.domain.MatchFilter;
 import nl.tudelft.sem.template.matching.domain.TimeslotApp;
 import nl.tudelft.sem.template.matching.domain.TypeOfActivity;
@@ -79,8 +80,8 @@ class CertificateHandlerTest {
                 new TimeslotApp(LocalDateTime.parse("2022-12-08T10:15"),
                         LocalDateTime.parse("2022-12-08T17:00")));
 
-        when(certificateRepo.getCertificateByName("C4")).thenReturn(Optional.of(1L));
-        when(certificateRepo.getCertificateByName("4+")).thenReturn(Optional.of(2L));
+        when(certificateRepo.getCertificateByName("C4")).thenReturn(Optional.of(new Certificate(1L, "C4+")));
+        when(certificateRepo.getCertificateByName("4+")).thenReturn(Optional.of(new Certificate(2L, "4+")));
 
         // user can participate since C4 < 4+
         assertThat(filteringHandler.handle(matchFilter)).isTrue();

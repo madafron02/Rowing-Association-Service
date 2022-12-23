@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.matching.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import javax.persistence.Table;
 @Entity
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "certificates")
 public class Certificate {
     @Id
