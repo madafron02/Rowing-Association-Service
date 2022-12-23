@@ -11,7 +11,48 @@ class PositionsTest {
 
     @BeforeEach
     void setUp() {
-        positions = new Positions(null, 8, null, 3, 0);
+        positions = new Positions(0, 8, 0, 3, 0);
+    }
+
+    @Test
+    void allArgsConstructorTest() {
+        assertThat(positions).isNotNull();
+    }
+
+    @Test
+    void reduceByOneTestCox() {
+        boolean result = positions.reduceByOne("cox");
+        assertThat(positions.getCox()).isEqualTo(0);
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    void reduceByOneTestCoach() {
+        assertThat(positions.getCoach()).isEqualTo(8);
+        boolean result = positions.reduceByOne("coach");
+        assertThat(positions.getCoach()).isEqualTo(7);
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void reduceByOneTestPort() {
+        boolean result = positions.reduceByOne("port");
+        assertThat(positions.getPort()).isEqualTo(0);
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    void reduceByOneTestStarboard() {
+        boolean result = positions.reduceByOne("starboard");
+        assertThat(positions.getStarboard()).isEqualTo(2);
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void reduceByOneTestSculling() {
+        boolean result = positions.reduceByOne("sculling");
+        assertThat(positions.getSculling()).isEqualTo(0);
+        assertThat(result).isFalse();
     }
 
     @Test
@@ -27,7 +68,7 @@ class PositionsTest {
 
     @Test
     void getCoxTest() {
-        assertThat(positions.getCox()).isEqualTo(null);
+        assertThat(positions.getCox()).isEqualTo(0);
     }
 
     @Test
@@ -37,7 +78,7 @@ class PositionsTest {
 
     @Test
     void getPortSideRowerTest() {
-        assertThat(positions.getPort()).isEqualTo(null);
+        assertThat(positions.getPort()).isEqualTo(0);
     }
 
     @Test
@@ -82,25 +123,25 @@ class PositionsTest {
 
     @Test
     void equalsTrue() {
-        Positions other = new Positions(null, 8, null, 3, 0);
+        Positions other = new Positions(0, 8, 0, 3, 0);
         assertThat(positions.equals(other)).isTrue();
     }
 
     @Test
     void equalsFalse() {
-        Positions other = new Positions(null, 9, null, 3, 0);
+        Positions other = new Positions(0, 9, 0, 3, 0);
         assertThat(positions.equals(other)).isFalse();
     }
 
     @Test
     void hashCodeEquals() {
-        Positions other = new Positions(null, 8, null, 3, 0);
+        Positions other = new Positions(0, 8, 0, 3, 0);
         assertThat(positions.hashCode()).isEqualTo(other.hashCode());
     }
 
     @Test
     void hashCodeNotEquals() {
-        Positions other = new Positions(null, 9, null, 3, 0);
+        Positions other = new Positions(0, 9, 0, 3, 0);
         assertThat(positions.hashCode()).isNotEqualTo(other.hashCode());
     }
 }

@@ -20,7 +20,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -85,7 +84,7 @@ class ActivityControllerTest {
     }
 
     @Test
-    public void getActivityTimeslotByIdOk() throws Exception {
+    public void getActivityTimeslotByIdOkIntegration() throws Exception {
         when(activityRepository.findById(1L)).thenReturn(Optional.of(c1));
         this.mockMvc
                 .perform(get("/1"))
@@ -93,13 +92,18 @@ class ActivityControllerTest {
     }
 
     @Test
-    void getAllActivitiesWithinTimeslotEmpty() {
-        when(activityRepository.findActivitiesByTimeslot(LocalDateTime.MIN, LocalDateTime.MAX))
-                .thenReturn(new ArrayList<Activity>());
-        List<Activity> trainings = activityController.getAllActivitiesWithinTimeslot(
-                        new Timeslot(LocalDateTime.MIN, LocalDateTime.MAX))
-                .getBody().getActivities();
-        assertThat(trainings.isEmpty()).isTrue();
+    public void getActivityTimeslotByIdNotFoundIntegration() throws Exception {
+        when(activityRepository.findById(1L)).thenReturn(Optional.empty());
+        this.mockMvc
+                .perform(get("/1"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void getActivityTimeslotByIdOk() throws Exception {
+        when(activityRepository.findById(1L)).thenReturn(Optional.of(c1));
+        Timeslot timeslot = activityController.getActivityTimeslotById(1L).getBody();
+        assertThat(timeslot).isEqualTo(c1.getTimeslot());
     }
 
     @Test
@@ -156,7 +160,15 @@ class ActivityControllerTest {
     void reduceByOneTest() {
         when(activityRepository.findById(1L)).thenReturn(Optional.of(t1));
         String name = "cox";
-        //name.setPosition("cox");
+        Activity training =  activityController.reduceByOne(1L, name).getBody();
+        assertThat(t1.getPositions().getCox()).isEqualTo(0);
+        verify(activityRepository).save(t1);
+    }
+
+    @Test
+    void reduceByOneTestIntegration() {
+        when(activityRepository.findById(1L)).thenReturn(Optional.of(t1));
+        String name = "cox";
         Activity training =  activityController.reduceByOne(1L, name).getBody();
         assertThat(t1.getPositions().getCox()).isEqualTo(0);
         verify(activityRepository).save(t1);
