@@ -117,6 +117,7 @@ public class MatchingService {
                 .filter(a -> a != null)
                 .distinct()
                 .map(a -> a.setTypeOfActivity())
+                .filter(a -> a != null)
                 .filter(a -> this.filteringHandler.handle(new MatchFilter(a, user, position, timeslot)))
                 .filter(a -> matchingRepo.getMatchesByActivityIdAndParticipantId(a.getId(), user.getEmail()).isEmpty())
                 .map(a -> matchUserToActivity(user, position, a))

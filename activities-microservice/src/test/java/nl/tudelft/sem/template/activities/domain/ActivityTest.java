@@ -12,15 +12,15 @@ class ActivityTest {
     void defaultConstructorTest() {
         Activity a = new Activity("owner@gmail.com", 1, null, 8, 10,
                 null, LocalDateTime.of(2042, 12, 12, 20, 15),
-                LocalDateTime.MAX, "8+", false, null);
+                LocalDateTime.MAX, "8+", false, null, null);
         assertThat(a).isNotNull();
     }
 
     @Test
     void checkIfValidTrueTest() {
-        Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
+        Activity a = new Activity("owner@gmail.com", 1, 0, 8, 10, 0,
                 LocalDateTime.of(2042, 12, 12, 20, 15),
-                LocalDateTime.MAX, "8+", false, null);
+                LocalDateTime.MAX, "8+", false, null, null);
         assertThat(a.checkIfValid()).isTrue();
     }
 
@@ -28,7 +28,7 @@ class ActivityTest {
     void checkIfValidRowersNullTest() {
         Activity a = new Activity("owner@gmail.com", null, null, null, null, null,
                 LocalDateTime.of(2042, 12, 12, 20, 15),
-                LocalDateTime.MAX, "8+", false, null);
+                LocalDateTime.MAX, "8+", false, null, null);
         assertThat(a.checkIfValid()).isFalse();
     }
 
@@ -36,7 +36,7 @@ class ActivityTest {
     void checkIfValidInvalidCertificateTest() {
         Activity a = new Activity("owner@gmail.com", null, null, null, null, null,
                 LocalDateTime.of(2042, 12, 12, 20, 15),
-                LocalDateTime.MAX, "invalid", false, null);
+                LocalDateTime.MAX, "invalid", false, null, null);
         assertThat(a.checkIfValid()).isFalse();
     }
 
@@ -44,7 +44,7 @@ class ActivityTest {
     void checkIfValidInvalidCompetitionTrueInvalidGenderTest() {
         Activity a = new Activity("owner@gmail.com", null, null, null, null, null,
                 LocalDateTime.of(2042, 12, 12, 20, 15),
-                LocalDateTime.MAX, "8+", true, "Helicopter");
+                LocalDateTime.MAX, "8+", true, "Helicopter", "Laga");
         assertThat(a.checkIfValid()).isFalse();
     }
 
@@ -52,7 +52,7 @@ class ActivityTest {
     void checkIfValidNullTimestampTest() {
         Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
                 LocalDateTime.of(2042, 12, 12, 20, 15),
-                null, "8+", false, null);
+                null, "8+", false, null, null);
         assertThat(a.checkIfValid()).isFalse();
     }
 
@@ -60,7 +60,7 @@ class ActivityTest {
     void checkIfValidIncorrectTimestampTest() {
         Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
                 LocalDateTime.of(2042, 12, 12, 20, 15),
-                LocalDateTime.of(2042, 12, 12, 20, 14), "8+", false, null);
+                LocalDateTime.of(2042, 12, 12, 20, 14), "8+", false, null, "Laga");
         assertThat(a.checkIfValid()).isFalse();
     }
 
@@ -68,7 +68,7 @@ class ActivityTest {
     void checkIfValidExpiredActivityTest() {
         Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
                 LocalDateTime.of(2022, 12, 12, 20, 15),
-                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null);
+                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null, null);
         assertThat(a.checkIfValid()).isFalse();
     }
 
@@ -76,7 +76,7 @@ class ActivityTest {
     void updateFieldsEmptyActivityNullFieldsTest() {
         Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
                 LocalDateTime.of(2022, 12, 12, 20, 15),
-                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null);
+                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null, null);
         Activity other = new Activity();
         a.setId(1L);
         other.setId(1L);
@@ -89,7 +89,7 @@ class ActivityTest {
     void updateFieldsEmptyActivityOneFieldTest() {
         Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
                 LocalDateTime.of(2022, 12, 12, 20, 15),
-                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null);
+                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null, null);
         Activity other = new Activity();
         other.setCertificate("4+");
         a.setId(1L);
@@ -103,7 +103,7 @@ class ActivityTest {
     void updateFieldsEmptyActivityOneObjectTest() {
         Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
                 LocalDateTime.of(2022, 12, 12, 20, 15),
-                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null);
+                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null, null);
         Activity other = new Activity();
         a.setPositions(new Positions(0, null, 7, 11, null));
         a.setId(1L);
@@ -117,10 +117,10 @@ class ActivityTest {
     void updateFieldsEmptyActivityAllFieldsTest() {
         Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
                 LocalDateTime.of(2022, 12, 12, 20, 15),
-                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null);
+                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null, null);
         Activity other = new Activity("owner@gmail.com", 0, null, 7, 11, null,
                 LocalDateTime.of(2022, 12, 12, 20, 15),
-                LocalDateTime.of(2022, 12, 12, 20, 20), "4+", false, null);
+                LocalDateTime.of(2022, 12, 12, 20, 20), "4+", false, null, null);
         a.setId(1L);
         other.setId(1L);
         a.updateFields(other);
@@ -138,7 +138,7 @@ class ActivityTest {
     void equalsTrueTest() {
         Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
                 LocalDateTime.of(2022, 12, 12, 20, 15),
-                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null);
+                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null, null);
         assertThat(a.equals(a)).isTrue();
     }
 
@@ -146,10 +146,10 @@ class ActivityTest {
     void equalsFalseTest() {
         Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
                 LocalDateTime.of(2022, 12, 12, 20, 15),
-                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null);
+                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null, null);
         Activity b = new Activity("different@gmail.com", 1, null, 8, 10, null,
                 LocalDateTime.of(2022, 12, 12, 20, 15),
-                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null);
+                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null, null);
         assertThat(a.equals(b)).isFalse();
     }
 
@@ -157,10 +157,10 @@ class ActivityTest {
     void hashCodeTestEqual() {
         Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
                 LocalDateTime.of(2022, 12, 12, 20, 15),
-                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null);
+                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null, null);
         Activity b = new Activity("owner@gmail.com", 1, null, 8, 10, null,
                 LocalDateTime.of(2022, 12, 12, 20, 15),
-                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null);
+                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null, null);
         assertThat(a.hashCode()).isEqualTo(b.hashCode());
     }
 
@@ -168,10 +168,10 @@ class ActivityTest {
     void hashCodeTestNotEqual() {
         Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
                 LocalDateTime.of(2022, 12, 12, 20, 15),
-                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null);
+                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null, null);
         Activity b = new Activity("different@gmail.com", 1, null, 8, 10, null,
                 LocalDateTime.of(2022, 12, 12, 20, 15),
-                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null);
+                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null, null);
         assertThat(a.hashCode()).isNotEqualTo(b.hashCode());
     }
 }
