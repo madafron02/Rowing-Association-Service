@@ -98,16 +98,17 @@ class MatchingServiceTest {
         positions.put("cox", 2);
 
         ArrayList<ActivityApp> activities = new ArrayList<>();
+        activities.add(null);
         activities.add(new ActivityApp(1L,
                 "l.tosa@tudelft.nl",
                 new TimeslotApp(LocalDateTime.now().plusMinutes(45),
                         LocalDateTime.now().plusHours(3)),
-                "", "", positions, false, TypeOfActivity.TRAINING, "C4"));
+                null, null, positions, false, TypeOfActivity.TRAINING, "C4"));
         activities.add(new ActivityApp(2L,
                 "l.tosa@tudelft.nl",
                 new TimeslotApp(LocalDateTime.now(),
                         LocalDateTime.now().plusMinutes(45)),
-                "", "", positions, false, TypeOfActivity.TRAINING, "C4"));
+                null, null, positions, false, TypeOfActivity.TRAINING, "C4"));
 
         activities.add(new ActivityApp(3L,
                 "l.tosa@tudelft.nl",
@@ -283,7 +284,7 @@ class MatchingServiceTest {
         NotificationActivityModified activityModifiedEmail = new NotificationActivityModified(acceptedMatch
                 .getParticipantId(), 2L, null);
         verify(notificationCommunication).activityModifiedNotification(activityModifiedEmail);
-        //verify(matchingRepo).deleteById(acceptedMatch.getMatchId());
-        //verify(matchingRepo).deleteById(match.getMatchId());
+        // two times since match and accepted match are not saved in db => same id
+        verify(matchingRepo, times(2)).deleteById(match.getMatchId());
     }
 }

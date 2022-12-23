@@ -53,4 +53,11 @@ class PositionHandlerTest {
         filteringHandler.setNext(new GenderHandler());
         assertThat(filteringHandler.handle(matchFilter)).isFalse();
     }
+
+    @Test
+    void handleContainingPositionButZero() {
+        matchFilter.getActivityApp().getPositions().put("cox", 0);
+        matchFilter.setPosition("cox");
+        assertThat(filteringHandler.handle(matchFilter)).isFalse();
+    }
 }
