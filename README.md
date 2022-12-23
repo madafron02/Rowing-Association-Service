@@ -1,27 +1,22 @@
-# Lab Template
+# Rowing scenario - Group 30b
 
-This template contains two microservices:
-- authentication-microservice
-- example-microservice
+This template contains five microservices:
+- auth-microservice
+- activities-microservice
+- users-microservice
+- notification-microservice
+- matching-microservice
 
-The `authentication-microservice` is responsible for registering new users and authenticating current ones. After successful authentication, this microservice will provide a JWT token which can be used to bypass the security on the `example-microservice`. This token contains the *NetID* of the user that authenticated. If your scenario includes different roles, these will have to be added to the authentication-microservice and to the JWT token. To do this, you will have to:
-- Add a concept of roles to the `AppUser`
-- Add the roles to the `UserDetails` in `JwtUserDetailsService`
-- Add the roles as claims to the JWT token in `JwtTokenGenerator`
+### *Authentication microservice (auth-microservice)*
+In order to use the system, you must be authenticated. To do this, make a request to the authentication service on port 8081.
+To  create an account, post an email-address as userId and a password to /register.
+![img.png](img.png)
 
-The `example-microservice` is just an example and needs to be modified to suit the domain you are modeling based on your scenario.
+To sign in with an existing account, post your userId and password to /authenticate.
+![img_1.png](img_1.png)
 
-The `domain` and `application` packages contain the code for the domain layer and application layer. The code for the framework layer is the root package as *Spring* has some limitations on were certain files are located in terms of autowiring.
+After each successful registration or authentication you will receive a token. Include this token in the authorization header in all your requests to other services in order to be automatically authenticated.
+![img_2.png](img_2.png)
 
-## Running the microservices
-
-You can run the two microservices individually by starting the Spring applications. Then, you can use *Postman* to perform the different requests:
-
-Register:
-![image](instructions/register.png)
-
-Authenticate:
-![image](instructions/authenticate.png)
-
-Hello:
-![image](instructions/hello.png)
+### *Notification microservice (notification-microservice)
+In order to send notifications via email, one must be authenticated first. Otherwise an error will be shown, mentioning this has not been done properly. After following the steps mentioned in the Authentication section, include your bearer token in the "Authorization" page in Postman for each request you want to make.
