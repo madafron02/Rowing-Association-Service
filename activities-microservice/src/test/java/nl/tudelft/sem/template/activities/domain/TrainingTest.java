@@ -38,8 +38,14 @@ class TrainingTest {
     }
 
     @Test
-    void checkIfValidInvalidCertificate() {
-        Training a = new Training(testEmail, 0, 0, 0, 0, 0, timeslot, "invalid");
+    void checkIfValidNullCertificate() {
+        Training a = new Training(testEmail, 0, 0, 0, 0, 0, timeslot, null);
+        assertThat(a.checkIfValid()).isFalse();
+    }
+
+    @Test
+    void checkIfValidEmptyCertificate() {
+        Training a = new Training(testEmail, 0, 0, 0, 0, 0, timeslot, null);
         assertThat(a.checkIfValid()).isFalse();
     }
 

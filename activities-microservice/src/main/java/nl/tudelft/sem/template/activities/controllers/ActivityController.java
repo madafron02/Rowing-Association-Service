@@ -107,6 +107,9 @@ public class ActivityController {
         if (!request.checkIfValid()) {
             return ResponseEntity.badRequest().build();
         }
+        if (!matchingClient.validateCertificate(request.getCertificate())) {
+            return ResponseEntity.badRequest().build();
+        }
         trainingRepository.save(request);
         return ResponseEntity.ok("Competition created successfully!");
     }
@@ -120,6 +123,9 @@ public class ActivityController {
     public ResponseEntity<String> createTraining(@RequestBody Training request) {
         request.setOwnerId(authManager.getUserId());
         if (!request.checkIfValid()) {
+            return ResponseEntity.badRequest().build();
+        }
+        if (!matchingClient.validateCertificate(request.getCertificate())) {
             return ResponseEntity.badRequest().build();
         }
         trainingRepository.save(request);
@@ -168,7 +174,7 @@ public class ActivityController {
         }
         Training training = toUpdate.get();
         training.updateFields(request);
-        if (!training.checkIfValid()) {
+        if (!training.checkIfValid() || !matchingClient.validateCertificate(request.getCertificate())) {
             return new ResponseEntity("Update failed: the at least one of the attributes has incorrect values.",
                     HttpStatus.BAD_REQUEST);
         }

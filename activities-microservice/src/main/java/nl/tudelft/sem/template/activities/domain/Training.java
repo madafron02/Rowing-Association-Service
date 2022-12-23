@@ -1,7 +1,6 @@
 package nl.tudelft.sem.template.activities.domain;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -34,8 +33,6 @@ import nl.tudelft.sem.template.activities.model.UpdateRequestDataModel;
 @Getter
 @Setter
 public class Training {
-
-    public static final List<String> CERTIFICATE_TYPES = List.of("C4", "4+", "8+");
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -105,7 +102,7 @@ public class Training {
         if (!nonNull) {
             return false;
         }
-        if (!CERTIFICATE_TYPES.contains(certificate)) {
+        if (certificate == null || certificate.equals("")) {
             return false;
         }
         LocalDateTime now = LocalDateTime.now();
