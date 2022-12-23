@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface CertificateRepo extends JpaRepository<Certificate, Long> {
-    public Optional<Long> getCertificateByName(String name);
+    public Optional<Certificate> getCertificateByName(String name);
 }
