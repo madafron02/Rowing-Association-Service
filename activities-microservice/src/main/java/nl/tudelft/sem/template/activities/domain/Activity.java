@@ -54,6 +54,9 @@ public class Activity {
     @Column(name = "gender")
     private String gender;
 
+    @Column(name = "organisation")
+    private String organisation;
+
     /**
      * Creates a new Activity.
      *
@@ -68,10 +71,11 @@ public class Activity {
      * @param certificate the boat type
      * @param competition true if it is a competition and false otherwise
      * @param gender the gender of the needed participants, null if not needed
+     * @param organisation the origanisation of the participant
      */
     public Activity(String ownerId, Integer coxCount, Integer coachCount, Integer portSideRowerCount,
                     Integer starboardSideRowerCount, Integer scullingRowerCount, LocalDateTime startTime,
-                    LocalDateTime endTime, String certificate, Boolean competition, String gender) {
+                    LocalDateTime endTime, String certificate, Boolean competition, String gender, String organisation) {
         this.ownerId = ownerId;
         this.positions = new Positions(coxCount, coachCount, portSideRowerCount, starboardSideRowerCount,
                 scullingRowerCount);
@@ -79,6 +83,7 @@ public class Activity {
         this.certificate = certificate;
         this.competition = Objects.requireNonNullElse(competition, false);
         this.gender = gender;
+        this.organisation = organisation;
     }
 
     /**
@@ -97,7 +102,7 @@ public class Activity {
         if (!CERTIFICATE_TYPES.contains(certificate)) {
             return false;
         }
-        if (competition && (gender == null || !GENDER_TYPES.contains(gender))) {
+        if (competition && ((gender == null || !GENDER_TYPES.contains(gender)) || organisation == null)) {
             return false;
         }
         LocalDateTime now = LocalDateTime.now();
