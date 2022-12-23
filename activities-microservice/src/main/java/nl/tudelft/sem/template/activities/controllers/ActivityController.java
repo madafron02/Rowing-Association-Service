@@ -174,7 +174,7 @@ public class ActivityController {
         }
         Training training = toUpdate.get();
         training.updateFields(request);
-        if (!training.checkIfValid() || !matchingClient.validateCertificate(request.getCertificate())) {
+        if (!training.checkIfValid() || !matchingClient.validateCertificate(training.getCertificate())) {
             return new ResponseEntity("Update failed: the at least one of the attributes has incorrect values.",
                     HttpStatus.BAD_REQUEST);
         }
