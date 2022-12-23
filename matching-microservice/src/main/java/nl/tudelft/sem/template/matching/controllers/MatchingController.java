@@ -78,7 +78,7 @@ public class MatchingController {
      *
      * @param matchId the match id
      * @return a String representing saying "Application sent" if the activity
-     *         was successfully picked
+     *          was successfully picked
      */
     @PostMapping("/pick")
     public ResponseEntity<String> pickActivity(@RequestBody Long matchId) {
@@ -98,11 +98,7 @@ public class MatchingController {
      */
     @GetMapping("/participants")
     public ResponseEntity<List<Match>> getPendingRequests() {
-        try {
-            return ResponseEntity.ok(service.getPendingRequests());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.ok(service.getPendingRequests());
     }
 
     /**
@@ -113,8 +109,25 @@ public class MatchingController {
      */
     @GetMapping("/match/{status}")
     public ResponseEntity<List<Match>> getMatches(@PathVariable("status") String status) {
-        Status statusEnum = Status.valueOf(status);
-        return ResponseEntity.ok(service.getMatches(statusEnum));
+        try {
+            Status statusEnum = Status.valueOf(status);
+            return ResponseEntity.ok(service.getMatches(statusEnum));
+        } catch (Exception e) {
+            return new ResponseEntity("Use a valid status (MATCHED, PENDING, ACCEPTED, DECLINED", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    /**
+     * API Endpoint used by the Notification microservice to discard all the matches done
+     * for a modified activity.
+     *
+     * @param activityId the id of the activity modifies
+     * @return an okay response entity
+     */
+    @PostMapping("/activity/modified")
+    public ResponseEntity<String> discardMatchesByActivity(@RequestBody Long activityId) {
+        service.discardMatchesByActivity(activityId);
+        return ResponseEntity.ok("Participants notified successfully !");
     }
 
     /**
@@ -126,19 +139,6 @@ public class MatchingController {
     @PostMapping("/certificate/validate")
     public ResponseEntity<Boolean> validateCertificate(@RequestBody String certificate) {
         return ResponseEntity.ok(certificateRepo.getCertificateByName(certificate).isPresent());
-    }
-
-    /**
-     * API Endpoint used by the Notification microservice to discard all the matches done
-     * for a modified activity.
-     *
-     * @param activityId the id of the activity modifies
-     * @return an okay response entity
-     */
-    @PostMapping("/activity/modified")
-    public ResponseEntity discardMatchesByActivity(@RequestBody Long activityId) {
-        service.discardMatchesByActivity(activityId);
-        return ResponseEntity.ok().build();
     }
 
     /**

@@ -18,7 +18,7 @@ public interface MatchingRepo extends JpaRepository<Match, Long> {
 
     List<Match> getMatchesByOwnerId(String ownerId);
 
-    List<Match> getMatchesByParticipantIdAndStatus(String ownerId, Status status);
+    List<Match> getMatchesByParticipantIdAndStatus(String participantId, Status status);
 
     List<Match> getMatchesByOwnerIdAndStatus(String ownerId, Status status);
 

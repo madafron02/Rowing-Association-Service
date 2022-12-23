@@ -22,7 +22,7 @@ public class Match {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id", unique = true, nullable = false)
     private long matchId;
 
     @Column(name = "participant_id", nullable = false)

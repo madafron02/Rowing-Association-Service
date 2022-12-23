@@ -10,7 +10,7 @@ public class TimeConstraintHandler implements FilteringHandler {
 
     @Override
     public void setNext(FilteringHandler handler) {
-        this.next = next;
+        this.next = handler;
     }
 
     @Override

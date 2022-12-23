@@ -36,7 +36,7 @@ public class MatchingService {
     private final transient UsersCommunication usersCommunication;
     private final transient NotificationCommunication notificationCommunication;
     private final transient ActivityCommunication activityCommunication;
-    private transient FilteringHandler filteringHandler;
+    public transient FilteringHandler filteringHandler;
     private final transient CertificateRepo certificateRepo;
 
 
@@ -114,9 +114,9 @@ public class MatchingService {
                                                   String position) {
         return activities
                 .stream()
+                .filter(a -> a != null)
                 .distinct()
                 .map(a -> a.setTypeOfActivity())
-                .filter(a -> a != null)
                 .filter(a -> this.filteringHandler.handle(new MatchFilter(a, user, position, timeslot)))
                 .filter(a -> matchingRepo.getMatchesByActivityIdAndParticipantId(a.getId(), user.getEmail()).isEmpty())
                 .map(a -> matchUserToActivity(user, position, a))
