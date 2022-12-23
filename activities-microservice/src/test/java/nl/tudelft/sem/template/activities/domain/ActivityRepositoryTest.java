@@ -48,4 +48,14 @@ class ActivityRepositoryTest {
         LocalDateTime endTime = LocalDateTime.of(2042, 12, 12, 23, 15);
         assertThat(activityRepository.findActivitiesByTimeslot(startTime, endTime).size()).isEqualTo(2);
     }
+
+    @Test
+    void findActivityByOwnerIdTest() {
+        assertThat(activityRepository.findActivitiesByOwnerId("owner1@gmail.com").size()).isEqualTo(1);
+    }
+
+    @Test
+    void findActivityByOwnerIdNotFoundTest() {
+        assertThat(activityRepository.findActivitiesByOwnerId("non-existent@gmail.com").size()).isEqualTo(0);
+    }
 }

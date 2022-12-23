@@ -64,7 +64,7 @@ public class NotificationCommunication {
      */
     public String activityModifiedNotification(NotificationActivityModified request) {
         return new ResteasyClientBuilder().build()
-                .target(SERVER).path("notification/modification")
+                .target(SERVER).path("notification/activity-changed")
                 .request(APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer "
                         + SecurityContextHolder.getContext().getAuthentication().getCredentials())

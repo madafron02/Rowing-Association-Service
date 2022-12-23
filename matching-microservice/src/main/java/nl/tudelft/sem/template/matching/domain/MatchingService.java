@@ -82,7 +82,6 @@ public class MatchingService {
         organisationHandler.setNext(genderHandler);
         FilteringHandler competitivenessHandler = new CompetitivenessHandler();
         genderHandler.setNext(competitivenessHandler);
-
     }
 
     /**
@@ -104,6 +103,7 @@ public class MatchingService {
      * in order to match a user.
      *
      * @param activities the activities given by the Activity microservice
+     * @param timeslot   the availability of the user
      * @param user       the user requesting activities
      * @param position   teh position they can fill in
      * @return the positions the user is matched with
@@ -115,6 +115,8 @@ public class MatchingService {
         return activities
                 .stream()
                 .distinct()
+                .map(a -> a.setTypeOfActivity())
+                .filter(a -> a != null)
                 .filter(a -> this.filteringHandler.handle(new MatchFilter(a, user, position, timeslot)))
                 .filter(a -> matchingRepo.getMatchesByActivityIdAndParticipantId(a.getId(), user.getEmail()).isEmpty())
                 .map(a -> matchUserToActivity(user, position, a))
@@ -216,7 +218,7 @@ public class MatchingService {
             newMatch.setStatus(Status.ACCEPTED);
             activityCommunication.updateActivity(newMatch.getActivityId(), newMatch.getPosition());
         } else {
-            newMatch.setStatus(Status.DECLINE);
+            newMatch.setStatus(Status.DECLINED);
         }
         matchingRepo.save(newMatch);
         notificationCommunication.sendNotificationToParticipant(
@@ -268,7 +270,9 @@ public class MatchingService {
                 .forEach(match ->
                         notificationCommunication
                                 .activityModifiedNotification(new NotificationActivityModified(match.getParticipantId(),
-                                        activityId)));
-        matchingRepo.deleteMatchesByActivityId(activityId);
+                                        activityId, activityCommunication.getActivityTimeslotById(activityId))));
+        matchesModifiedByActivityChange
+                .stream()
+                .forEach(match -> matchingRepo.deleteById(match.getMatchId()));
     }
 }

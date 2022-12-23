@@ -105,4 +105,27 @@ public class Activity {
         return timeslotExists && timeslot.getStartTime().isBefore(timeslot.getEndTime())
                 && timeslot.getEndTime().isAfter(now);
     }
+
+    /**
+     * Updates the values of this Activity with the values from another Activity.
+     *
+     * @param other the Activity that contains the values to update
+     */
+    public void updateFields(Activity other) {
+        if (other.getPositions() != null) {
+            this.setPositions(other.getPositions());
+        }
+        if (other.getTimeslot() != null) {
+            this.setTimeslot(other.getTimeslot());
+        }
+        if (other.getCertificate() != null) {
+            this.setCertificate(other.getCertificate());
+        }
+        if (other.getCompetition() != null) {
+            this.setCompetition(other.getCompetition());
+        }
+        if (other.getGender() != null) {
+            this.setGender(other.getGender());
+        }
+    }
 }

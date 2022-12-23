@@ -1,5 +1,16 @@
 package nl.tudelft.sem.template.users.domain;
 
+import nl.tudelft.sem.template.users.application.MatchingCommunication;
+import nl.tudelft.sem.template.users.domain.database.OrganisationRepo;
+import nl.tudelft.sem.template.users.domain.database.UserRepo;
+import nl.tudelft.sem.template.users.domain.handlers.UserValidationHandler;
+import nl.tudelft.sem.template.users.domain.handlers.OrganisationValidationHandler;
+import nl.tudelft.sem.template.users.domain.handlers.EmailValidationHandler;
+import nl.tudelft.sem.template.users.domain.handlers.CertificateValidationHandler;
+import nl.tudelft.sem.template.users.domain.handlers.GenderValidationHandler;
+
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,16 +22,39 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-    private final transient UserRepo repo;
+    private final transient UserRepo userRepo;
+    private final transient OrganisationRepo organisationRepo;
+    private final transient MatchingCommunication matchingCommunication;
+    private transient UserValidationHandler userValidationHandler;
+
+
 
     /**
      * Default constructor.
      *
-     * @param repo the user repository
+     * @param userRepo the user repository
+     * @param organisationRepo the organisation name repository
+     * @param matchingCommunication communication to the matching microservice
      */
     @Autowired
-    public UserService(UserRepo repo) {
-        this.repo = repo;
+    public UserService(UserRepo userRepo, OrganisationRepo organisationRepo, MatchingCommunication matchingCommunication) {
+        this.userRepo = userRepo;
+        this.organisationRepo = organisationRepo;
+        this.matchingCommunication = matchingCommunication;
+        userValidationHandlerSetUp();
+    }
+
+    /**
+     * Sets up the chain of responsibility for validating user details that a client enters into the system.
+     */
+    public final void userValidationHandlerSetUp() {
+        this.userValidationHandler = new EmailValidationHandler(userRepo);
+        UserValidationHandler genderValidationHandler = new GenderValidationHandler();
+        this.userValidationHandler.setNext(genderValidationHandler);
+        UserValidationHandler organisationValidationHandler = new OrganisationValidationHandler(organisationRepo);
+        genderValidationHandler.setNext(organisationValidationHandler);
+        UserValidationHandler certificateValidationHandler = new CertificateValidationHandler(matchingCommunication);
+        organisationValidationHandler.setNext(certificateValidationHandler);
     }
 
     /**
@@ -30,63 +64,60 @@ public class UserService {
      * @return the user object
      */
     public User getByEmail(String id) {
-        if (!repo.existsUserByEmail(id)) {
+        if (!userRepo.existsUserByEmail(id)) {
             return null;
         }
-        return repo.getUserByEmail(id);
+        return userRepo.getUserByEmail(id);
     }
 
-    /**
-     * Method for creating a new user with given id and adding them to user repository.
-     *
-     * @param email id of the new user
-     * @return the user entity if successfully created, null if unsuccessful
-     */
-    public User createUser(String email) {
-        if (email == null || repo.existsUserByEmail(email)) {
-            return null;
-        }
-        User newUser = new User(email);
-        repo.save(newUser);
-        return newUser;
-    }
 
     /**
      * Saves user in database if the user has a valid email and there isn't already a user with that email in the db.
      *
      * @param newUser user to save
      * @return user entity saved
-     * @throws EmailAlreadyInUseException if email already in use
      */
-    public User saveUser(User newUser) throws EmailAlreadyInUseException {
-        if (repo.existsUserByEmail(newUser.getEmail())) {
-            throw new EmailAlreadyInUseException(newUser.getEmail());
+    public User saveUser(User newUser) throws IllegalArgumentException {
+        try {
+            if (userValidationHandler.handle(newUser)) {
+                userRepo.save(newUser);
+                return newUser;
+            }
+        } catch (IllegalArgumentException e) {
+            throw e;
         }
-        repo.save(newUser);
-        return newUser;
+        return new User();
     }
 
     public boolean userExists(String email) {
-        return repo.existsUserByEmail(email);
+        return userRepo.existsUserByEmail(email);
     }
 
     /**
      * Updates the user attributes that are not null in the user argument.
      * Note that when calling save with the updated entity, spring will actually do an update
      *
-     * @param user - user with updates data
+     * @param newData - user with updates data
      * @return the updated user entity
      */
-    public User updateUser(User user) {
-        User existingUser = repo.getUserByEmail(user.getEmail());
+    public User updateUser(User newData) {
+        try {
+            if (userValidationHandler.handle(newData)) {
+                User existingUser = userRepo.getUserByEmail(newData.getEmail());
 
-        existingUser.setGender(user.getGender() == null ? existingUser.getGender() : user.getGender());
-        existingUser.setCertificate(user.getCertificate() == null ? existingUser.getCertificate() : user.getCertificate());
-        existingUser.setOrganisation(user.getOrganisation() == null ? existingUser.getOrganisation()
-                : user.getOrganisation());
-        existingUser.setCompetitiveness(user.isCompetitive());
+                existingUser.setGender(newData.getGender() == null ? existingUser.getGender() : newData.getGender());
+                existingUser.setCertificate(newData.getCertificate() == null ? existingUser.getCertificate()
+                        : newData.getCertificate());
+                existingUser.setOrganisation(newData.getOrganisation() == null ? existingUser.getOrganisation()
+                        : newData.getOrganisation());
+                existingUser.setCompetitiveness(newData.isCompetitive());
 
-        repo.save(existingUser);
-        return existingUser;
+                userRepo.save(existingUser);
+                return existingUser;
+            }
+        } catch (IllegalArgumentException e) {
+            throw e;
+        }
+        return new User();
     }
 }
