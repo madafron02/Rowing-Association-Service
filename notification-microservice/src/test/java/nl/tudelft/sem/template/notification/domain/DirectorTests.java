@@ -40,8 +40,8 @@ public class DirectorTests {
     public void makeNotificationForPlayerApprovedTest() {
         String expectedMessage = "Congratulations! You have been accepted for activity "
                 + activityId + ". You are expected to be there between "
-                + timeslot.getStart().toString()
-                + dash + timeslot.getEnd().toString() + ".";
+                + timeslot.getStartTime().toString()
+                + dash + timeslot.getEndTime().toString() + ".";
 
         director.makeNotificationForPlayer(participantId, activityId, timeslot, true);
 
@@ -53,8 +53,8 @@ public class DirectorTests {
     public void makeNotificationForPlayerDeniedTest() {
         String expectedMessage = "Unfortunately, you have been denied for activity "
                 + activityId + ", happening between "
-                + timeslot.getStart().toString()
-                + dash + timeslot.getEnd().toString()
+                + timeslot.getStartTime().toString()
+                + dash + timeslot.getEndTime().toString()
                 + ". We advise you to not give up and try another timeslot or activity.";
 
         director.makeNotificationForPlayer(participantId, activityId, timeslot, false);
@@ -67,8 +67,8 @@ public class DirectorTests {
     public void makeNotificationForPlayerChangesTest() {
         String expectedMessage = "Unfortunately, the details for activity " + activityId
                 + ", happening between "
-                + timeslot.getStart().toString()
-                + dash + timeslot.getEnd().toString()
+                + timeslot.getStartTime().toString()
+                + dash + timeslot.getEndTime().toString()
                 + "have been changed and you have been unenrolled. "
                 + "We advise you to try another timeslot or activity.";
 
@@ -83,8 +83,8 @@ public class DirectorTests {
         String expectedOwnerId = "owner@gmail.com";
         String expectedMessage = "You have a new request: user "
                 + participantId + " wants to participate in activity " + activityId
-                + " between " + timeslot.getStart().toString()
-                + dash + timeslot.getEnd().toString() + ". Please decide as soon as possible"
+                + " between " + timeslot.getStartTime().toString()
+                + dash + timeslot.getEndTime().toString() + ". Please decide as soon as possible"
                 + " whether you accept this request or not.";
 
         director.makeNotificationForPublisher(expectedOwnerId, participantId, activityId, timeslot);

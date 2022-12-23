@@ -37,35 +37,11 @@ public class TimeslotTests {
 
     @Test
     public void getStartTest() {
-        assertThat(timeslot.getStart()).isEqualTo(start);
+        assertThat(timeslot.getStartTime()).isEqualTo(start);
     }
 
     @Test
     public void getEndTest() {
-        assertThat(timeslot.getEnd()).isEqualTo(end);
-    }
-
-    @Test
-    public void hashCodeTest() {
-        int actualHashCode = timeslot.hashCode();
-
-        assertThat(actualHashCode).isEqualTo(timeslot.hashCode());
-        assertThat(actualHashCode).isEqualTo(sameTimeslot.hashCode());
-        assertThat(actualHashCode).isNotEqualTo(otherTimeslot.hashCode());
-    }
-
-    @Test
-    public void equalsTest() {
-        assertThat(timeslot).isEqualTo(timeslot);
-        assertThat(timeslot).isEqualTo(sameTimeslot);
-        assertThat(timeslot).isNotEqualTo(otherTimeslot);
-    }
-
-    @Test
-    public void toStringTest() {
-        assertThat(timeslot.toString()).isEqualTo("Timeslot{"
-                + "start=" + start
-                + ", end=" + end
-                + '}');
+        assertThat(timeslot.getEndTime()).isEqualTo(end);
     }
 }

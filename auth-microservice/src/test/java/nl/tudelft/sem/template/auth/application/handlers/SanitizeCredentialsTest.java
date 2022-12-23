@@ -53,6 +53,23 @@ public class SanitizeCredentialsTest {
     void testEmptyUserId() {
         sanitizeCredentials.handle(new AccountCredentials("", "world"));
         assertThat(exceptionHandler.didCatchException()).isTrue();
+        assertThat(exceptionHandler.getErrorMessage()).isEqualTo("Please provide a user id.");
+        verify(mockHandler, times(0)).handle(any());
+    }
+
+    @Test
+    void testNullUserId() {
+        sanitizeCredentials.handle(new AccountCredentials(null, "world"));
+        assertThat(exceptionHandler.didCatchException()).isTrue();
+        assertThat(exceptionHandler.getErrorMessage()).isEqualTo("Please provide a user id.");
+        verify(mockHandler, times(0)).handle(any());
+    }
+
+    @Test
+    void testNullPassword() {
+        sanitizeCredentials.handle(new AccountCredentials("hello@world.com", null));
+        assertThat(exceptionHandler.didCatchException()).isTrue();
+        assertThat(exceptionHandler.getErrorMessage()).isEqualTo("Please provide a password.");
         verify(mockHandler, times(0)).handle(any());
     }
 
@@ -60,6 +77,7 @@ public class SanitizeCredentialsTest {
     void testEmptyPassword() {
         sanitizeCredentials.handle(new AccountCredentials("hello@world.com", ""));
         assertThat(exceptionHandler.didCatchException()).isTrue();
+        assertThat(exceptionHandler.getErrorMessage()).isEqualTo("Please provide a password.");
         verify(mockHandler, times(0)).handle(any());
     }
 
@@ -67,6 +85,9 @@ public class SanitizeCredentialsTest {
     void testIllegalUserId() {
         sanitizeCredentials.handle(new AccountCredentials("hello\"@world.com", "world"));
         assertThat(exceptionHandler.didCatchException()).isTrue();
+        assertThat(exceptionHandler.getErrorMessage()).isEqualTo("Your user id contains illegal"
+                + " characters. Please only use letters, numbers and the following characters: "
+                + "!#$%&()*+,-./:;<=>?@^_`{|}~");
         verify(mockHandler, times(0)).handle(any());
     }
 
@@ -74,6 +95,7 @@ public class SanitizeCredentialsTest {
     void testNoEmail() {
         sanitizeCredentials.handle(new AccountCredentials("hello", "world"));
         assertThat(exceptionHandler.didCatchException()).isTrue();
+        assertThat(exceptionHandler.getErrorMessage()).isEqualTo("Your user id must be an email address.");
         verify(mockHandler, times(0)).handle(any());
     }
 
@@ -81,6 +103,9 @@ public class SanitizeCredentialsTest {
     void testIllegalPassword() {
         sanitizeCredentials.handle(new AccountCredentials("hello", "world]"));
         assertThat(exceptionHandler.didCatchException()).isTrue();
+        assertThat(exceptionHandler.getErrorMessage()).isEqualTo("Your password contains illegal"
+                + " characters. Please only use letters, numbers and the following characters: "
+                + "!#$%&()*+,-./:;<=>?@^_`{|}~");
         verify(mockHandler, times(0)).handle(any());
     }
 
@@ -88,7 +113,26 @@ public class SanitizeCredentialsTest {
     void testIncorrectEmail() {
         sanitizeCredentials.handle(new AccountCredentials("hello..there@world.com", "world"));
         assertThat(exceptionHandler.didCatchException()).isTrue();
+        assertThat(exceptionHandler.getErrorMessage()).isEqualTo("Your user id must be an email address.");
         verify(mockHandler, times(0)).handle(any());
+    }
+
+    @Test
+    void nextNullTest() {
+        SanitizeCredentials sanitizeCredentials1 = new SanitizeCredentials();
+        sanitizeCredentials1.setExceptionHandler(exceptionHandler);
+        AccountCredentials mockCredentials = mock(AccountCredentials.class);
+        sanitizeCredentials1.handle(mockCredentials);
+        verify(mockCredentials, times(0)).getUserId();
+    }
+
+    @Test
+    void exceptionHandlerNullTest() {
+        SanitizeCredentials sanitizeCredentials1 = new SanitizeCredentials();
+        sanitizeCredentials1.setNext(mockHandler);
+        AccountCredentials mockCredentials = mock(AccountCredentials.class);
+        sanitizeCredentials1.handle(mockCredentials);
+        verify(mockCredentials, times(0)).getUserId();
     }
 
 }

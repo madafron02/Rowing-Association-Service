@@ -13,6 +13,7 @@ import java.util.Objects;
 @NoArgsConstructor
 public class User {
 
+
     /**
      * Entity that represents the users in the system.
      */
@@ -23,7 +24,7 @@ public class User {
     private String gender;
     private boolean competitive;
     private String certificate;
-    private String organization;
+    private String organisation;
 
     /**
      * Constructor for the User entity.
@@ -32,24 +33,16 @@ public class User {
      * @param gender the gender of the user
      * @param competitive TRUE if user is competitive, FALSE if user is not competitive
      * @param certificate the highest priority certificate of the user
-     * @param organization the organization of the user
+     * @param organisation the organization of the user
      */
-    public User(String email, String gender, boolean competitive, String certificate, String organization) {
+    public User(String email, String gender, boolean competitive, String certificate, String organisation) {
         this.email = email;
         this.gender = gender;
         this.competitive = competitive;
         this.certificate = certificate;
-        this.organization = organization;
+        this.organisation = organisation;
     }
 
-    /**
-     * Constructor for the User entity, only defining the id.
-     *
-     * @param email the email of the user
-     */
-    public User(String email) {
-        this.email = email;
-    }
 
     /**
      * Getter for the email of a user.
@@ -92,8 +85,8 @@ public class User {
      *
      * @return the organization of a user
      */
-    public String getOrganization() {
-        return organization;
+    public String getOrganisation() {
+        return organisation;
     }
 
     /**
@@ -108,10 +101,10 @@ public class User {
     /**
      * Setter for the competitiveness of a user.
      *
-     * @param competitive the competitiveness of the user
+     * @param competitiveness the competitiveness of the user
      */
-    public void setCompetitive(boolean competitive) {
-        this.competitive = competitive;
+    public void setCompetitiveness(boolean competitiveness) {
+        this.competitive = competitiveness;
     }
 
     /**
@@ -126,10 +119,10 @@ public class User {
     /**
      * Setter for the organization of a user.
      *
-     * @param organization the organization of a user
+     * @param organisation the organization of a user
      */
-    public void setOrganization(String organization) {
-        this.organization = organization;
+    public void setOrganisation(String organisation) {
+        this.organisation = organisation;
     }
 
     /**

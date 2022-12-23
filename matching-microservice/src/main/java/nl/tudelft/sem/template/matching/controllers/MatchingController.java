@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.matching.controllers;
 
+import nl.tudelft.sem.template.matching.domain.Certificate;
 import nl.tudelft.sem.template.matching.domain.Match;
 import nl.tudelft.sem.template.matching.domain.MatchingService;
 import nl.tudelft.sem.template.matching.domain.Status;
@@ -8,15 +9,15 @@ import nl.tudelft.sem.template.matching.models.DecisionModel;
 import nl.tudelft.sem.template.matching.models.MatchingRequestModel;
 import nl.tudelft.sem.template.matching.models.MatchingResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -50,15 +51,11 @@ public class MatchingController {
      */
     @PostMapping("/submit")
     public ResponseEntity<MatchingResponseModel> submitAvailability(@RequestBody MatchingRequestModel request) {
-        try {
-            if (!service.verifyPosition(request.getPosition())) {
-                return ResponseEntity.badRequest().build();
-            }
-            return ResponseEntity.ok(service.submitAvailability(request.getTimeslot(), request.getPosition()));
-        } catch (Exception e) {
-            System.err.println(Arrays.toString(e.getStackTrace()));
+        if (!service.verifyPosition(request.getPosition())) {
             return ResponseEntity.badRequest().build();
         }
+        return ResponseEntity.ok(service.submitAvailability(request.getTimeslot(), request.getPosition()));
+
     }
 
     /**
@@ -81,10 +78,10 @@ public class MatchingController {
      *
      * @param matchId the match id
      * @return a String representing saying "Application sent" if the activity
-     *         was successfully picked
+     *          was successfully picked
      */
     @PostMapping("/pick")
-    public ResponseEntity<String> pickActivity(@RequestBody long matchId) {
+    public ResponseEntity<String> pickActivity(@RequestBody Long matchId) {
         if (service.verifyMatch(matchId)) {
             service.pickActivity(matchId);
             return ResponseEntity.ok("Application sent");
@@ -101,11 +98,7 @@ public class MatchingController {
      */
     @GetMapping("/participants")
     public ResponseEntity<List<Match>> getPendingRequests() {
-        try {
-            return ResponseEntity.ok(service.getPendingRequests());
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+        return ResponseEntity.ok(service.getPendingRequests());
     }
 
     /**
@@ -115,8 +108,26 @@ public class MatchingController {
      * @return a list with all the matches of the user that have the required status
      */
     @GetMapping("/match/{status}")
-    public ResponseEntity<List<Match>> getMatches(@RequestParam Status status) {
-        return ResponseEntity.ok(service.getMatches(status));
+    public ResponseEntity<List<Match>> getMatches(@PathVariable("status") String status) {
+        try {
+            Status statusEnum = Status.valueOf(status);
+            return ResponseEntity.ok(service.getMatches(statusEnum));
+        } catch (Exception e) {
+            return new ResponseEntity("Use a valid status (MATCHED, PENDING, ACCEPTED, DECLINED", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    /**
+     * API Endpoint used by the Notification microservice to discard all the matches done
+     * for a modified activity.
+     *
+     * @param activityId the id of the activity modifies
+     * @return an okay response entity
+     */
+    @PostMapping("/activity/modified")
+    public ResponseEntity<String> discardMatchesByActivity(@RequestBody Long activityId) {
+        service.discardMatchesByActivity(activityId);
+        return ResponseEntity.ok("Participants notified successfully !");
     }
 
     /**
@@ -131,15 +142,18 @@ public class MatchingController {
     }
 
     /**
-     * API Endpoint used by the Notification microservice to discard all the matches done
-     * for a modified activity.
+     * API Endpoint for adding a new certificate to the certificate repository.
      *
-     * @param activityId the id of the activity modifies
-     * @return an okay response entity
+     * @param certificate the name of the certificate to be added
+     * @return a response entity with a String containing a success/failure message for the client
      */
-    @PostMapping("/activity/modified")
-    public ResponseEntity discardMatchesByActivity(@RequestBody Long activityId) {
-        service.discardMatchesByActivity(activityId);
-        return ResponseEntity.ok().build();
+    @PostMapping("/certificate/add")
+    public ResponseEntity addNewCertificate(@RequestBody String certificate) {
+        if (certificateRepo.getCertificateByName(certificate).isPresent()) {
+            return new ResponseEntity("Certificate already added!", HttpStatus.BAD_REQUEST);
+        } else {
+            certificateRepo.save(new Certificate(certificate));
+            return new ResponseEntity("Certificate successfully added!", HttpStatus.OK);
+        }
     }
 }

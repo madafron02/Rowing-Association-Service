@@ -1,8 +1,13 @@
 package nl.tudelft.sem.template.users.controllers;
 
 import nl.tudelft.sem.template.users.authentication.AuthManager;
-import nl.tudelft.sem.template.users.domain.User;
 import nl.tudelft.sem.template.users.domain.UserService;
+import nl.tudelft.sem.template.users.domain.User;
+import nl.tudelft.sem.template.users.domain.Organisation;
+
+
+
+import nl.tudelft.sem.template.users.domain.database.OrganisationRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
@@ -25,17 +30,20 @@ public class UserController {
 
     private final transient AuthManager authManager;
     private final transient UserService userService;
+    private final transient OrganisationRepo organisationRepo;
 
     /**
      * Instantiates a new controller.
      *
      * @param authManager Spring Security component used to authenticate and authorize the user
      * @param userService Service for handling user data
+     * @param organisationRepo repository for storing recognized organisations
      */
     @Autowired
-    public UserController(AuthManager authManager, UserService userService) {
+    public UserController(AuthManager authManager, UserService userService, OrganisationRepo organisationRepo) {
         this.authManager = authManager;
         this.userService = userService;
+        this.organisationRepo = organisationRepo;
     }
 
     /**
@@ -45,9 +53,9 @@ public class UserController {
      */
     @GetMapping("/mydata")
     public ResponseEntity<User> getUserData() {
-        User user = userService.getByEmail(authManager.getNetId());
+        User user = userService.getByEmail(authManager.getUserId());
         if (user == null) {
-            return new ResponseEntity("User with the email: " + authManager.getNetId() + " was not found.",
+            return new ResponseEntity("User with the email: " + authManager.getUserId() + " was not found.",
                     HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(user);
@@ -58,7 +66,7 @@ public class UserController {
      *
      * @return User entity of user specified by email.
      */
-    @GetMapping("/details")
+    @PostMapping("/details")
     public ResponseEntity<User> getUserDataById(@RequestBody String email) {
         User user = userService.getByEmail(email);
         if (user == null) {
@@ -70,15 +78,60 @@ public class UserController {
     /**
      * Post mapping for creating a new user, specified by email.
      *
-     * @param email email of new user
-     * @return user entity created, or error if a user with that email already exists
+     * @param user new user entity
+     * @return user entity created, or error if a user with that email already exists or details are invalid
      */
     @PostMapping("/newuser")
-    public ResponseEntity<User> createNewUser(@RequestBody String email) {
-        User newUser = userService.createUser(email);
-        if (newUser == null) {
-            return new ResponseEntity("User with the email:" + email + " already exists", HttpStatus.CONFLICT);
+    public ResponseEntity<User> createNewUser(@RequestBody User user) {
+
+        if (!user.getEmail().equals(authManager.getUserId())) {
+            return new ResponseEntity("You are not authenticated with the email: " + user.getEmail(), HttpStatus.CONFLICT);
         }
-        return ResponseEntity.ok(newUser);
+        if (userService.userExists(user.getEmail())) {
+            return new ResponseEntity("The following e-mail is already in use: " + user.getEmail(), HttpStatus.CONFLICT);
+        }
+        try {
+            User newUser = userService.saveUser(user);
+            return ResponseEntity.ok(newUser);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
+        }
+    }
+
+    /**
+     * Post mapping for updating a users data, specified by email.
+     *
+     * @param user user entity with updated data
+     * @return updated user entity, or error if a user doesn't exist, unauthenticated or invalid data
+     */
+    @PostMapping("/updatemydata")
+    public ResponseEntity<User> updateUser(@RequestBody User user) {
+        if (!user.getEmail().equals(authManager.getUserId())) {
+            return new ResponseEntity("You are not authenticated with the email: " + user.getEmail(), HttpStatus.CONFLICT);
+        } else if (!userService.userExists(user.getEmail())) {
+            return new ResponseEntity("This user does not exist, please create a user account first.", HttpStatus.CONFLICT);
+        }
+        try {
+            return ResponseEntity.ok(userService.updateUser(user));
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
+        }
+    }
+
+    /**
+     * Post mapping for adding a new organisation to the set of legitimate organisations recognized by the system.
+     *
+     * @param organisationName name of new organisation
+     * @return organisation that was added if successful, otherwise error.
+     */
+    @PostMapping("/organisation/add")
+    public ResponseEntity<Organisation> addNewOrganisation(@RequestBody String organisationName) {
+        if (organisationRepo.existsOrganisationByName(organisationName)) {
+            return new ResponseEntity("Organisation already present in system.", HttpStatus.CONFLICT);
+        } else {
+            Organisation newOrganisation = new Organisation(organisationName);
+            organisationRepo.save(newOrganisation);
+            return ResponseEntity.ok(newOrganisation);
+        }
     }
 }

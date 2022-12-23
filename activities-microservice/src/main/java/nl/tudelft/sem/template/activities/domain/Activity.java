@@ -54,6 +54,9 @@ public class Activity {
     @Column(name = "gender")
     private String gender;
 
+    @Column(name = "organisation")
+    private String organisation;
+
     /**
      * Creates a new Activity.
      *
@@ -68,10 +71,11 @@ public class Activity {
      * @param certificate the boat type
      * @param competition true if it is a competition and false otherwise
      * @param gender the gender of the needed participants, null if not needed
+     * @param organisation the origanisation of the participant
      */
     public Activity(String ownerId, Integer coxCount, Integer coachCount, Integer portSideRowerCount,
                     Integer starboardSideRowerCount, Integer scullingRowerCount, LocalDateTime startTime,
-                    LocalDateTime endTime, String certificate, Boolean competition, String gender) {
+                    LocalDateTime endTime, String certificate, Boolean competition, String gender, String organisation) {
         this.ownerId = ownerId;
         this.positions = new Positions(coxCount, coachCount, portSideRowerCount, starboardSideRowerCount,
                 scullingRowerCount);
@@ -79,6 +83,7 @@ public class Activity {
         this.certificate = certificate;
         this.competition = Objects.requireNonNullElse(competition, false);
         this.gender = gender;
+        this.organisation = organisation;
     }
 
     /**
@@ -87,9 +92,9 @@ public class Activity {
      * @return true if this is valid and false otherwise
      */
     public boolean checkIfValid() {
-        boolean requiresRowers = positions.getCoxCount() != null || positions.getCoachCount() != null
-                || positions.getPortSideRowerCount() != null || positions.getStarboardSideRowerCount() != null
-                || positions.getScullingRowerCount() != null;
+        boolean requiresRowers = positions.getCox() != null || positions.getCoach() != null
+                || positions.getPort() != null || positions.getStarboard() != null
+                || positions.getSculling() != null;
         boolean nonNull = ownerId != null && requiresRowers;
         if (!nonNull) {
             return false;
@@ -97,12 +102,35 @@ public class Activity {
         if (!CERTIFICATE_TYPES.contains(certificate)) {
             return false;
         }
-        if (competition && (gender == null || !GENDER_TYPES.contains(gender))) {
+        if (competition && ((gender == null || !GENDER_TYPES.contains(gender)) || organisation == null)) {
             return false;
         }
         LocalDateTime now = LocalDateTime.now();
         boolean timeslotExists = timeslot != null && timeslot.getStartTime() != null && timeslot.getEndTime() != null;
         return timeslotExists && timeslot.getStartTime().isBefore(timeslot.getEndTime())
                 && timeslot.getEndTime().isAfter(now);
+    }
+
+    /**
+     * Updates the values of this Activity with the values from another Activity.
+     *
+     * @param other the Activity that contains the values to update
+     */
+    public void updateFields(Activity other) {
+        if (other.getPositions() != null) {
+            this.setPositions(other.getPositions());
+        }
+        if (other.getTimeslot() != null) {
+            this.setTimeslot(other.getTimeslot());
+        }
+        if (other.getCertificate() != null) {
+            this.setCertificate(other.getCertificate());
+        }
+        if (other.getCompetition() != null) {
+            this.setCompetition(other.getCompetition());
+        }
+        if (other.getGender() != null) {
+            this.setGender(other.getGender());
+        }
     }
 }

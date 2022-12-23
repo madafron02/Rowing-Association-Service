@@ -30,7 +30,7 @@ public class ActivityCommunication {
     public ActivityAvailabilityResponseModel getActivitiesByAvailability(TimeslotApp availability) {
         return new ResteasyClientBuilder().build()
                 .target(SERVER)
-                .path("/activity/availability")
+                .path("/activities/within-timeslot")
                 .request(APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer "
                         + SecurityContextHolder.getContext().getAuthentication().getCredentials())
@@ -49,7 +49,7 @@ public class ActivityCommunication {
     public TimeslotApp getActivityTimeslotById(long activityId) {
         return new ResteasyClientBuilder().build()
                 .target(SERVER)
-                .path("/activity/" + activityId)
+                .path("/activities/" + activityId)
                 .request(APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer "
                         + SecurityContextHolder.getContext().getAuthentication().getCredentials())
@@ -67,7 +67,7 @@ public class ActivityCommunication {
     public void updateActivity(long activityId, String position) {
         new ResteasyClientBuilder().build()
                 .target(SERVER)
-                .path("/activity/update/" + activityId)
+                .path("/activities/update/" + activityId)
                 .request(APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer "
                         + SecurityContextHolder.getContext().getAuthentication().getCredentials())
