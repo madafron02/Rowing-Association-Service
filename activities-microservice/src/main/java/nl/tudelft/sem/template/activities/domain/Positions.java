@@ -10,7 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
 /**
- * An embeddable class for storing required positions of an Activity.
+ * An embeddable class for storing required positions of a training or a competition.
  */
 @Embeddable
 @AllArgsConstructor
@@ -20,19 +20,19 @@ import javax.persistence.Embeddable;
 @EqualsAndHashCode
 public class Positions {
 
-    @Column(name = "cox")
+    @Column(name = "cox", nullable = false)
     private Integer cox;
 
-    @Column(name = "coach")
+    @Column(name = "coach", nullable = false)
     private Integer coach;
 
-    @Column(name = "port")
+    @Column(name = "port", nullable = false)
     private Integer port;
 
-    @Column(name = "starboard")
+    @Column(name = "starboard", nullable = false)
     private Integer starboard;
 
-    @Column(name = "sculling")
+    @Column(name = "sculling", nullable = false)
     private Integer sculling;
 
     /**

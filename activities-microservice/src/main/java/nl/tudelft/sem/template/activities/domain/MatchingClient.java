@@ -20,11 +20,11 @@ public class MatchingClient {
     private static final String SERVER = "http://localhost:8083/matching";
 
     /**
-     * Informs the matching service to delete all matches for this Activity.
+     * Informs the matching service to delete all matches for this training.
      *
-     * @param activityId the id of the Activity to be deleted
+     * @param trainingId the id of the training to be deleted
      */
-    public void deleteAllMatches(Long activityId) {
+    public void deleteAllMatchesForTraining(Long trainingId) {
         new ResteasyClientBuilder().build()
                 .target(SERVER)
                 .path("/activity/modified")
@@ -32,7 +32,7 @@ public class MatchingClient {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer "
                         + SecurityContextHolder.getContext().getAuthentication().getCredentials())
                 .accept(APPLICATION_JSON)
-                .post(Entity.entity(activityId, APPLICATION_JSON));
+                .post(Entity.entity(trainingId, APPLICATION_JSON));
     }
 
     /**

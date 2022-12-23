@@ -16,7 +16,7 @@ import javax.persistence.Embeddable;
 import java.time.LocalDateTime;
 
 /**
- * An embeddable class for storing the timeslot of an Activity.
+ * An embeddable class for storing the timeslot of a training or a competition.
  */
 @Embeddable
 @AllArgsConstructor

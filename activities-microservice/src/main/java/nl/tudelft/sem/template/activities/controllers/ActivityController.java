@@ -1,11 +1,14 @@
 package nl.tudelft.sem.template.activities.controllers;
 
 import nl.tudelft.sem.template.activities.authentication.AuthManager;
-import nl.tudelft.sem.template.activities.domain.Activity;
-import nl.tudelft.sem.template.activities.domain.ActivityRepository;
+import nl.tudelft.sem.template.activities.domain.Training;
+import nl.tudelft.sem.template.activities.domain.Competition;
+import nl.tudelft.sem.template.activities.domain.TrainingRepository;
 import nl.tudelft.sem.template.activities.domain.MatchingClient;
 import nl.tudelft.sem.template.activities.domain.Timeslot;
 import nl.tudelft.sem.template.activities.model.ActivityListResponseModel;
+import nl.tudelft.sem.template.activities.model.PositionNameRequestModel;
+import nl.tudelft.sem.template.activities.model.UpdateRequestDataModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +37,7 @@ public class ActivityController {
 
     private final transient AuthManager authManager;
 
-    private final transient ActivityRepository activityRepository;
+    private final transient TrainingRepository trainingRepository;
 
     private final transient MatchingClient matchingClient;
 
@@ -46,11 +49,11 @@ public class ActivityController {
     @Autowired
     public ActivityController(
             AuthManager authManager,
-            ActivityRepository activityRepository,
+            TrainingRepository trainingRepository,
             MatchingClient matchingClient
     ) {
         this.authManager = authManager;
-        this.activityRepository = activityRepository;
+        this.trainingRepository = trainingRepository;
         this.matchingClient = matchingClient;
     }
 
@@ -62,7 +65,7 @@ public class ActivityController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Timeslot> getActivityTimeslotById(@PathVariable("id") long id) {
-        Optional<Activity> activity = activityRepository.findById(id);
+        Optional<Training> activity = trainingRepository.findById(id);
         if (activity.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -76,10 +79,10 @@ public class ActivityController {
      */
     @PostMapping("/within-timeslot")
     public ResponseEntity<ActivityListResponseModel> getAllActivitiesWithinTimeslot(@RequestBody Timeslot request) {
-        List<Activity> activities = activityRepository.findActivitiesByTimeslot(
+        List<Training> trainings = trainingRepository.findTrainingsByTimeslot(
                 request.getStartTime(), request.getEndTime()
         );
-        return ResponseEntity.ok(new ActivityListResponseModel(activities));
+        return ResponseEntity.ok(new ActivityListResponseModel(trainings));
     }
 
     /**
@@ -89,88 +92,116 @@ public class ActivityController {
      */
     @GetMapping("/list")
     public ResponseEntity<ActivityListResponseModel> getAllActivitiesByOwner() {
-        List<Activity> activities = activityRepository.findActivitiesByOwnerId(authManager.getUserId());
-        return ResponseEntity.ok(new ActivityListResponseModel(activities));
+        List<Training> trainings = trainingRepository.findTrainingsByOwnerId(authManager.getUserId());
+        return ResponseEntity.ok(new ActivityListResponseModel(trainings));
     }
 
     /**
-     * Gets example by id.
+     * Creates a new Competition.
      *
-     * @return the example found in the database with the given id
+     * @return a response entity showing if the Competition was created
      */
-    @PostMapping("/publish")
-    public ResponseEntity<String> createActivity(@RequestBody Activity request) {
+    @PostMapping("/publish-competition")
+    public ResponseEntity<String> createCompetition(@RequestBody Competition request) {
+        request.setOwnerId(authManager.getUserId());
         if (!request.checkIfValid()) {
             return ResponseEntity.badRequest().build();
         }
-        request.setOwnerId(authManager.getUserId());
-        activityRepository.save(request);
-        return ResponseEntity.ok("Activity created successfully!");
+        if (!matchingClient.validateCertificate(request.getCertificate())) {
+            return ResponseEntity.badRequest().build();
+        }
+        trainingRepository.save(request);
+        return ResponseEntity.ok("Competition created successfully!");
     }
 
     /**
-     * Deletes an Activity by its given id.
+     * Creates a new Training.
      *
-     * @param activityId the id of the Activity
-     * @return a response entity showing if the Activity was deleted
+     * @return a response entity showing if the Training was created
      */
-    @DeleteMapping("/delete/{activityId}")
-    public ResponseEntity<String> deleteActivity(@PathVariable Long activityId) {
-        if (activityId == null) {
+    @PostMapping("/publish-training")
+    public ResponseEntity<String> createTraining(@RequestBody Training request) {
+        request.setOwnerId(authManager.getUserId());
+        if (!request.checkIfValid()) {
             return ResponseEntity.badRequest().build();
         }
-        Optional<Activity> toDelete = activityRepository.findById(activityId);
+        if (!matchingClient.validateCertificate(request.getCertificate())) {
+            return ResponseEntity.badRequest().build();
+        }
+        trainingRepository.save(request);
+        return ResponseEntity.ok("Training created successfully!");
+    }
+
+    /**
+     * Deletes a Training by its given id.
+     *
+     * @param trainingId the id of the Training
+     * @return a response entity showing if the Training was deleted
+     */
+    @DeleteMapping("/delete-training/{trainingId}")
+    public ResponseEntity<String> deleteTraining(@PathVariable Long trainingId) {
+        if (trainingId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        Optional<Training> toDelete = trainingRepository.findById(trainingId);
         if (toDelete.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
         if (!toDelete.get().getOwnerId().equals(authManager.getUserId())) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        activityRepository.delete(toDelete.get());
-        matchingClient.deleteAllMatches(activityId);
-        return ResponseEntity.ok("Activity with the id " + activityId + " has been deleted successfully!");
+        trainingRepository.delete(toDelete.get());
+        matchingClient.deleteAllMatchesForTraining(trainingId);
+        return ResponseEntity.ok("Training with the id " + trainingId + " has been deleted successfully!");
     }
 
     /**
      * Updates the attributes of an Activity.
      *
-     * @param request the values which will be used for updating the Activity
-     * @return the Activity that was updated
+     * @param request the values which will be used for updating the Training
+     * @return the Training that was updated
      */
     @PatchMapping("/edit")
-    public ResponseEntity<Activity> updateActivity(@RequestBody Activity request) {
-        Optional<Activity> toUpdate = activityRepository.findById(request.getId());
+    public ResponseEntity<Training> updateTraining(@RequestBody UpdateRequestDataModel request) {
+        if (request.getId() == null) {
+            return new ResponseEntity("Update failed: the id has an incorrect value.",
+                    HttpStatus.BAD_REQUEST);
+        }
+        Optional<Training> toUpdate = trainingRepository.findById(request.getId());
         if (toUpdate.isEmpty()) {
-            return new ResponseEntity("Activity with the id: " + request.getId() + " was not found.", HttpStatus.NOT_FOUND);
+            return new ResponseEntity("Activity with the id: " + request.getId() + " was not found.",
+                    HttpStatus.NOT_FOUND);
         }
-        Activity activity = toUpdate.get();
-        activity.updateFields(request);
-        if (!activity.checkIfValid()) {
-            return new ResponseEntity("Update failed: the attributes have incorrect values.", HttpStatus.BAD_REQUEST);
+        Training training = toUpdate.get();
+        training.updateFields(request);
+        if (!training.checkIfValid() || !matchingClient.validateCertificate(request.getCertificate())) {
+            return new ResponseEntity("Update failed: the at least one of the attributes has incorrect values.",
+                    HttpStatus.BAD_REQUEST);
         }
-        activityRepository.save(activity);
-        matchingClient.deleteAllMatches(activity.getId());
-        return ResponseEntity.ok(activity);
+        trainingRepository.save(training);
+        matchingClient.deleteAllMatchesForTraining(training.getId());
+        return ResponseEntity.ok(training);
     }
 
     /**
      * Reduce the number of remaining spots for a given position of an activity.
      *
-     * @param activityId the id of an activity
+     * @param trainingId the id of an activity
      * @param position the position which should have the reduced count
      * @return a response entity containing the activity
      */
-    @PutMapping("/update/{activityId}")
-    public ResponseEntity<Activity> reduceByOne(@PathVariable Long activityId, @RequestBody String position) {
-        Optional<Activity> toDelete = activityRepository.findById(activityId);
-        if (toDelete.isEmpty()) {
+    @PutMapping("/update/{trainingId}")
+    public ResponseEntity<Training> reduceByOne(@PathVariable Long trainingId,
+                                                @RequestBody PositionNameRequestModel position) {
+        Optional<Training> toUpdate = trainingRepository.findById(trainingId);
+        if (toUpdate.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        Activity activity = toDelete.get();
-        if (!activity.getPositions().reduceByOne(position)) {
+        Training training = toUpdate.get();
+        if (!training.getPositions().reduceByOne(position.getPosition())) {
             return ResponseEntity.badRequest().build();
         }
-        activityRepository.save(activity);
-        return ResponseEntity.ok(activity);
+        trainingRepository.save(training);
+        return ResponseEntity.ok(training);
     }
 }
