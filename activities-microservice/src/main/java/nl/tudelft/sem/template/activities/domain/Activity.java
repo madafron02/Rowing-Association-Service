@@ -102,8 +102,7 @@ public class Activity {
         if (!CERTIFICATE_TYPES.contains(certificate)) {
             return false;
         }
-        if (!(competition != null && gender != null && GENDER_TYPES.contains(gender) && organisation != null) ||
-        !(competition == null && gender == null && organisation == null)) {
+        if (competition && ((gender == null || !GENDER_TYPES.contains(gender)) || organisation == null)) {
             return false;
         }
         LocalDateTime now = LocalDateTime.now();
