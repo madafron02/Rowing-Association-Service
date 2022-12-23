@@ -78,7 +78,7 @@ public class MatchingController {
      *
      * @param matchId the match id
      * @return a String representing saying "Application sent" if the activity
-     *         was successfully picked
+     *          was successfully picked
      */
     @PostMapping("/pick")
     public ResponseEntity<String> pickActivity(@RequestBody Long matchId) {
@@ -112,7 +112,7 @@ public class MatchingController {
         try {
             Status statusEnum = Status.valueOf(status);
             return ResponseEntity.ok(service.getMatches(statusEnum));
-        } catch(Exception e) {
+        } catch (Exception e) {
             return new ResponseEntity("Use a valid status (MATCHED, PENDING, ACCEPTED, DECLINED", HttpStatus.BAD_REQUEST);
         }
     }

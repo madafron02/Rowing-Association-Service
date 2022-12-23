@@ -31,7 +31,7 @@ public class User {
      *
      * @param email the email of the user
      * @param gender the gender of the user
-     * @param competitiveness TRUE if user is competitive, FALSE if user is not competitive
+     * @param competitive TRUE if user is competitive, FALSE if user is not competitive
      * @param certificate the highest priority certificate of the user
      * @param organisation the organization of the user
      */

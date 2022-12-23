@@ -1,8 +1,6 @@
 package nl.tudelft.sem.template.matching.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import nl.tudelft.sem.template.matching.authentication.AuthManager;
 import nl.tudelft.sem.template.matching.domain.Certificate;
 import nl.tudelft.sem.template.matching.domain.Match;
 import nl.tudelft.sem.template.matching.domain.MatchingService;
@@ -30,7 +28,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -177,7 +174,7 @@ class MatchingControllerTest {
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getContentAsString();
 
-       assertThat(response).isEqualTo("Use a valid status (MATCHED, PENDING, ACCEPTED, DECLINED");
+        assertThat(response).isEqualTo("Use a valid status (MATCHED, PENDING, ACCEPTED, DECLINED");
     }
 
     @Test
