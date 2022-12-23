@@ -284,7 +284,7 @@ class MatchingServiceTest {
         NotificationActivityModified activityModifiedEmail = new NotificationActivityModified(acceptedMatch
                 .getParticipantId(), 2L, null);
         verify(notificationCommunication).activityModifiedNotification(activityModifiedEmail);
-        //verify(matchingRepo).deleteById(acceptedMatch.getMatchId());
-        //verify(matchingRepo).deleteById(match.getMatchId());
+        // two times since match and accepted match are not saved in db => same id
+        verify(matchingRepo, times(2)).deleteById(match.getMatchId());
     }
 }
