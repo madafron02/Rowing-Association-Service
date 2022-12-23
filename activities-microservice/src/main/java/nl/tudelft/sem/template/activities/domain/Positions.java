@@ -1,6 +1,5 @@
 package nl.tudelft.sem.template.activities.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +12,6 @@ import javax.persistence.Embeddable;
  * An embeddable class for storing required positions of an Activity.
  */
 @Embeddable
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
@@ -34,6 +32,23 @@ public class Positions {
 
     @Column(name = "sculling")
     private Integer sculling;
+
+    /**
+     * Creates a Positions class.
+     *
+     * @param cox cox count
+     * @param coach coach count
+     * @param port port side rowe count
+     * @param starboard starboard side rower count
+     * @param sculling sculling rower count
+     */
+    public Positions(Integer cox, Integer coach, Integer port, Integer starboard, Integer sculling) {
+        this.cox = cox;
+        this.coach = coach;
+        this.port = port;
+        this.starboard = starboard;
+        this.sculling = sculling;
+    }
 
     /**
      * Reduces the value of remaining spots for a certain position by one.

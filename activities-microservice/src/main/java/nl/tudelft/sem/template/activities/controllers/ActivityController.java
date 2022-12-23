@@ -145,6 +145,9 @@ public class ActivityController {
         }
         Activity activity = toUpdate.get();
         activity.updateFields(request);
+        if (!activity.getOwnerId().equals(authManager.getUserId())) {
+            return new ResponseEntity("The access to this activity is forbidden", HttpStatus.FORBIDDEN);
+        }
         if (!activity.checkIfValid()) {
             return new ResponseEntity("Update failed: the attributes have incorrect values.", HttpStatus.BAD_REQUEST);
         }
