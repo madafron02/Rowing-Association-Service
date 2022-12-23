@@ -58,7 +58,7 @@ public class UserControllerTest {
     @Test
     public void getUserDataTest() throws Exception {
         User testUser = new User("abc@def.ghi", null, false, null, null);
-        when(authManager.getNetId()).thenReturn("abc@def.ghi");
+        when(authManager.getUserId()).thenReturn("abc@def.ghi");
         when(userService.getByEmail("abc@def.ghi")).thenReturn(testUser);
 
         this.mockMvc.perform(get("/user/mydata"))
@@ -69,7 +69,7 @@ public class UserControllerTest {
 
     @Test
     public void getEmptyUserDataTest() throws Exception  {
-        when(authManager.getNetId()).thenReturn("test@a.b");
+        when(authManager.getUserId()).thenReturn("test@a.b");
         when(userService.getByEmail("test@a.b")).thenReturn(null);
 
         this.mockMvc.perform(get("/user/mydata"))
@@ -100,7 +100,7 @@ public class UserControllerTest {
 
     @Test
     public void createAccountNotAuthTest() throws Exception {
-        when(authManager.getNetId()).thenReturn("notTheSameEmail@invalid.com");
+        when(authManager.getUserId()).thenReturn("notTheSameEmail@invalid.com");
 
         this.mockMvc.perform(post("/user/newuser")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -111,7 +111,7 @@ public class UserControllerTest {
 
     @Test
     public void createDuplicateAccountTest() throws Exception {
-        when(authManager.getNetId()).thenReturn("test@a.b");
+        when(authManager.getUserId()).thenReturn("test@a.b");
         when(userService.userExists("test@a.b")).thenReturn(true);
 
         this.mockMvc.perform(post("/user/newuser")
@@ -123,7 +123,7 @@ public class UserControllerTest {
 
     @Test
     public void createNewAccountTest() throws Exception {
-        when(authManager.getNetId()).thenReturn("test@a.b");
+        when(authManager.getUserId()).thenReturn("test@a.b");
         when(userService.userExists("test@a.b")).thenReturn(false);
 
         User testUser = new User("test@a.b", null, false, null, null);
@@ -138,7 +138,7 @@ public class UserControllerTest {
 
     @Test
     public void createInvalidAccountTest() throws Exception {
-        when(authManager.getNetId()).thenReturn("test2@a.b");
+        when(authManager.getUserId()).thenReturn("test2@a.b");
         when(userService.userExists("test2@a.b")).thenReturn(false);
 
         User testUser = new User("test2@a.b", null, false, null, null);
@@ -153,7 +153,7 @@ public class UserControllerTest {
 
     @Test
     public void updateNotAuthTest() throws Exception {
-        when(authManager.getNetId()).thenReturn("differentEmail@a.b");
+        when(authManager.getUserId()).thenReturn("differentEmail@a.b");
 
         this.mockMvc.perform(post("/user/updatemydata")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -164,7 +164,7 @@ public class UserControllerTest {
 
     @Test
     public void updateNonExistentTest() throws Exception {
-        when(authManager.getNetId()).thenReturn("testemail@a.b");
+        when(authManager.getUserId()).thenReturn("testemail@a.b");
         when(userService.userExists("testemail@a.b")).thenReturn(false);
 
         this.mockMvc.perform(post("/user/updatemydata")
@@ -176,7 +176,7 @@ public class UserControllerTest {
 
     @Test
     public void updateSuccessfulTest() throws Exception {
-        when(authManager.getNetId()).thenReturn("testemail@a.b");
+        when(authManager.getUserId()).thenReturn("testemail@a.b");
         when(userService.userExists("testemail@a.b")).thenReturn(true);
         User testUser = new User("testemail@a.b", null, false, null, null);
         when(userService.updateUser(testUser)).thenReturn(testUser);
@@ -190,7 +190,7 @@ public class UserControllerTest {
 
     @Test
     public void updateWithInvalidDetailsTest() throws Exception {
-        when(authManager.getNetId()).thenReturn("testemail@a.b");
+        when(authManager.getUserId()).thenReturn("testemail@a.b");
         when(userService.userExists("testemail@a.b")).thenReturn(true);
         User testUser = new User("testemail@a.b", null, false, null, null);
         when(userService.updateUser(testUser)).thenThrow(new IllegalArgumentException("test exception"));
