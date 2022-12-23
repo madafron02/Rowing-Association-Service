@@ -43,14 +43,6 @@ public class User {
         this.organisation = organisation;
     }
 
-    /**
-     * Constructor for the User entity, only defining the id.
-     *
-     * @param email the email of the user
-     */
-    public User(String email) {
-        this.email = email;
-    }
 
     /**
      * Getter for the email of a user.
