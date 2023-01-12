@@ -19,9 +19,11 @@ import nl.tudelft.sem.template.matching.models.MatchingResponseModel;
 import nl.tudelft.sem.template.matching.models.NotificationActivityModified;
 import nl.tudelft.sem.template.matching.models.NotificationRequestModelOwner;
 import nl.tudelft.sem.template.matching.models.NotificationRequestModelParticipant;
+import nl.tudelft.sem.template.matching.models.UserPreferences;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -95,7 +97,7 @@ public class MatchingService {
     public MatchingResponseModel submitAvailability(TimeslotApp timeslot, String position) {
         UserApp user = usersCommunication.getUserDetails(auth.getUserId());
         List<ActivityApp> activities = activityCommunication.getActivitiesByAvailability(timeslot).getActivities();
-        return new MatchingResponseModel(filterActivities(activities, timeslot, user, position));
+        return new MatchingResponseModel(filterActivities(activities, new UserPreferences(timeslot, user, position)));
     }
 
     /**
@@ -103,24 +105,21 @@ public class MatchingService {
      * in order to match a user.
      *
      * @param activities the activities given by the Activity microservice
-     * @param timeslot   the availability of the user
-     * @param user       the user requesting activities
-     * @param position   teh position they can fill in
+     * @param userPreferences  the preferences of the user
      * @return the positions the user is matched with
      */
     public List<ActivityReponse> filterActivities(List<ActivityApp> activities,
-                                                  TimeslotApp timeslot,
-                                                  UserApp user,
-                                                  String position) {
+                                                  UserPreferences userPreferences) {
         return activities
                 .stream()
-                .filter(a -> a != null)
+                .filter(Objects::nonNull)
                 .distinct()
-                .map(a -> a.setTypeOfActivity())
-                .filter(a -> a != null)
-                .filter(a -> this.filteringHandler.handle(new MatchFilter(a, user, position, timeslot)))
-                .filter(a -> matchingRepo.getMatchesByActivityIdAndParticipantId(a.getId(), user.getEmail()).isEmpty())
-                .map(a -> matchUserToActivity(user, position, a))
+                .map(ActivityApp::setTypeOfActivity)
+                .filter(Objects::nonNull)
+                .filter(a -> this.filteringHandler.handle(new MatchFilter(a, userPreferences)))
+                .filter(a -> matchingRepo.getMatchesByActivityIdAndParticipantId(a.getId(), userPreferences.getUser()
+                        .getEmail()).isEmpty())
+                .map(a -> matchUserToActivity(userPreferences.getUser(), userPreferences.getPosition(), a))
                 .collect(Collectors.toList());
     }
 
@@ -248,14 +247,8 @@ public class MatchingService {
      * @return true iff the position exists
      */
     public boolean verifyPosition(String position) {
-        switch (position) {
-            case "cox" : return true;
-            case "starboard" : return true;
-            case "coach" : return true;
-            case "port" : return true;
-            case "sculling" : return true;
-            default : return false;
-        }
+        List<String> validPositions = List.of("cox", "port", "coach", "starboard", "sculling");
+        return validPositions.contains(position);
     }
 
     /**

@@ -20,7 +20,7 @@ public class CertificateHandler implements FilteringHandler {
 
     @Override
     public boolean handle(MatchFilter matchFilter) {
-        if (!matchFilter.getPosition().equals("cox")) {
+        if (!matchFilter.getUserPreferences().getPosition().equals("cox")) {
             if (next != null) {
                 return next.handle(matchFilter);
             } else {
@@ -29,7 +29,7 @@ public class CertificateHandler implements FilteringHandler {
         }
 
         long certificateIdUser = certificateRepo.getCertificateByName(
-                matchFilter.getUser().getCertificate()).get().getId();
+                matchFilter.getUserPreferences().getUser().getCertificate()).get().getId();
         long certificateIdActivity = certificateRepo.getCertificateByName(
                 matchFilter.getActivityApp().getCertificate()).get().getId();
 
