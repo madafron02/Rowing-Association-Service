@@ -31,7 +31,7 @@ public class CertificateHandler implements FilteringHandler {
         long certificateIdUser = certificateRepo.getCertificateByName(
                 matchFilter.getUser().getCertificate()).get().getId();
         long certificateIdActivity = certificateRepo.getCertificateByName(
-                matchFilter.getActivityApp().getCertificate()).get().getId();
+                matchFilter.getActivityApp().getProperties().getCertificate()).get().getId();
 
 
         if (certificateIdActivity <= certificateIdUser) {

@@ -91,7 +91,7 @@ class CertificateHandlerTest {
 
         // swap so that user is not able to participate
         user.setCertificate("C4");
-        activityApp.setCertificate("4+");
+        activityApp.getProperties().setCertificate("4+");
         assertThat(filteringHandler.handle(matchFilter)).isFalse();
     }
 }

@@ -1,27 +1,58 @@
 package nl.tudelft.sem.template.matching.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.HashMap;
 
 /**
  * A DDD value object representing an activity.
  */
-@Data
-@AllArgsConstructor
+@Getter
 @NoArgsConstructor
 public class ActivityApp {
     private long id;
     private String ownerId;
     private TimeslotApp timeslot;
-    private String gender;
-    private String organisation;
     private HashMap<String, Integer> positions;
-    private boolean competition;
+    @Setter
     private TypeOfActivity type;
-    private String certificate;
+    private ActivityProperties properties;
+
+    /**
+     * Constructor for ActivityApp.
+     *
+     * @param id of activity
+     * @param ownerId id of the owner
+     * @param timeslot timeslot of the activity
+     * @param gender requested by the activity
+     * @param organisation hosting the competition
+     * @param positions available for the activity
+     * @param competition true iff the activity is competition and requires competitive users
+     * @param type of the activity TRAINING/COMPETITION
+     * @param certificate required for the cox position of the activity
+     */
+    @JsonCreator
+    public ActivityApp(@JsonProperty("id") long id,
+                       @JsonProperty("ownerId") String ownerId,
+                       @JsonProperty("timeslot") TimeslotApp timeslot,
+                       @JsonProperty("gender") String gender,
+                       @JsonProperty("organisation") String organisation,
+                       @JsonProperty("positions") HashMap<String, Integer> positions,
+                       @JsonProperty("competition") boolean competition,
+                       @JsonProperty("type") TypeOfActivity type,
+                       @JsonProperty("certificate") String certificate) {
+        this.id = id;
+        this.ownerId = ownerId;
+        this.timeslot = timeslot;
+        this.positions = positions;
+        this.type = type;
+        this.properties = new ActivityProperties(gender, organisation, competition, certificate);
+    }
+
 
     /**
      * This method takes an activity and decides whether it is a Training or a Competition.
@@ -29,9 +60,9 @@ public class ActivityApp {
      * @return the activity with the type set
      */
     public ActivityApp setTypeOfActivity() {
-        if (getGender() != null && getOrganisation() != null) {
+        if (properties.getGender() != null && properties.getOrganisation() != null) {
             setType(TypeOfActivity.COMPETITION);
-        } else if (getGender() == null && getOrganisation() == null) {
+        } else if (properties.getGender() == null && properties.getOrganisation() == null) {
             setType(TypeOfActivity.TRAINING);
         } else {
             return null;
@@ -39,3 +70,4 @@ public class ActivityApp {
         return this;
     }
 }
+
