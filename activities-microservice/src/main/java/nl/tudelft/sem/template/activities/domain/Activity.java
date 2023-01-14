@@ -92,11 +92,10 @@ public class Activity {
      * @return true if this is valid and false otherwise
      */
     public boolean checkIfValid() {
-        boolean requiresRowers = positions.getCox() != null || positions.getCoach() != null
-                || positions.getPort() != null || positions.getStarboard() != null
-                || positions.getSculling() != null;
-        boolean nonNull = ownerId != null && requiresRowers;
-        if (!nonNull) {
+        if (positions != null && !positions.checkIfValid()) {
+            return false;
+        }
+        if (ownerId != null) {
             return false;
         }
         if (!CERTIFICATE_TYPES.contains(certificate)) {
@@ -105,10 +104,10 @@ public class Activity {
         if (competition && ((gender == null || !GENDER_TYPES.contains(gender)) || organisation == null)) {
             return false;
         }
-        LocalDateTime now = LocalDateTime.now();
-        boolean timeslotExists = timeslot != null && timeslot.getStartTime() != null && timeslot.getEndTime() != null;
-        return timeslotExists && timeslot.getStartTime().isBefore(timeslot.getEndTime())
-                && timeslot.getEndTime().isAfter(now);
+        if (timeslot != null && !timeslot.checkIfValid()) {
+            return false;
+        }
+        return true;
     }
 
     /**

@@ -37,4 +37,14 @@ public class Timeslot {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime endTime;
+
+    /**
+     * Checks if this timeslot has valid data.
+     *
+     * @return true if this is valid and false otherwise
+     */
+    public boolean checkIfValid() {
+        LocalDateTime now = LocalDateTime.now();
+        return startTime != null && endTime != null && startTime.isBefore(endTime) && endTime.isAfter(now);
+    }
 }
