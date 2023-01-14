@@ -92,22 +92,26 @@ public class Activity {
      * @return true if this is valid and false otherwise
      */
     public boolean checkIfValid() {
-        if (positions != null && !positions.checkIfValid()) {
-            return false;
-        }
-        if (ownerId != null) {
-            return false;
-        }
-        if (!CERTIFICATE_TYPES.contains(certificate)) {
-            return false;
-        }
-        if (competition && ((gender == null || !GENDER_TYPES.contains(gender)) || organisation == null)) {
-            return false;
-        }
-        if (timeslot != null && !timeslot.checkIfValid()) {
-            return false;
-        }
-        return true;
+        boolean valid = ownerId != null && CERTIFICATE_TYPES.contains(certificate);
+        return valid && checkIfPositionsAndTimestampValid() && checkIfCompetitionValid();
+    }
+
+    /**
+     * Checks if the positions and timestamp have valid data.
+     *
+     * @return true if the data is valid and false otherwise
+     */
+    public boolean checkIfPositionsAndTimestampValid() {
+        return positions != null && positions.checkIfValid() && timeslot != null && timeslot.checkIfValid();
+    }
+
+    /**
+     * Checks if this activity is a competition that is valid.
+     *
+     * @return true if this is a valid competition or not a competition at all and false otherwise
+     */
+    private boolean checkIfCompetitionValid() {
+        return !competition || ((gender != null && GENDER_TYPES.contains(gender)) && organisation != null);
     }
 
     /**
