@@ -46,11 +46,11 @@ class CompetitivenessHandlerTest {
         assertThat(filteringHandler.handle(matchFilter)).isTrue();
 
         // competitive user for competitive activity
-        activityApp.setCompetition(true);
+        activityApp.getProperties().setCompetition(true);
         assertThat(filteringHandler.handle(matchFilter)).isTrue();
 
         // uncompetitive user for uncompetitive activity
-        activityApp.setCompetition(false);
+        activityApp.getProperties().setCompetition(false);
         user.setCompetitive(false);
         assertThat(filteringHandler.handle(matchFilter)).isTrue();
 
@@ -62,7 +62,7 @@ class CompetitivenessHandlerTest {
     void handleFalse() {
         // uncompetitive user for competitive activity
         user.setCompetitive(false);
-        activityApp.setCompetition(true);
+        activityApp.getProperties().setCompetition(true);
         assertThat(filteringHandler.handle(matchFilter)).isFalse();
     }
 }
