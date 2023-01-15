@@ -49,7 +49,7 @@ class OrganisationHandlerTest {
 
     @Test
     void handleTrue() {
-        matchFilter.getActivityApp().setOrganisation("SEM");
+        matchFilter.getActivityApp().getProperties().setOrganisation("SEM");
         assertThat(filteringHandler.handle(matchFilter)).isTrue();
 
         filteringHandler.setNext(new GenderHandler());

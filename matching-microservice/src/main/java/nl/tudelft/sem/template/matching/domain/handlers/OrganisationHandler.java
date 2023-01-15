@@ -13,7 +13,7 @@ public class OrganisationHandler implements FilteringHandler {
 
     @Override
     public boolean handle(MatchFilter matchFilter) {
-        if (matchFilter.getActivityApp().getOrganisation().equals(matchFilter
+        if (matchFilter.getActivityApp().getProperties().getOrganisation().equals(matchFilter
                 .getUserPreferences().getUser().getOrganisation())) {
             if (next != null) {
                 return next.handle(matchFilter);
