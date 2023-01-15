@@ -27,6 +27,35 @@ class TimeslotTest {
     }
 
     @Test
+    void checkIfValidTrueTest() {
+        assertThat(timeslot.checkIfValid()).isTrue();
+    }
+
+    @Test
+    void checkIfValidStartNullTest() {
+        timeslot.setStartTime(null);
+        assertThat(timeslot.checkIfValid()).isFalse();
+    }
+
+    @Test
+    void checkIfValidEndNullTest() {
+        timeslot.setEndTime(null);
+        assertThat(timeslot.checkIfValid()).isFalse();
+    }
+
+    @Test
+    void checkIfValidStartNotBeforeTest() {
+        timeslot.setStartTime(endTime);
+        assertThat(timeslot.checkIfValid()).isFalse();
+    }
+
+    @Test
+    void checkIfValidEndBeforeNowTest() {
+        timeslot.setEndTime(LocalDateTime.of(2012, 12, 12, 23, 14));
+        assertThat(timeslot.checkIfValid()).isFalse();
+    }
+
+    @Test
     void constructorTest() {
         assertThat(timeslot).isNotNull();
     }

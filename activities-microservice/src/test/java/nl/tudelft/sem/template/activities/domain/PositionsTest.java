@@ -102,6 +102,47 @@ class PositionsTest {
     }
 
     @Test
+    void checkIfValidFalseTest() {
+        Positions empty = new Positions();
+        assertThat(empty.checkIfValid()).isFalse();
+    }
+
+    @Test
+    void checkIfValidCoxNotNullTest() {
+        Positions empty = new Positions();
+        empty.setCox(1);
+        assertThat(empty.checkIfValid()).isTrue();
+    }
+
+    @Test
+    void checkIfValidCoachNotNullTest() {
+        Positions empty = new Positions();
+        empty.setCoach(1);
+        assertThat(empty.checkIfValid()).isTrue();
+    }
+
+    @Test
+    void checkIfValidPortNotNullTest() {
+        Positions empty = new Positions();
+        empty.setPort(1);
+        assertThat(empty.checkIfValid()).isTrue();
+    }
+
+    @Test
+    void checkIfValidStarboardNotNullTest() {
+        Positions empty = new Positions();
+        empty.setStarboard(1);
+        assertThat(empty.checkIfValid()).isTrue();
+    }
+
+    @Test
+    void checkIfValidScullingNotNullTest() {
+        Positions empty = new Positions();
+        empty.setSculling(1);
+        assertThat(empty.checkIfValid()).isTrue();
+    }
+
+    @Test
     void emptyConstructorTest() {
         Positions empty = new Positions();
         assertThat(empty).isNotNull();
