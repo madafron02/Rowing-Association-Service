@@ -100,6 +100,6 @@ public class Positions {
      * @return true if this is valid and false otherwise
      */
     public boolean checkIfValid() {
-        return cox != null && coach != null && port != null && starboard != null && sculling != null;
+        return cox != null || coach != null || port != null || starboard != null || sculling != null;
     }
 }

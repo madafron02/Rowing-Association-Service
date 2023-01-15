@@ -93,15 +93,15 @@ public class Activity {
      */
     public boolean checkIfValid() {
         boolean valid = ownerId != null && CERTIFICATE_TYPES.contains(certificate);
-        return valid && checkIfPositionsAndTimestampValid() && checkIfCompetitionValid();
+        return valid && checkIfPositionsAndTimeslotValid() && checkIfCompetitionValid();
     }
 
     /**
-     * Checks if the positions and timestamp have valid data.
+     * Checks if the positions and timeslot have valid data.
      *
      * @return true if the data is valid and false otherwise
      */
-    public boolean checkIfPositionsAndTimestampValid() {
+    public boolean checkIfPositionsAndTimeslotValid() {
         return positions != null && positions.checkIfValid() && timeslot != null && timeslot.checkIfValid();
     }
 
@@ -110,8 +110,8 @@ public class Activity {
      *
      * @return true if this is a valid competition or not a competition at all and false otherwise
      */
-    private boolean checkIfCompetitionValid() {
-        return !competition || ((gender != null && GENDER_TYPES.contains(gender)) && organisation != null);
+    public boolean checkIfCompetitionValid() {
+        return !competition || ((gender == null || GENDER_TYPES.contains(gender)) && organisation != null);
     }
 
     /**
