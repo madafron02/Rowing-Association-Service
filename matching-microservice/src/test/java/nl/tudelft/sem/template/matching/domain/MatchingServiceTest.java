@@ -12,6 +12,7 @@ import nl.tudelft.sem.template.matching.models.MatchingResponseModel;
 import nl.tudelft.sem.template.matching.models.NotificationActivityModified;
 import nl.tudelft.sem.template.matching.models.NotificationRequestModelOwner;
 import nl.tudelft.sem.template.matching.models.NotificationRequestModelParticipant;
+import nl.tudelft.sem.template.matching.models.UserPreferences;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -126,7 +127,7 @@ class MatchingServiceTest {
         when(certificateRepo.getCertificateByName("C4")).thenReturn(Optional.of(new Certificate(1L, "C4+")));
         when(certificateRepo.getCertificateByName("4+")).thenReturn(Optional.of(new Certificate(2L, "4+")));
         // one because one of the activities is 30 min after the timeslot given by the user
-        List<ActivityReponse> result = service.filterActivities(activities, timeslot, user, "cox");
+        List<ActivityReponse> result = service.filterActivities(activities, new UserPreferences(timeslot, user, "cox"));
         assertThat(result.size()).isEqualTo(1);
 
         Match matchMade = new Match("d.micloiu@tudelft.nl",
