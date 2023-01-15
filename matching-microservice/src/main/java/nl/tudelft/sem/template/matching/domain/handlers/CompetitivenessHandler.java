@@ -13,7 +13,8 @@ public class CompetitivenessHandler implements FilteringHandler {
 
     @Override
     public boolean handle(MatchFilter matchFilter) {
-        if (!matchFilter.getActivityApp().getProperties().isCompetition() || matchFilter.getUserPreferences().getUser().isCompetitive()) {
+        if (!matchFilter.getActivityApp().getProperties().isCompetition()
+                || matchFilter.getUserPreferences().getUser().isCompetitive()) {
             if (next != null) {
                 return next.handle(matchFilter);
             } else {
