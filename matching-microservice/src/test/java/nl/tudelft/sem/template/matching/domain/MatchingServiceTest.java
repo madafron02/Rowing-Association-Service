@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.matching.domain;
 
 import nl.tudelft.sem.template.matching.application.ActivityCommunication;
+import nl.tudelft.sem.template.matching.application.Communication;
 import nl.tudelft.sem.template.matching.application.NotificationCommunication;
 import nl.tudelft.sem.template.matching.application.UsersCommunication;
 import nl.tudelft.sem.template.matching.authentication.AuthManager;
@@ -36,6 +37,7 @@ class MatchingServiceTest {
 
     private MatchingService service;
 
+    private Sanitization sanitizationService;
     @Mock
     private AuthManager authManager;
     @Mock
@@ -58,10 +60,12 @@ class MatchingServiceTest {
 
     @BeforeEach
     void setUp() {
+        sanitizationService = new Sanitization(authManager, matchingRepo);
         matchingRepo.deleteAll();
-        service = new MatchingService(authManager, matchingRepo,
-                usersCommunication, notificationCommunication,
-                activityCommunication, certificateRepo);
+        Communication communication = new Communication(usersCommunication,
+                notificationCommunication,
+                activityCommunication);
+        service = new MatchingService(authManager, matchingRepo, communication, certificateRepo);
         timeslot = new TimeslotApp(LocalDateTime.now(),
                 LocalDateTime.now().plusDays(1).plusHours(4));
         position = "cox";
@@ -161,7 +165,7 @@ class MatchingServiceTest {
         when(matchingRepo.getMatchesByOwnerIdAndStatus("l.tosa@tudelft.nl",
                 Status.PENDING))
                 .thenReturn(List.of(match));
-        assertThat(service.getPendingRequests().size()).isEqualTo(1);
+        assertThat(sanitizationService.getPendingRequests().size()).isEqualTo(1);
 
     }
 

@@ -1,8 +1,6 @@
 package nl.tudelft.sem.template.matching.domain;
 
-import nl.tudelft.sem.template.matching.application.ActivityCommunication;
-import nl.tudelft.sem.template.matching.application.NotificationCommunication;
-import nl.tudelft.sem.template.matching.application.UsersCommunication;
+import nl.tudelft.sem.template.matching.application.Communication;
 import nl.tudelft.sem.template.matching.authentication.AuthManager;
 import nl.tudelft.sem.template.matching.domain.database.CertificateRepo;
 import nl.tudelft.sem.template.matching.domain.database.MatchingRepo;
@@ -15,10 +13,9 @@ import nl.tudelft.sem.template.matching.models.NotificationRequestModelParticipa
 import nl.tudelft.sem.template.matching.models.UserPreferences;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * A DDD service for matching a user.
@@ -28,32 +25,24 @@ public class MatchingService {
 
     private final transient AuthManager auth;
     private final transient MatchingRepo matchingRepo;
-    private final transient UsersCommunication usersCommunication;
-    private final transient NotificationCommunication notificationCommunication;
-    private final transient ActivityCommunication activityCommunication;
+    private final transient Communication communication;
     public transient FilteringHandler filteringHandler;
 
 
     /**
      * Constructor of the matching service.
      *
-     * @param auth                      the authentication manager
-     * @param repo                      the repository of matches
-     * @param usersCommunication        communication to the user service
-     * @param notificationCommunication communication to the notification service
-     * @param activityCommunication     communication to the activity service
+     * @param auth          the authentication manager
+     * @param repo          the repository of matches
+     * @param communication communication with other microservices
      */
     public MatchingService(AuthManager auth,
                            MatchingRepo repo,
-                           UsersCommunication usersCommunication,
-                           NotificationCommunication notificationCommunication,
-                           ActivityCommunication activityCommunication,
+                           Communication communication,
                            CertificateRepo certificateRepo) {
         this.auth = auth;
         this.matchingRepo = repo;
-        this.usersCommunication = usersCommunication;
-        this.notificationCommunication = notificationCommunication;
-        this.activityCommunication = activityCommunication;
+        this.communication = communication;
         this.filteringHandler = SetupMatchingService.filteringHandlerSetUp(certificateRepo);
     }
 
@@ -66,8 +55,9 @@ public class MatchingService {
      * @return DTO containing the list of matched activities
      */
     public MatchingResponseModel submitAvailability(TimeslotApp timeslot, String position) {
-        UserApp user = usersCommunication.getUserDetails(auth.getUserId());
-        List<ActivityApp> activities = activityCommunication.getActivitiesByAvailability(timeslot).getActivities();
+        UserApp user = communication.getUsersCommunication().getUserDetails(auth.getUserId());
+        List<ActivityApp> activities = communication.getActivityCommunication()
+                .getActivitiesByAvailability(timeslot).getActivities();
         return new MatchingResponseModel(filterActivities(activities, new UserPreferences(timeslot, user, position)));
     }
 
@@ -75,23 +65,26 @@ public class MatchingService {
      * Method for filtering the activities based on different constraints
      * in order to match a user.
      *
-     * @param activities the activities given by the Activity microservice
-     * @param userPreferences  the preferences of the user
+     * @param activities      the activities given by the Activity microservice
+     * @param userPreferences the preferences of the user
      * @return the positions the user is matched with
      */
     public List<ActivityResponse> filterActivities(List<ActivityApp> activities,
                                                    UserPreferences userPreferences) {
-        return activities
-                .stream()
-                .filter(Objects::nonNull)
-                .distinct()
-                .map(ActivityApp::setTypeOfActivity)
-                .filter(Objects::nonNull)
-                .filter(a -> this.filteringHandler.handle(new MatchFilter(a, userPreferences)))
-                .filter(a -> matchingRepo.getMatchesByActivityIdAndParticipantId(a.getId(), userPreferences.getUser()
-                        .getEmail()).isEmpty())
-                .map(a -> matchUserToActivity(userPreferences.getUser(), userPreferences.getPosition(), a))
-                .collect(Collectors.toList());
+        List<ActivityResponse> responses = new ArrayList<>();
+
+        for (ActivityApp activity : activities) {
+            if (activity == null
+                    || activity.setTypeOfActivity() == null
+                    || !this.filteringHandler.handle(new MatchFilter(activity, userPreferences))
+                    || !matchingRepo.getMatchesByActivityIdAndParticipantId(activity.getId(),
+                    userPreferences.getUser().getEmail()).isEmpty()) {
+                continue;
+            }
+            responses.add(matchUserToActivity(userPreferences.getUser(), userPreferences.getPosition(), activity));
+        }
+
+        return responses;
     }
 
     /**
@@ -128,20 +121,11 @@ public class MatchingService {
      * @param match the Match entity made
      */
     private void notifyOwner(Match match) {
-        notificationCommunication
+        communication.getNotificationCommunication()
                 .sendReminderToOwner(new NotificationRequestModelOwner(match.getOwnerId(),
                         match.getParticipantId(),
                         match.getActivityId(),
-                        activityCommunication.getActivityTimeslotById(match.getActivityId())));
-    }
-
-    /**
-     * Method for getting the pending requests by the current userId acting as owner of activities.
-     *
-     * @return the List of matches being in pending for the owner (client making a request)
-     */
-    public List<Match> getPendingRequests() {
-        return matchingRepo.getMatchesByOwnerIdAndStatus(auth.getUserId(), Status.PENDING);
+                        communication.getActivityCommunication().getActivityTimeslotById(match.getActivityId())));
     }
 
     /**
@@ -165,15 +149,15 @@ public class MatchingService {
         Match newMatch = match.get();
         if (decision) {
             newMatch.setStatus(Status.ACCEPTED);
-            activityCommunication.updateActivity(newMatch.getActivityId(), newMatch.getPosition());
+            communication.getActivityCommunication().updateActivity(newMatch.getActivityId(), newMatch.getPosition());
         } else {
             newMatch.setStatus(Status.DECLINED);
         }
         matchingRepo.save(newMatch);
-        notificationCommunication.sendNotificationToParticipant(
+        communication.getNotificationCommunication().sendNotificationToParticipant(
                 new NotificationRequestModelParticipant(newMatch.getParticipantId(),
                         newMatch.getActivityId(),
-                        activityCommunication.getActivityTimeslotById(newMatch.getActivityId()),
+                        communication.getActivityCommunication().getActivityTimeslotById(newMatch.getActivityId()),
                         decision));
         return true;
     }
@@ -186,15 +170,13 @@ public class MatchingService {
      */
     public void discardMatchesByActivity(Long activityId) {
         List<Match> matchesModifiedByActivityChange = matchingRepo.getMatchesByActivityId(activityId);
-        matchesModifiedByActivityChange
-                .stream()
-                .filter(match -> match.getStatus() == Status.ACCEPTED)
-                .forEach(match ->
-                        notificationCommunication
-                                .activityModifiedNotification(new NotificationActivityModified(match.getParticipantId(),
-                                        activityId, activityCommunication.getActivityTimeslotById(activityId))));
-        matchesModifiedByActivityChange
-                .stream()
-                .forEach(match -> matchingRepo.deleteById(match.getMatchId()));
+        for (Match match : matchesModifiedByActivityChange) {
+            if (match.getStatus() == Status.ACCEPTED) {
+                communication.getNotificationCommunication()
+                        .activityModifiedNotification(new NotificationActivityModified(match.getParticipantId(),
+                                activityId, communication.getActivityCommunication().getActivityTimeslotById(activityId)));
+            }
+            matchingRepo.deleteById(match.getMatchId());
+        }
     }
 }

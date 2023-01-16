@@ -104,7 +104,7 @@ public class MatchingController {
      */
     @GetMapping("/participants")
     public ResponseEntity<List<Match>> getPendingRequests() {
-        return ResponseEntity.ok(service.getPendingRequests());
+        return ResponseEntity.ok(sanitizationService.getPendingRequests());
     }
 
     /**

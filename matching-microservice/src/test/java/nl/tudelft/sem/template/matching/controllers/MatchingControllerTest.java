@@ -147,7 +147,7 @@ class MatchingControllerTest {
                 new Match("participant2@tudelft.nl", 1L, "l.tosa@student.tudelft.nl", "coach"),
                 new Match("participant3@tudelft.nl", 2L, "l.tosa@student.tudelft.nl", "cox")
                 );
-        when(service.getPendingRequests()).thenReturn(matches);
+        when(sanitizationService.getPendingRequests()).thenReturn(matches);
 
         String response = mockMvc.perform(get("/matching/participants"))
                 .andExpect(status().isOk())

@@ -61,4 +61,13 @@ public class Sanitization {
         String userId = auth.getUserId();
         return matchingRepo.getMatchesByParticipantIdAndStatus(userId, status);
     }
+
+    /**
+     * Method for getting the pending requests by the current userId acting as owner of activities.
+     *
+     * @return the List of matches being in pending for the owner (client making a request)
+     */
+    public List<Match> getPendingRequests() {
+        return matchingRepo.getMatchesByOwnerIdAndStatus(auth.getUserId(), Status.PENDING);
+    }
 }
