@@ -3,6 +3,7 @@ package nl.tudelft.sem.template.matching.controllers;
 import nl.tudelft.sem.template.matching.domain.Certificate;
 import nl.tudelft.sem.template.matching.domain.Match;
 import nl.tudelft.sem.template.matching.domain.MatchingService;
+import nl.tudelft.sem.template.matching.domain.Sanitization;
 import nl.tudelft.sem.template.matching.domain.Status;
 import nl.tudelft.sem.template.matching.domain.database.CertificateRepo;
 import nl.tudelft.sem.template.matching.models.DecisionModel;
@@ -29,17 +30,22 @@ public class MatchingController {
 
     private final transient MatchingService service;
     private final transient CertificateRepo certificateRepo;
+    private final transient Sanitization sanitizationService;
 
     /**
      * Instantiates a new controller.
      *
-     * @param service DDD microservice for matching
+     * @param service             DDD microservice for matching
+     * @param certificateRepo     repository for certificates
+     * @param sanitizationService service providing verification of input
      */
     @Autowired
     public MatchingController(MatchingService service,
-                              CertificateRepo certificateRepo) {
+                              CertificateRepo certificateRepo,
+                              Sanitization sanitizationService) {
         this.service = service;
         this.certificateRepo = certificateRepo;
+        this.sanitizationService = sanitizationService;
     }
 
     /**
@@ -51,7 +57,7 @@ public class MatchingController {
      */
     @PostMapping("/submit")
     public ResponseEntity<MatchingResponseModel> submitAvailability(@RequestBody MatchingRequestModel request) {
-        if (!service.verifyPosition(request.getPosition())) {
+        if (!sanitizationService.verifyPosition(request.getPosition())) {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(service.submitAvailability(request.getTimeslot(), request.getPosition()));
@@ -82,7 +88,7 @@ public class MatchingController {
      */
     @PostMapping("/pick")
     public ResponseEntity<String> pickActivity(@RequestBody Long matchId) {
-        if (service.verifyMatch(matchId)) {
+        if (sanitizationService.verifyMatch(matchId)) {
             service.pickActivity(matchId);
             return ResponseEntity.ok("Application sent");
         } else {
@@ -111,7 +117,7 @@ public class MatchingController {
     public ResponseEntity<List<Match>> getMatches(@PathVariable("status") String status) {
         try {
             Status statusEnum = Status.valueOf(status);
-            return ResponseEntity.ok(service.getMatches(statusEnum));
+            return ResponseEntity.ok(sanitizationService.getMatches(statusEnum));
         } catch (Exception e) {
             return new ResponseEntity("Use a valid status (MATCHED, PENDING, ACCEPTED, DECLINED", HttpStatus.BAD_REQUEST);
         }

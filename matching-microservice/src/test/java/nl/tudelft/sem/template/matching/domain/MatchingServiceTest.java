@@ -138,26 +138,6 @@ class MatchingServiceTest {
     }
 
     @Test
-    void verifyMatchMatchIdNotPresent() {
-        when(matchingRepo.getMatchByMatchId(1L)).thenReturn(Optional.empty());
-        assertThat(service.verifyMatch(1L)).isFalse();
-    }
-
-    @Test
-    void verifyMatchMaliciousUser() {
-        when(matchingRepo.getMatchByMatchId(1L)).thenReturn(Optional.of(match));
-        when(authManager.getUserId()).thenReturn("d.micloiu@icloud.nl");
-        assertThat(service.verifyMatch(1L)).isFalse();
-    }
-
-    @Test
-    void verifyMatchTrue() {
-        when(matchingRepo.getMatchByMatchId(1L)).thenReturn(Optional.of(match));
-        when(authManager.getUserId()).thenReturn("d.micloiu@tudelft.nl");
-        assertThat(service.verifyMatch(1L)).isTrue();
-    }
-
-    @Test
     void pickActivity() {
         when(matchingRepo.getMatchByMatchId(1L)).thenReturn(Optional.of(match));
         service.pickActivity(1L);
@@ -248,28 +228,6 @@ class MatchingServiceTest {
         verify(notificationCommunication).sendNotificationToParticipant(emailParticipant);
     }
 
-    @Test
-    void getMatches() {
-        when(authManager.getUserId()).thenReturn("d.micloiu@tudelft.nl");
-        when(matchingRepo.getMatchesByParticipantIdAndStatus("d.micloiu@tudelft.nl",
-                Status.MATCHED)).thenReturn(List.of(match));
-
-        assertThat(service.getMatches(Status.MATCHED)).isEqualTo(List.of(match));
-    }
-
-    @Test
-    void verifyPosition() {
-        assertThat(service.verifyPosition("cox")).isTrue();
-        assertThat(service.verifyPosition("starboard")).isTrue();
-        assertThat(service.verifyPosition("coach")).isTrue();
-        assertThat(service.verifyPosition("port")).isTrue();
-        assertThat(service.verifyPosition("sculling")).isTrue();
-
-        assertThat(service.verifyPosition("Cox")).isFalse();
-        assertThat(service.verifyPosition("random_position")).isFalse();
-        assertThat(service.verifyPosition("coach.")).isFalse();
-
-    }
 
     @Test
     void discardMatchesByActivity() {

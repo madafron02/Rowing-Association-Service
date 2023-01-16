@@ -6,14 +6,7 @@ import nl.tudelft.sem.template.matching.application.UsersCommunication;
 import nl.tudelft.sem.template.matching.authentication.AuthManager;
 import nl.tudelft.sem.template.matching.domain.database.CertificateRepo;
 import nl.tudelft.sem.template.matching.domain.database.MatchingRepo;
-import nl.tudelft.sem.template.matching.domain.handlers.CertificateHandler;
-import nl.tudelft.sem.template.matching.domain.handlers.CompetitivenessHandler;
 import nl.tudelft.sem.template.matching.domain.handlers.FilteringHandler;
-import nl.tudelft.sem.template.matching.domain.handlers.GenderHandler;
-import nl.tudelft.sem.template.matching.domain.handlers.OrganisationHandler;
-import nl.tudelft.sem.template.matching.domain.handlers.PositionHandler;
-import nl.tudelft.sem.template.matching.domain.handlers.TimeConstraintHandler;
-import nl.tudelft.sem.template.matching.domain.handlers.TypeOfActivityHandler;
 import nl.tudelft.sem.template.matching.models.ActivityReponse;
 import nl.tudelft.sem.template.matching.models.MatchingResponseModel;
 import nl.tudelft.sem.template.matching.models.NotificationActivityModified;
@@ -39,7 +32,6 @@ public class MatchingService {
     private final transient NotificationCommunication notificationCommunication;
     private final transient ActivityCommunication activityCommunication;
     public transient FilteringHandler filteringHandler;
-    private final transient CertificateRepo certificateRepo;
 
 
     /**
@@ -62,28 +54,7 @@ public class MatchingService {
         this.usersCommunication = usersCommunication;
         this.notificationCommunication = notificationCommunication;
         this.activityCommunication = activityCommunication;
-        this.certificateRepo = certificateRepo;
-        filteringHandlerSetUp();
-    }
-
-
-    /**
-     * Function for setting up the Chain of Responsibility pattern implemented for filtering.
-     */
-    public final void filteringHandlerSetUp() {
-        this.filteringHandler = new PositionHandler();
-        FilteringHandler certificateHandler = new CertificateHandler(certificateRepo);
-        this.filteringHandler.setNext(certificateHandler);
-        FilteringHandler timeConstraintHandler = new TimeConstraintHandler();
-        certificateHandler.setNext(timeConstraintHandler);
-        FilteringHandler typeOfActivityHandler = new TypeOfActivityHandler();
-        timeConstraintHandler.setNext(typeOfActivityHandler);
-        FilteringHandler organisationHandler = new OrganisationHandler();
-        typeOfActivityHandler.setNext(organisationHandler);
-        FilteringHandler genderHandler = new GenderHandler();
-        organisationHandler.setNext(genderHandler);
-        FilteringHandler competitivenessHandler = new CompetitivenessHandler();
-        genderHandler.setNext(competitivenessHandler);
+        this.filteringHandler = SetupMatchingService.filteringHandlerSetUp(certificateRepo);
     }
 
     /**
@@ -137,28 +108,6 @@ public class MatchingService {
         return new ActivityReponse(matchMade.getMatchId(), activity.getType(), activity.getTimeslot());
     }
 
-    /**
-     * Method for verifying the identity of the user making a request by using the SecurityContext
-     * in the auth manager.
-     *
-     * @param matchId the id of the match
-     * @return true if the user making the request has the same userIs as the userId of the match given
-     *         false otherwise
-     */
-    private boolean verifyUser(long matchId) {
-        return auth.getUserId().equals(matchingRepo.getMatchByMatchId(matchId).get().getParticipantId());
-    }
-
-    /**
-     * Method for verifying the existence of the match.
-     *
-     * @param matchId the id of the match
-     * @return true if it exists in the database a match with the id given
-     *         false otherwise
-     */
-    public boolean verifyMatch(long matchId) {
-        return matchingRepo.getMatchByMatchId(matchId).isPresent() && verifyUser(matchId);
-    }
 
     /**
      * Method called by the api request for picking an activity which retrieves the match by the matchId
@@ -229,27 +178,6 @@ public class MatchingService {
         return true;
     }
 
-    /**
-     * Method for retrieving all matches of the user with the specified status.
-     *
-     * @param status of the required activities
-     * @return list of required matches
-     */
-    public List<Match> getMatches(Status status) {
-        String userId = auth.getUserId();
-        return matchingRepo.getMatchesByParticipantIdAndStatus(userId, status);
-    }
-
-    /**
-     * Method for verifying whether a position is valid.
-     *
-     * @param position to check
-     * @return true iff the position exists
-     */
-    public boolean verifyPosition(String position) {
-        List<String> validPositions = List.of("cox", "port", "coach", "starboard", "sculling");
-        return validPositions.contains(position);
-    }
 
     /**
      * Method for discarding the matches done with the activities having the specified activityId.
