@@ -49,7 +49,7 @@ class ActivityTest {
     }
 
     @Test
-    void checkIfValidNullTimestampTest() {
+    void checkIfValidNullTimeslotTest() {
         Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
                 LocalDateTime.of(2042, 12, 12, 20, 15),
                 null, "8+", false, null, null);
@@ -57,7 +57,7 @@ class ActivityTest {
     }
 
     @Test
-    void checkIfValidIncorrectTimestampTest() {
+    void checkIfValidIncorrectTimeslotTest() {
         Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
                 LocalDateTime.of(2042, 12, 12, 20, 15),
                 LocalDateTime.of(2042, 12, 12, 20, 14), "8+", false, null, "Laga");
@@ -70,6 +70,90 @@ class ActivityTest {
                 LocalDateTime.of(2022, 12, 12, 20, 15),
                 LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null, null);
         assertThat(a.checkIfValid()).isFalse();
+    }
+    
+    @Test
+    void checkIfPositionsAndTimeslotValidTrueTest() {
+        Activity a = new Activity("owner@gmail.com", 1, 0, 8, 10, 0,
+                LocalDateTime.of(2042, 12, 12, 20, 15),
+                LocalDateTime.of(2042, 12, 12, 20, 20), "8+", false, null, null);
+        assertThat(a.checkIfPositionsAndTimeslotValid()).isTrue();
+    }
+
+    @Test
+    void checkIfPositionsAndTimeslotValidPositionsNullTest() {
+        Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
+                LocalDateTime.of(2042, 12, 12, 20, 15),
+                LocalDateTime.of(2042, 12, 12, 20, 20), "8+", false, null, null);
+        a.setPositions(null);
+        assertThat(a.checkIfPositionsAndTimeslotValid()).isFalse();
+    }
+
+    @Test
+    void checkIfPositionsAndTimeslotValidPositionsInvalidTest() {
+        Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
+                LocalDateTime.of(2042, 12, 12, 20, 15),
+                LocalDateTime.of(2042, 12, 12, 20, 20), "8+", false, null, null);
+        a.setPositions(new Positions());
+        assertThat(a.checkIfPositionsAndTimeslotValid()).isFalse();
+    }
+
+    @Test
+    void checkIfPositionsAndTimeslotValidTimeslotNullTest() {
+        Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
+                LocalDateTime.of(2042, 12, 12, 20, 15),
+                LocalDateTime.of(2042, 12, 12, 20, 20), "8+", false, null, null);
+        a.setTimeslot(null);
+        assertThat(a.checkIfPositionsAndTimeslotValid()).isFalse();
+    }
+
+    @Test
+    void checkIfPositionsAndTimeslotValidTimeslotInvalidTest() {
+        Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
+                LocalDateTime.of(2042, 12, 12, 20, 15),
+                LocalDateTime.of(2042, 12, 12, 20, 20), "8+", false, null, null);
+        a.getTimeslot().setEndTime(null);
+        assertThat(a.checkIfPositionsAndTimeslotValid()).isFalse();
+    }
+
+    @Test
+    void checkIfCompetitionValidNonCompetitionTest() {
+        Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
+                LocalDateTime.of(2042, 12, 12, 20, 15),
+                LocalDateTime.of(2042, 12, 12, 20, 20), "8+", false, null, null);
+        assertThat(a.checkIfCompetitionValid()).isTrue();
+    }
+
+    @Test
+    void checkIfCompetitionValidTrueTest() {
+        Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
+                LocalDateTime.of(2042, 12, 12, 20, 15),
+                LocalDateTime.of(2042, 12, 12, 20, 20), "8+", true, null, "Proteus");
+        assertThat(a.checkIfCompetitionValid()).isTrue();
+    }
+
+    @Test
+    void checkIfCompetitionValidOrganizationNullTest() {
+        Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
+                LocalDateTime.of(2042, 12, 12, 20, 15),
+                LocalDateTime.of(2042, 12, 12, 20, 20), "8+", true, null, null);
+        assertThat(a.checkIfCompetitionValid()).isFalse();
+    }
+
+    @Test
+    void checkIfCompetitionValidOrganizationInvalidGenderTest() {
+        Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
+                LocalDateTime.of(2042, 12, 12, 20, 15),
+                LocalDateTime.of(2042, 12, 12, 20, 20), "8+", true, "null", "Proteus");
+        assertThat(a.checkIfCompetitionValid()).isFalse();
+    }
+
+    @Test
+    void checkIfCompetitionValidOrganizationValidGenderTest() {
+        Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
+                LocalDateTime.of(2042, 12, 12, 20, 15),
+                LocalDateTime.of(2042, 12, 12, 20, 20), "8+", true, "Male", "Proteus");
+        assertThat(a.checkIfCompetitionValid()).isTrue();
     }
 
     @Test

@@ -92,23 +92,26 @@ public class Activity {
      * @return true if this is valid and false otherwise
      */
     public boolean checkIfValid() {
-        boolean requiresRowers = positions.getCox() != null || positions.getCoach() != null
-                || positions.getPort() != null || positions.getStarboard() != null
-                || positions.getSculling() != null;
-        boolean nonNull = ownerId != null && requiresRowers;
-        if (!nonNull) {
-            return false;
-        }
-        if (!CERTIFICATE_TYPES.contains(certificate)) {
-            return false;
-        }
-        if (competition && ((gender == null || !GENDER_TYPES.contains(gender)) || organisation == null)) {
-            return false;
-        }
-        LocalDateTime now = LocalDateTime.now();
-        boolean timeslotExists = timeslot != null && timeslot.getStartTime() != null && timeslot.getEndTime() != null;
-        return timeslotExists && timeslot.getStartTime().isBefore(timeslot.getEndTime())
-                && timeslot.getEndTime().isAfter(now);
+        boolean valid = ownerId != null && CERTIFICATE_TYPES.contains(certificate);
+        return valid && checkIfPositionsAndTimeslotValid() && checkIfCompetitionValid();
+    }
+
+    /**
+     * Checks if the positions and timeslot have valid data.
+     *
+     * @return true if the data is valid and false otherwise
+     */
+    public boolean checkIfPositionsAndTimeslotValid() {
+        return positions != null && positions.checkIfValid() && timeslot != null && timeslot.checkIfValid();
+    }
+
+    /**
+     * Checks if this activity is a competition that is valid.
+     *
+     * @return true if this is a valid competition or not a competition at all and false otherwise
+     */
+    public boolean checkIfCompetitionValid() {
+        return !competition || ((gender == null || GENDER_TYPES.contains(gender)) && organisation != null);
     }
 
     /**
