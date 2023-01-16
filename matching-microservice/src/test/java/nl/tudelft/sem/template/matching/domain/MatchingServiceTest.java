@@ -7,7 +7,7 @@ import nl.tudelft.sem.template.matching.authentication.AuthManager;
 import nl.tudelft.sem.template.matching.domain.database.CertificateRepo;
 import nl.tudelft.sem.template.matching.domain.database.MatchingRepo;
 import nl.tudelft.sem.template.matching.models.ActivityAvailabilityResponseModel;
-import nl.tudelft.sem.template.matching.models.ActivityReponse;
+import nl.tudelft.sem.template.matching.models.ActivityResponse;
 import nl.tudelft.sem.template.matching.models.MatchingResponseModel;
 import nl.tudelft.sem.template.matching.models.NotificationActivityModified;
 import nl.tudelft.sem.template.matching.models.NotificationRequestModelOwner;
@@ -127,7 +127,7 @@ class MatchingServiceTest {
         when(certificateRepo.getCertificateByName("C4")).thenReturn(Optional.of(new Certificate(1L, "C4+")));
         when(certificateRepo.getCertificateByName("4+")).thenReturn(Optional.of(new Certificate(2L, "4+")));
         // one because one of the activities is 30 min after the timeslot given by the user
-        List<ActivityReponse> result = service.filterActivities(activities, new UserPreferences(timeslot, user, "cox"));
+        List<ActivityResponse> result = service.filterActivities(activities, new UserPreferences(timeslot, user, "cox"));
         assertThat(result.size()).isEqualTo(1);
 
         Match matchMade = new Match("d.micloiu@tudelft.nl",

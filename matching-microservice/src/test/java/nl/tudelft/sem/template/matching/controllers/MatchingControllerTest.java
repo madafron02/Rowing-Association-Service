@@ -7,7 +7,7 @@ import nl.tudelft.sem.template.matching.domain.MatchingService;
 import nl.tudelft.sem.template.matching.domain.TimeslotApp;
 import nl.tudelft.sem.template.matching.domain.TypeOfActivity;
 import nl.tudelft.sem.template.matching.domain.database.CertificateRepo;
-import nl.tudelft.sem.template.matching.models.ActivityReponse;
+import nl.tudelft.sem.template.matching.models.ActivityResponse;
 import nl.tudelft.sem.template.matching.models.DecisionModel;
 import nl.tudelft.sem.template.matching.models.MatchingRequestModel;
 import nl.tudelft.sem.template.matching.models.MatchingResponseModel;
@@ -60,7 +60,7 @@ class MatchingControllerTest {
         TimeslotApp availability = new TimeslotApp(LocalDateTime.now(), LocalDateTime.now().plusDays(1));
         TimeslotApp timeslot = new TimeslotApp(LocalDateTime.now().plusHours(2), LocalDateTime.now().plusHours(3));
         MatchingResponseModel matchingResponseModel = new MatchingResponseModel(
-                List.of(new ActivityReponse(1, TypeOfActivity.TRAINING, timeslot)));
+                List.of(new ActivityResponse(1, TypeOfActivity.TRAINING, timeslot)));
 
         when(service.submitAvailability(availability, "cox")).thenReturn(matchingResponseModel);
         when(service.verifyPosition("cox")).thenReturn(true);
