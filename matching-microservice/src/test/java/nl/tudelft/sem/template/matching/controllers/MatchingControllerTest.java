@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.tudelft.sem.template.matching.domain.Certificate;
 import nl.tudelft.sem.template.matching.domain.Match;
 import nl.tudelft.sem.template.matching.domain.MatchingService;
+import nl.tudelft.sem.template.matching.domain.Sanitization;
 import nl.tudelft.sem.template.matching.domain.TimeslotApp;
 import nl.tudelft.sem.template.matching.domain.TypeOfActivity;
 import nl.tudelft.sem.template.matching.domain.database.CertificateRepo;
@@ -44,13 +45,16 @@ class MatchingControllerTest {
     @Mock
     private transient CertificateRepo repo;
 
+    @Mock
+    private transient Sanitization sanitizationService;
+
     private transient MatchingController controller;
     private transient MockMvc mockMvc;
     private transient ObjectMapper objectMapper;
 
     @BeforeEach
     void setup() {
-        controller = new MatchingController(service, repo);
+        controller = new MatchingController(service, repo, sanitizationService);
         this.mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
         objectMapper = new ObjectMapper();
     }
@@ -63,7 +67,7 @@ class MatchingControllerTest {
                 List.of(new ActivityResponse(1, TypeOfActivity.TRAINING, timeslot)));
 
         when(service.submitAvailability(availability, "cox")).thenReturn(matchingResponseModel);
-        when(service.verifyPosition("cox")).thenReturn(true);
+        when(sanitizationService.verifyPosition("cox")).thenReturn(true);
 
         String response = mockMvc.perform(post("/matching/submit")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -78,7 +82,7 @@ class MatchingControllerTest {
     void testSubmitBadRequest() throws Exception {
         TimeslotApp availability = new TimeslotApp(LocalDateTime.now(), LocalDateTime.now().plusDays(1));
 
-        when(service.verifyPosition(any())).thenReturn(false);
+        when(sanitizationService.verifyPosition(any())).thenReturn(false);
 
         mockMvc.perform(post("/matching/submit")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -88,7 +92,7 @@ class MatchingControllerTest {
 
     @Test
     void testPick() throws Exception {
-        when(service.verifyMatch(1L)).thenReturn(true);
+        when(sanitizationService.verifyMatch(1L)).thenReturn(true);
 
         String response = mockMvc.perform(post("/matching/pick")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -101,7 +105,7 @@ class MatchingControllerTest {
 
     @Test
     void testPickBadRequest() throws Exception {
-        when(service.verifyMatch(1L)).thenReturn(false);
+        when(sanitizationService.verifyMatch(1L)).thenReturn(false);
 
         mockMvc.perform(post("/matching/pick")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -143,7 +147,7 @@ class MatchingControllerTest {
                 new Match("participant2@tudelft.nl", 1L, "l.tosa@student.tudelft.nl", "coach"),
                 new Match("participant3@tudelft.nl", 2L, "l.tosa@student.tudelft.nl", "cox")
                 );
-        when(service.getPendingRequests()).thenReturn(matches);
+        when(sanitizationService.getPendingRequests()).thenReturn(matches);
 
         String response = mockMvc.perform(get("/matching/participants"))
                 .andExpect(status().isOk())
@@ -159,7 +163,7 @@ class MatchingControllerTest {
                 new Match("participant2@tudelft.nl", 1L, "l.tosa@student.tudelft.nl", "coach"),
                 new Match("participant3@tudelft.nl", 2L, "l.tosa@student.tudelft.nl", "cox")
         );
-        when(service.getMatches(any())).thenReturn(matches);
+        when(sanitizationService.getMatches(any())).thenReturn(matches);
 
         String response = mockMvc.perform(get("/matching/match/MATCHED"))
                 .andExpect(status().isOk())
