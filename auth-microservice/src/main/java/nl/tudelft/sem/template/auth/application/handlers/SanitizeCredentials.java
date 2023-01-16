@@ -19,7 +19,7 @@ public class SanitizeCredentials implements AuthHandler {
     public SanitizeCredentials() {}
 
     /**
-     * Checks if the credentials are complete and don't contain any illegal characters. Also hashes the password.
+     * Checks if the credentials are complete and don't contain any illegal characters.
      * This method will fail if the credentials are incomplete or contain illegal characters,
      * or if the userId is not an email-address.
      * The method will abort if the next handler or ExceptionHandler are not set.
@@ -32,38 +32,13 @@ public class SanitizeCredentials implements AuthHandler {
             return;
         }
         this.credentials = credentials;
-        try {
-            if (credentials.getUserId() == null || credentials.getUserId().equals("")) {
-                exceptionHandler.handleException(new IllegalArgumentException(), "Please provide a user id.", 400);
-                return;
-            }
-            if (credentials.getPassword() == null || credentials.getPassword().equals("")) {
-                exceptionHandler.handleException(new IllegalArgumentException(), "Please provide a password.", 400);
-                return;
-            }
+        if (credentialsNotEmpty()) {
             sanitizedUserId = sanitize(credentials.getUserId());
             sanitizedPassword = sanitize(credentials.getPassword());
-            if (sanitizedUserId.length() < credentials.getUserId().length()) {
-                exceptionHandler.handleException(new IllegalArgumentException(), "Your user id contains illegal"
-                        + " characters. Please only use letters, numbers and the following characters: "
-                        + "!#$%&()*+,-./:;<=>?@^_`{|}~", 400);
-                return;
+            if (credentialsClean()) {
+                AccountCredentials newCredentials = new AccountCredentials(sanitizedUserId, sanitizedPassword);
+                next.handle(newCredentials);
             }
-            if (sanitizedPassword.length() < credentials.getPassword().length()) {
-                exceptionHandler.handleException(new IllegalArgumentException(), "Your password contains illegal"
-                        + " characters. Please only use letters, numbers and the following characters: "
-                        + "!#$%&()*+,-./:;<=>?@^_`{|}~", 400);
-                return;
-            }
-            if (!isEmailAddress(sanitizedUserId)) {
-                exceptionHandler.handleException(new IllegalArgumentException(), "Your user id must be an email address.",
-                        400);
-                return;
-            }
-            AccountCredentials newCredentials = new AccountCredentials(sanitizedUserId, sanitizedPassword);
-            next.handle(newCredentials);
-        } catch (Exception e) {
-            exceptionHandler.handleException(e);
         }
     }
 
@@ -100,6 +75,52 @@ public class SanitizeCredentials implements AuthHandler {
         res = res.replaceAll("null", "").replaceAll("NULL", "");
         return res;
     }
+
+    /**
+     * Checks if the required credentials are present.
+     * Sets the correct exception and status if this is not the case.
+     *
+     * @return False if one of the credentials is empty. True otherwise.
+     */
+    private boolean credentialsNotEmpty() {
+        if (credentials.getUserId() == null || credentials.getUserId().equals("")) {
+            exceptionHandler.handleException(new IllegalArgumentException(), "Please provide a user id.", 400);
+            return false;
+        }
+        if (credentials.getPassword() == null || credentials.getPassword().equals("")) {
+            exceptionHandler.handleException(new IllegalArgumentException(), "Please provide a password.", 400);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Checks if the original credentials were clean and correctly formatted by comparing them to their sanitized version.
+     * Sets the correct exception and status if this is not the case.
+     *
+     * @return True if the credentials were clean. False otherwise.
+     */
+    private boolean credentialsClean() {
+        if (sanitizedUserId.length() < credentials.getUserId().length()) {
+            exceptionHandler.handleException(new IllegalArgumentException(), "Your user id contains illegal"
+                    + " characters. Please only use letters, numbers and the following characters: "
+                    + "!#$%&()*+,-./:;<=>?@^_`{|}~", 400);
+            return false;
+        }
+        if (sanitizedPassword.length() < credentials.getPassword().length()) {
+            exceptionHandler.handleException(new IllegalArgumentException(), "Your password contains illegal"
+                    + " characters. Please only use letters, numbers and the following characters: "
+                    + "!#$%&()*+,-./:;<=>?@^_`{|}~", 400);
+            return false;
+        }
+        if (!isEmailAddress(sanitizedUserId)) {
+            exceptionHandler.handleException(new IllegalArgumentException(), "Your user id must be an email address.",
+                    400);
+            return false;
+        }
+        return true;
+    }
+
 
     /**
      * Checks if a String has the format of an email-address.
