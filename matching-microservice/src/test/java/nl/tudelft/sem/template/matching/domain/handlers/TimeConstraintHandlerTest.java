@@ -5,6 +5,7 @@ import nl.tudelft.sem.template.matching.domain.MatchFilter;
 import nl.tudelft.sem.template.matching.domain.TimeslotApp;
 import nl.tudelft.sem.template.matching.domain.TypeOfActivity;
 import nl.tudelft.sem.template.matching.domain.UserApp;
+import nl.tudelft.sem.template.matching.models.UserPreferences;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -38,9 +39,8 @@ class TimeConstraintHandlerTest {
                 TypeOfActivity.TRAINING, "4+");
         user = new UserApp("d.micloiu@icloud.com", "C4",
                 "Female", "SEM", true);
-        matchFilter = new MatchFilter(activityApp, user, "cox",
-                new TimeslotApp(LocalDateTime.now(),
-                        LocalDateTime.now().plusHours(12)));
+        matchFilter = new MatchFilter(activityApp, new UserPreferences(new TimeslotApp(LocalDateTime.now(),
+                LocalDateTime.now().plusHours(12)), user, "cox"));
 
         assertThat(filteringHandler.handle(matchFilter)).isFalse();
     }
@@ -58,9 +58,8 @@ class TimeConstraintHandlerTest {
                 TypeOfActivity.TRAINING, "4+");
         user = new UserApp("d.micloiu@icloud.com", "C4",
                 "Female", "SEM", true);
-        matchFilter = new MatchFilter(activityApp, user, "cox",
-                new TimeslotApp(LocalDateTime.now(),
-                        LocalDateTime.now().plusHours(12)));
+        matchFilter = new MatchFilter(activityApp, new UserPreferences(new TimeslotApp(LocalDateTime.now(),
+                LocalDateTime.now().plusHours(12)), user, "cox"));
 
         assertThat(filteringHandler.handle(matchFilter)).isFalse();
     }
@@ -78,9 +77,8 @@ class TimeConstraintHandlerTest {
                 TypeOfActivity.TRAINING, "4+");
         user = new UserApp("d.micloiu@icloud.com", "C4",
                 "Female", "SEM", true);
-        matchFilter = new MatchFilter(activityApp, user, "cox",
-                new TimeslotApp(LocalDateTime.now(),
-                        LocalDateTime.now().plusHours(12)));
+        matchFilter = new MatchFilter(activityApp, new UserPreferences(new TimeslotApp(LocalDateTime.now(),
+                LocalDateTime.now().plusHours(12)), user, "cox"));
 
         assertThat(filteringHandler.handle(matchFilter)).isTrue();
 
@@ -102,9 +100,8 @@ class TimeConstraintHandlerTest {
                 TypeOfActivity. COMPETITION, "4+");
         user = new UserApp("d.micloiu@icloud.com", "C4",
                 "Female", "SEM", true);
-        matchFilter = new MatchFilter(activityApp, user, "cox",
-                new TimeslotApp(LocalDateTime.now().plusDays(1),
-                        LocalDateTime.now().plusDays(1).plusHours(12)));
+        matchFilter = new MatchFilter(activityApp, new UserPreferences(new TimeslotApp(LocalDateTime.now().plusDays(1),
+                LocalDateTime.now().plusDays(1).plusHours(12)), user, "cox"));
 
         assertThat(filteringHandler.handle(matchFilter)).isFalse();
     }
@@ -122,9 +119,8 @@ class TimeConstraintHandlerTest {
                 TypeOfActivity. COMPETITION, "4+");
         user = new UserApp("d.micloiu@icloud.com", "C4",
                 "Female", "SEM", true);
-        matchFilter = new MatchFilter(activityApp, user, "cox",
-                new TimeslotApp(LocalDateTime.now().plusDays(1),
-                        LocalDateTime.now().plusDays(1).plusHours(12)));
+        matchFilter = new MatchFilter(activityApp, new UserPreferences(new TimeslotApp(LocalDateTime.now().plusDays(1),
+                LocalDateTime.now().plusDays(1).plusHours(12)), user, "cox"));
 
         assertThat(filteringHandler.handle(matchFilter)).isTrue();
 
@@ -146,9 +142,8 @@ class TimeConstraintHandlerTest {
                 TypeOfActivity.OTHER, "4+");
         user = new UserApp("d.micloiu@icloud.com", "C4",
                 "Female", "SEM", true);
-        matchFilter = new MatchFilter(activityApp, user, "cox",
-                new TimeslotApp(LocalDateTime.now().plusDays(1),
-                        LocalDateTime.now().plusDays(1).plusHours(12)));
+        matchFilter = new MatchFilter(activityApp, new UserPreferences(new TimeslotApp(LocalDateTime.now().plusDays(1),
+                LocalDateTime.now().plusDays(1).plusHours(12)), user, "cox"));
 
         assertThat(filteringHandler.handle(matchFilter)).isFalse();
     }
