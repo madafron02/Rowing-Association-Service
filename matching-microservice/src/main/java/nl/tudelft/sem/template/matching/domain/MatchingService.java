@@ -7,7 +7,7 @@ import nl.tudelft.sem.template.matching.authentication.AuthManager;
 import nl.tudelft.sem.template.matching.domain.database.CertificateRepo;
 import nl.tudelft.sem.template.matching.domain.database.MatchingRepo;
 import nl.tudelft.sem.template.matching.domain.handlers.FilteringHandler;
-import nl.tudelft.sem.template.matching.models.ActivityReponse;
+import nl.tudelft.sem.template.matching.models.ActivityResponse;
 import nl.tudelft.sem.template.matching.models.MatchingResponseModel;
 import nl.tudelft.sem.template.matching.models.NotificationActivityModified;
 import nl.tudelft.sem.template.matching.models.NotificationRequestModelOwner;
@@ -79,8 +79,8 @@ public class MatchingService {
      * @param userPreferences  the preferences of the user
      * @return the positions the user is matched with
      */
-    public List<ActivityReponse> filterActivities(List<ActivityApp> activities,
-                                                  UserPreferences userPreferences) {
+    public List<ActivityResponse> filterActivities(List<ActivityApp> activities,
+                                                   UserPreferences userPreferences) {
         return activities
                 .stream()
                 .filter(Objects::nonNull)
@@ -102,10 +102,10 @@ public class MatchingService {
      * @param activity the activity they've been matched with
      * @return the ActivityResponse entity to be sent to the client
      */
-    private ActivityReponse matchUserToActivity(UserApp user, String position, ActivityApp activity) {
+    private ActivityResponse matchUserToActivity(UserApp user, String position, ActivityApp activity) {
         Match matchMade = new Match(user.getEmail(), activity.getId(), activity.getOwnerId(), position);
         matchingRepo.save(matchMade);
-        return new ActivityReponse(matchMade.getMatchId(), activity.getType(), activity.getTimeslot());
+        return new ActivityResponse(matchMade.getMatchId(), activity.getType(), activity.getTimeslot());
     }
 
 
