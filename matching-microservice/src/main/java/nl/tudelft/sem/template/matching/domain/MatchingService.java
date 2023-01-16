@@ -137,16 +137,12 @@ public class MatchingService {
      */
     public boolean acceptOrDenyRequest(long matchId, boolean decision) {
         Optional<Match> match = matchingRepo.getMatchByMatchId(matchId);
-        if (match.isEmpty()) {
+        if (!verifySubmission(match)) {
             return false;
         }
-        if (!match.get().getOwnerId().equals(auth.getUserId())) {
-            return false;
-        }
-        if (!match.get().getStatus().equals(Status.PENDING)) {
-            return false;
-        }
-        Match newMatch = match.get();
+
+        Match newMatch = matchingRepo.getMatchByMatchId(matchId).get();
+
         if (decision) {
             newMatch.setStatus(Status.ACCEPTED);
             communication.getActivityCommunication().updateActivity(newMatch.getActivityId(), newMatch.getPosition());
@@ -160,6 +156,18 @@ public class MatchingService {
                         communication.getActivityCommunication().getActivityTimeslotById(newMatch.getActivityId()),
                         decision));
         return true;
+    }
+
+    /**
+     * Method for verifying the submission of an owner regarding the application of a user.
+     *
+     * @param match the match to be verified
+     * @return TRUE if the match complies with the sanitisation constraints, FALSE otherwise
+     */
+    public boolean verifySubmission(Optional<Match> match) {
+        return match.isPresent()
+                && match.get().getOwnerId().equals(auth.getUserId())
+                && match.get().getStatus().equals(Status.PENDING);
     }
 
 
