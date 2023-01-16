@@ -6,7 +6,6 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -16,7 +15,6 @@ import java.time.LocalDateTime;
  * A DDD value object representing a timeslot.
  */
 @AllArgsConstructor
-@EqualsAndHashCode
 @NoArgsConstructor
 @Data
 public class TimeslotApp {

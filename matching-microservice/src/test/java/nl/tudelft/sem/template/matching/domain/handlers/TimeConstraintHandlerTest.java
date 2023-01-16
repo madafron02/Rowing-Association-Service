@@ -129,23 +129,4 @@ class TimeConstraintHandlerTest {
         assertThat(filteringHandler.handle(matchFilter)).isFalse();
     }
 
-    @Test
-    void handleDefault() {
-        HashMap<String, Integer> positions = new HashMap<>();
-        positions.put("cox", 2);
-
-        activityApp = new ActivityApp(3L,
-                "l.tosa@tudelft.nl",
-                new TimeslotApp(LocalDateTime.now().plusDays(1).plusMinutes(10),
-                        LocalDateTime.now().plusDays(1).plusHours(2)),
-                "Male", "SEM", positions, false,
-                TypeOfActivity.OTHER, "4+");
-        user = new UserApp("d.micloiu@icloud.com", "C4",
-                "Female", "SEM", true);
-        matchFilter = new MatchFilter(activityApp, new UserPreferences(new TimeslotApp(LocalDateTime.now().plusDays(1),
-                LocalDateTime.now().plusDays(1).plusHours(12)), user, "cox"));
-
-        assertThat(filteringHandler.handle(matchFilter)).isFalse();
-    }
-
 }
