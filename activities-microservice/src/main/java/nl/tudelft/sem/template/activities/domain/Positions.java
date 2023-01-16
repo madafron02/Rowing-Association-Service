@@ -93,4 +93,13 @@ public class Positions {
         }
         return false;
     }
+
+    /**
+     * Checks if this object has valid data.
+     *
+     * @return true if this is valid and false otherwise
+     */
+    public boolean checkIfValid() {
+        return cox != null || coach != null || port != null || starboard != null || sculling != null;
+    }
 }
