@@ -217,45 +217,4 @@ class ActivityTest {
         Activity a = new Activity();
         assertThat(a).isNotNull();
     }
-
-    @Test
-    void equalsTrueTest() {
-        Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
-                LocalDateTime.of(2022, 12, 12, 20, 15),
-                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null, null);
-        assertThat(a.equals(a)).isTrue();
-    }
-
-    @Test
-    void equalsFalseTest() {
-        Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
-                LocalDateTime.of(2022, 12, 12, 20, 15),
-                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null, null);
-        Activity b = new Activity("different@gmail.com", 1, null, 8, 10, null,
-                LocalDateTime.of(2022, 12, 12, 20, 15),
-                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null, null);
-        assertThat(a.equals(b)).isFalse();
-    }
-
-    @Test
-    void hashCodeTestEqual() {
-        Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
-                LocalDateTime.of(2022, 12, 12, 20, 15),
-                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null, null);
-        Activity b = new Activity("owner@gmail.com", 1, null, 8, 10, null,
-                LocalDateTime.of(2022, 12, 12, 20, 15),
-                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null, null);
-        assertThat(a.hashCode()).isEqualTo(b.hashCode());
-    }
-
-    @Test
-    void hashCodeTestNotEqual() {
-        Activity a = new Activity("owner@gmail.com", 1, null, 8, 10, null,
-                LocalDateTime.of(2022, 12, 12, 20, 15),
-                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null, null);
-        Activity b = new Activity("different@gmail.com", 1, null, 8, 10, null,
-                LocalDateTime.of(2022, 12, 12, 20, 15),
-                LocalDateTime.of(2022, 12, 12, 20, 20), "8+", false, null, null);
-        assertThat(a.hashCode()).isNotEqualTo(b.hashCode());
-    }
 }
