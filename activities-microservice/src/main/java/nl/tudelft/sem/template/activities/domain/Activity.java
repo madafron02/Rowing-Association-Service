@@ -1,6 +1,5 @@
 package nl.tudelft.sem.template.activities.domain;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
@@ -59,25 +58,18 @@ public class Activity {
      * Creates a new Activity.
      *
      * @param ownerId the email of the user that created the activity
-     * @param coxCount number of needed coxes
-     * @param coachCount number of needed coaches
-     * @param portSideRowerCount number of needed port side rowers
-     * @param starboardSideRowerCount number of needed starboard side
-     * @param scullingRowerCount number of needed sculling rowers
-     * @param startTime starting time of the activity
-     * @param endTime ending time of the activity
+     * @param positions the positions of the needed participants
+     * @param timeslot the timeslot representing the time of the activity
      * @param certificate the boat type
      * @param competition true if it is a competition and false otherwise
      * @param gender the gender of the needed participants, null if not needed
      * @param organisation the origanisation of the participant
      */
-    public Activity(String ownerId, Integer coxCount, Integer coachCount, Integer portSideRowerCount,
-                    Integer starboardSideRowerCount, Integer scullingRowerCount, LocalDateTime startTime,
-                    LocalDateTime endTime, String certificate, Boolean competition, String gender, String organisation) {
+    public Activity(String ownerId, Positions positions, Timeslot timeslot, String certificate,
+                    Boolean competition, String gender, String organisation) {
         this.ownerId = ownerId;
-        this.positions = new Positions(coxCount, coachCount, portSideRowerCount, starboardSideRowerCount,
-                scullingRowerCount);
-        this.timeslot = new Timeslot(startTime, endTime);
+        this.positions = positions;
+        this.timeslot = timeslot;
         this.certificate = certificate;
         this.competition = Objects.requireNonNullElse(competition, false);
         this.gender = gender;
