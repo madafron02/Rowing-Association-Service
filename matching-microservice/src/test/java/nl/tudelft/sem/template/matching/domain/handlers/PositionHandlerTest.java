@@ -5,6 +5,7 @@ import nl.tudelft.sem.template.matching.domain.MatchFilter;
 import nl.tudelft.sem.template.matching.domain.TimeslotApp;
 import nl.tudelft.sem.template.matching.domain.TypeOfActivity;
 import nl.tudelft.sem.template.matching.domain.UserApp;
+import nl.tudelft.sem.template.matching.models.UserPreferences;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -35,9 +36,9 @@ class PositionHandlerTest {
         user = new UserApp("d.micloiu@icloud.com", "C4",
                 "Female", "SEM", true);
 
-        matchFilter = new MatchFilter(activityApp, user, "coach",
+        matchFilter = new MatchFilter(activityApp, new UserPreferences(
                 new TimeslotApp(LocalDateTime.parse("2022-12-08T10:15"),
-                        LocalDateTime.parse("2022-12-08T17:00")));
+                LocalDateTime.parse("2022-12-08T17:00")), user, "coach"));
     }
 
     @Test
@@ -47,7 +48,7 @@ class PositionHandlerTest {
 
     @Test
     void handleContainingPosition() {
-        matchFilter.setPosition("cox");
+        matchFilter.getUserPreferences().setPosition("cox");
         assertThat(filteringHandler.handle(matchFilter)).isTrue();
 
         filteringHandler.setNext(new GenderHandler());
@@ -57,7 +58,7 @@ class PositionHandlerTest {
     @Test
     void handleContainingPositionButZero() {
         matchFilter.getActivityApp().getPositions().put("cox", 0);
-        matchFilter.setPosition("cox");
+        matchFilter.getUserPreferences().setPosition("cox");
         assertThat(filteringHandler.handle(matchFilter)).isFalse();
     }
 }

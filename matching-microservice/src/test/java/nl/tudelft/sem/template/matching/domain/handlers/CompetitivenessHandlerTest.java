@@ -5,6 +5,7 @@ import nl.tudelft.sem.template.matching.domain.MatchFilter;
 import nl.tudelft.sem.template.matching.domain.TimeslotApp;
 import nl.tudelft.sem.template.matching.domain.TypeOfActivity;
 import nl.tudelft.sem.template.matching.domain.UserApp;
+import nl.tudelft.sem.template.matching.models.UserPreferences;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -35,9 +36,9 @@ class CompetitivenessHandlerTest {
         user = new UserApp("d.micloiu@icloud.com", "C4",
                 "Female", "SEM", true);
 
-        matchFilter = new MatchFilter(activityApp, user, "coach",
+        matchFilter = new MatchFilter(activityApp, new UserPreferences(
                 new TimeslotApp(LocalDateTime.parse("2022-12-08T10:15"),
-                        LocalDateTime.parse("2022-12-08T17:00")));
+                LocalDateTime.parse("2022-12-08T17:00")), user, "coach"));
     }
 
     @Test
@@ -46,11 +47,11 @@ class CompetitivenessHandlerTest {
         assertThat(filteringHandler.handle(matchFilter)).isTrue();
 
         // competitive user for competitive activity
-        activityApp.setCompetition(true);
+        activityApp.getProperties().setCompetition(true);
         assertThat(filteringHandler.handle(matchFilter)).isTrue();
 
         // uncompetitive user for uncompetitive activity
-        activityApp.setCompetition(false);
+        activityApp.getProperties().setCompetition(false);
         user.setCompetitive(false);
         assertThat(filteringHandler.handle(matchFilter)).isTrue();
 
@@ -62,7 +63,7 @@ class CompetitivenessHandlerTest {
     void handleFalse() {
         // uncompetitive user for competitive activity
         user.setCompetitive(false);
-        activityApp.setCompetition(true);
+        activityApp.getProperties().setCompetition(true);
         assertThat(filteringHandler.handle(matchFilter)).isFalse();
     }
 }

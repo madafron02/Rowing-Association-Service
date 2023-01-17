@@ -1,17 +1,19 @@
 package nl.tudelft.sem.template.matching.domain;
 
 import nl.tudelft.sem.template.matching.application.ActivityCommunication;
+import nl.tudelft.sem.template.matching.application.Communication;
 import nl.tudelft.sem.template.matching.application.NotificationCommunication;
 import nl.tudelft.sem.template.matching.application.UsersCommunication;
 import nl.tudelft.sem.template.matching.authentication.AuthManager;
 import nl.tudelft.sem.template.matching.domain.database.CertificateRepo;
 import nl.tudelft.sem.template.matching.domain.database.MatchingRepo;
 import nl.tudelft.sem.template.matching.models.ActivityAvailabilityResponseModel;
-import nl.tudelft.sem.template.matching.models.ActivityReponse;
+import nl.tudelft.sem.template.matching.models.ActivityResponse;
 import nl.tudelft.sem.template.matching.models.MatchingResponseModel;
 import nl.tudelft.sem.template.matching.models.NotificationActivityModified;
 import nl.tudelft.sem.template.matching.models.NotificationRequestModelOwner;
 import nl.tudelft.sem.template.matching.models.NotificationRequestModelParticipant;
+import nl.tudelft.sem.template.matching.models.UserPreferences;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +37,7 @@ class MatchingServiceTest {
 
     private MatchingService service;
 
+    private Sanitization sanitizationService;
     @Mock
     private AuthManager authManager;
     @Mock
@@ -57,10 +60,12 @@ class MatchingServiceTest {
 
     @BeforeEach
     void setUp() {
+        sanitizationService = new Sanitization(authManager, matchingRepo);
         matchingRepo.deleteAll();
-        service = new MatchingService(authManager, matchingRepo,
-                usersCommunication, notificationCommunication,
-                activityCommunication, certificateRepo);
+        Communication communication = new Communication(usersCommunication,
+                notificationCommunication,
+                activityCommunication);
+        service = new MatchingService(authManager, matchingRepo, communication, certificateRepo);
         timeslot = new TimeslotApp(LocalDateTime.now(),
                 LocalDateTime.now().plusDays(1).plusHours(4));
         position = "cox";
@@ -126,7 +131,7 @@ class MatchingServiceTest {
         when(certificateRepo.getCertificateByName("C4")).thenReturn(Optional.of(new Certificate(1L, "C4+")));
         when(certificateRepo.getCertificateByName("4+")).thenReturn(Optional.of(new Certificate(2L, "4+")));
         // one because one of the activities is 30 min after the timeslot given by the user
-        List<ActivityReponse> result = service.filterActivities(activities, timeslot, user, "cox");
+        List<ActivityResponse> result = service.filterActivities(activities, new UserPreferences(timeslot, user, "cox"));
         assertThat(result.size()).isEqualTo(1);
 
         Match matchMade = new Match("d.micloiu@tudelft.nl",
@@ -137,26 +142,6 @@ class MatchingServiceTest {
     }
 
     @Test
-    void verifyMatchMatchIdNotPresent() {
-        when(matchingRepo.getMatchByMatchId(1L)).thenReturn(Optional.empty());
-        assertThat(service.verifyMatch(1L)).isFalse();
-    }
-
-    @Test
-    void verifyMatchMaliciousUser() {
-        when(matchingRepo.getMatchByMatchId(1L)).thenReturn(Optional.of(match));
-        when(authManager.getUserId()).thenReturn("d.micloiu@icloud.nl");
-        assertThat(service.verifyMatch(1L)).isFalse();
-    }
-
-    @Test
-    void verifyMatchTrue() {
-        when(matchingRepo.getMatchByMatchId(1L)).thenReturn(Optional.of(match));
-        when(authManager.getUserId()).thenReturn("d.micloiu@tudelft.nl");
-        assertThat(service.verifyMatch(1L)).isTrue();
-    }
-
-    @Test
     void pickActivity() {
         when(matchingRepo.getMatchByMatchId(1L)).thenReturn(Optional.of(match));
         service.pickActivity(1L);
@@ -164,10 +149,11 @@ class MatchingServiceTest {
         assertThat(match.getStatus()).isEqualTo(Status.PENDING);
         verify(matchingRepo).save(match);
 
-        NotificationRequestModelOwner emailOwner = new NotificationRequestModelOwner(match.getOwnerId(),
+        NotificationRequestModelOwner emailOwner = new NotificationRequestModelOwner(match.getActivityInformation()
+                .getOwnerId(),
                 match.getParticipantId(),
-                match.getActivityId(),
-                activityCommunication.getActivityTimeslotById(match.getActivityId()));
+                match.getActivityInformation().getActivityId(),
+                activityCommunication.getActivityTimeslotById(match.getActivityInformation().getActivityId()));
 
         verify(notificationCommunication).sendReminderToOwner(emailOwner);
     }
@@ -180,7 +166,7 @@ class MatchingServiceTest {
         when(matchingRepo.getMatchesByOwnerIdAndStatus("l.tosa@tudelft.nl",
                 Status.PENDING))
                 .thenReturn(List.of(match));
-        assertThat(service.getPendingRequests().size()).isEqualTo(1);
+        assertThat(sanitizationService.getPendingRequests().size()).isEqualTo(1);
 
     }
 
@@ -219,8 +205,8 @@ class MatchingServiceTest {
 
         NotificationRequestModelParticipant emailParticipant = new NotificationRequestModelParticipant(match
                 .getParticipantId(),
-                match.getActivityId(),
-                activityCommunication.getActivityTimeslotById(match.getActivityId()),
+                match.getActivityInformation().getActivityId(),
+                activityCommunication.getActivityTimeslotById(match.getActivityInformation().getActivityId()),
                 true);
 
         verify(notificationCommunication).sendNotificationToParticipant(emailParticipant);
@@ -240,35 +226,13 @@ class MatchingServiceTest {
 
         NotificationRequestModelParticipant emailParticipant = new NotificationRequestModelParticipant(match
                 .getParticipantId(),
-                match.getActivityId(),
-                activityCommunication.getActivityTimeslotById(match.getActivityId()),
+                match.getActivityInformation().getActivityId(),
+                activityCommunication.getActivityTimeslotById(match.getActivityInformation().getActivityId()),
                 false);
 
         verify(notificationCommunication).sendNotificationToParticipant(emailParticipant);
     }
 
-    @Test
-    void getMatches() {
-        when(authManager.getUserId()).thenReturn("d.micloiu@tudelft.nl");
-        when(matchingRepo.getMatchesByParticipantIdAndStatus("d.micloiu@tudelft.nl",
-                Status.MATCHED)).thenReturn(List.of(match));
-
-        assertThat(service.getMatches(Status.MATCHED)).isEqualTo(List.of(match));
-    }
-
-    @Test
-    void verifyPosition() {
-        assertThat(service.verifyPosition("cox")).isTrue();
-        assertThat(service.verifyPosition("starboard")).isTrue();
-        assertThat(service.verifyPosition("coach")).isTrue();
-        assertThat(service.verifyPosition("port")).isTrue();
-        assertThat(service.verifyPosition("sculling")).isTrue();
-
-        assertThat(service.verifyPosition("Cox")).isFalse();
-        assertThat(service.verifyPosition("random_position")).isFalse();
-        assertThat(service.verifyPosition("coach.")).isFalse();
-
-    }
 
     @Test
     void discardMatchesByActivity() {

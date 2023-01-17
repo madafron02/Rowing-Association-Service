@@ -13,7 +13,8 @@ public class GenderHandler implements FilteringHandler {
 
     @Override
     public boolean handle(MatchFilter matchFilter) {
-        if (matchFilter.getActivityApp().getGender().equals(matchFilter.getUser().getGender())) {
+        if (matchFilter.getActivityApp().getProperties().getGender()
+                .equals(matchFilter.getUserPreferences().getUser().getGender())) {
             if (next != null) {
                 return next.handle(matchFilter);
             } else {
