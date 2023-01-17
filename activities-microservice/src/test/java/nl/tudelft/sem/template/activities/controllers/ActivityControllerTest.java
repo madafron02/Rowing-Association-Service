@@ -61,14 +61,14 @@ class ActivityControllerTest {
         matchingClient = Mockito.mock(MatchingClient.class);
         activityController = new ActivityController(authManager, activityRepository, matchingClient);
         this.mockMvc = MockMvcBuilders.standaloneSetup(activityController).build();
-        c1 = new Activity("owner1@gmail.com", 1, 0, 4, 4, 0,
-                ts1.getStartTime(), ts1.getEndTime(), "4+", false, "Male", "Laga");
-        c2 = new Activity("owner2@gmail.com", 0, 2, 0, 0, 8,
-                ts1.getStartTime(), ts1.getEndTime(), "8+", false, "Female", "Laga");
-        t1 = new Activity("owner1@gmail.com", 1, 0, 4, 4, 0,
-                ts2.getStartTime(), ts2.getEndTime(), "C4", true, "Male", "Laga");
-        t2 = new Activity("owner2@gmail.com", 1, 0, 4, 4, 0,
-                ts1.getStartTime(), ts2.getEndTime(), "8+", true, "Female", "Laga");
+        c1 = new Activity("owner1@gmail.com", new Positions(1, 0, 4, 4, 0),
+                ts1, "4+", false, "Male", "Laga");
+        c2 = new Activity("owner2@gmail.com", new Positions(0, 2, 0, 0, 8),
+                ts1, "8+", false, "Female", "Laga");
+        t1 = new Activity("owner1@gmail.com", new Positions(1, 0, 4, 4, 0),
+                ts2, "C4", true, "Male", "Laga");
+        t2 = new Activity("owner2@gmail.com", new Positions(1, 0, 4, 4, 0),
+                ts1, "8+", true, "Female", "Laga");
     }
 
     @Test
