@@ -1,6 +1,5 @@
 package nl.tudelft.sem.template.activities.domain;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,7 +14,6 @@ import javax.persistence.Embeddable;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
 public class Positions {
 
     @Column(name = "cox")
