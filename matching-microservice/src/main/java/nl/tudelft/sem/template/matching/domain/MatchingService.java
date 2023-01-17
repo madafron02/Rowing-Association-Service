@@ -122,10 +122,11 @@ public class MatchingService {
      */
     private void notifyOwner(Match match) {
         communication.getNotificationCommunication()
-                .sendReminderToOwner(new NotificationRequestModelOwner(match.getOwnerId(),
+                .sendReminderToOwner(new NotificationRequestModelOwner(match.getActivityInformation().getOwnerId(),
                         match.getParticipantId(),
-                        match.getActivityId(),
-                        communication.getActivityCommunication().getActivityTimeslotById(match.getActivityId())));
+                        match.getActivityInformation().getActivityId(),
+                        communication.getActivityCommunication().getActivityTimeslotById(match.getActivityInformation()
+                                .getActivityId())));
     }
 
     /**
@@ -145,15 +146,17 @@ public class MatchingService {
 
         if (decision) {
             newMatch.setStatus(Status.ACCEPTED);
-            communication.getActivityCommunication().updateActivity(newMatch.getActivityId(), newMatch.getPosition());
+            communication.getActivityCommunication().updateActivity(newMatch.getActivityInformation().getActivityId(),
+                    newMatch.getActivityInformation().getPosition());
         } else {
             newMatch.setStatus(Status.DECLINED);
         }
         matchingRepo.save(newMatch);
         communication.getNotificationCommunication().sendNotificationToParticipant(
                 new NotificationRequestModelParticipant(newMatch.getParticipantId(),
-                        newMatch.getActivityId(),
-                        communication.getActivityCommunication().getActivityTimeslotById(newMatch.getActivityId()),
+                        newMatch.getActivityInformation().getActivityId(),
+                        communication.getActivityCommunication()
+                                .getActivityTimeslotById(newMatch.getActivityInformation().getActivityId()),
                         decision));
         return true;
     }
@@ -166,7 +169,7 @@ public class MatchingService {
      */
     public boolean verifySubmission(Optional<Match> match) {
         return match.isPresent()
-                && match.get().getOwnerId().equals(auth.getUserId())
+                && match.get().getActivityInformation().getOwnerId().equals(auth.getUserId())
                 && match.get().getStatus().equals(Status.PENDING);
     }
 

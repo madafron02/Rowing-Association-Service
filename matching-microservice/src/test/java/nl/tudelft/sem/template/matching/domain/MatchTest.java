@@ -43,12 +43,12 @@ class MatchTest {
 
     @Test
     void testGetActivityId() {
-        assertThat(match.getActivityId()).isEqualTo(1L);
+        assertThat(match.getActivityInformation().getActivityId()).isEqualTo(1L);
     }
 
     @Test
     void testGetOwnerId() {
-        assertThat(match.getOwnerId()).isEqualTo("l.tosa@tudelft.nl");
+        assertThat(match.getActivityInformation().getOwnerId()).isEqualTo("l.tosa@tudelft.nl");
     }
 
     @Test
@@ -58,7 +58,7 @@ class MatchTest {
 
     @Test
     void testGetPosition() {
-        assertThat(match.getPosition()).isEqualTo("cox");
+        assertThat(match.getActivityInformation().getPosition()).isEqualTo("cox");
     }
 
     @Test

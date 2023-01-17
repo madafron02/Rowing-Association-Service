@@ -149,10 +149,11 @@ class MatchingServiceTest {
         assertThat(match.getStatus()).isEqualTo(Status.PENDING);
         verify(matchingRepo).save(match);
 
-        NotificationRequestModelOwner emailOwner = new NotificationRequestModelOwner(match.getOwnerId(),
+        NotificationRequestModelOwner emailOwner = new NotificationRequestModelOwner(match.getActivityInformation()
+                .getOwnerId(),
                 match.getParticipantId(),
-                match.getActivityId(),
-                activityCommunication.getActivityTimeslotById(match.getActivityId()));
+                match.getActivityInformation().getActivityId(),
+                activityCommunication.getActivityTimeslotById(match.getActivityInformation().getActivityId()));
 
         verify(notificationCommunication).sendReminderToOwner(emailOwner);
     }
@@ -204,8 +205,8 @@ class MatchingServiceTest {
 
         NotificationRequestModelParticipant emailParticipant = new NotificationRequestModelParticipant(match
                 .getParticipantId(),
-                match.getActivityId(),
-                activityCommunication.getActivityTimeslotById(match.getActivityId()),
+                match.getActivityInformation().getActivityId(),
+                activityCommunication.getActivityTimeslotById(match.getActivityInformation().getActivityId()),
                 true);
 
         verify(notificationCommunication).sendNotificationToParticipant(emailParticipant);
@@ -225,8 +226,8 @@ class MatchingServiceTest {
 
         NotificationRequestModelParticipant emailParticipant = new NotificationRequestModelParticipant(match
                 .getParticipantId(),
-                match.getActivityId(),
-                activityCommunication.getActivityTimeslotById(match.getActivityId()),
+                match.getActivityInformation().getActivityId(),
+                activityCommunication.getActivityTimeslotById(match.getActivityInformation().getActivityId()),
                 false);
 
         verify(notificationCommunication).sendNotificationToParticipant(emailParticipant);
