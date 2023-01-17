@@ -10,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,7 +20,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "activities")
 @NoArgsConstructor
-@EqualsAndHashCode
 @Getter
 @Setter
 public class Activity {
