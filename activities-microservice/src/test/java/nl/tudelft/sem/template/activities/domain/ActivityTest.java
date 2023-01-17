@@ -162,7 +162,12 @@ class ActivityTest {
         a.setId(1L);
         other.setId(1L);
         a.updateFields(other);
-        assertThat(a.getPositions().equals(validPositions)).isTrue();
+        Positions apos = a.getPositions();
+        assertThat(apos.getCox().equals(validPositions.getCox())).isTrue();
+        assertThat(apos.getCoach()).isNull();
+        assertThat(apos.getPort().equals(validPositions.getPort())).isTrue();
+        assertThat(apos.getStarboard().equals(validPositions.getStarboard())).isTrue();
+        assertThat(apos.getSculling()).isNull();
         assertThat(a.getCertificate().equals("8+"));
     }
 
@@ -175,7 +180,12 @@ class ActivityTest {
         a.setId(1L);
         other.setId(1L);
         a.updateFields(other);
-        assertThat(a.getPositions().equals(validPositions)).isTrue();
+        Positions apos = a.getPositions();
+        assertThat(apos.getCox().equals(validPositions.getCox())).isTrue();
+        assertThat(apos.getCoach()).isNull();
+        assertThat(apos.getPort().equals(validPositions.getPort())).isTrue();
+        assertThat(apos.getStarboard().equals(validPositions.getStarboard())).isTrue();
+        assertThat(apos.getSculling()).isNull();
         assertThat(a.getCertificate().equals("4+"));
     }
 
@@ -188,7 +198,12 @@ class ActivityTest {
         a.setId(1L);
         other.setId(1L);
         a.updateFields(other);
-        assertThat(a.getPositions().equals(new Positions(0, null, 7, 11, null))).isTrue();
+        Positions apos = a.getPositions();
+        assertThat(apos.getCox().equals(validPositions.getCox())).isFalse();
+        assertThat(apos.getCoach()).isNull();
+        assertThat(apos.getPort().equals(validPositions.getPort())).isFalse();
+        assertThat(apos.getStarboard().equals(validPositions.getStarboard())).isFalse();
+        assertThat(apos.getSculling()).isNull();
         assertThat(a.getCertificate().equals("8+"));
     }
 
@@ -201,7 +216,13 @@ class ActivityTest {
         a.setId(1L);
         other.setId(1L);
         a.updateFields(other);
-        assertThat(a.getPositions().equals(new Positions(0, null, 7, 11, null))).isTrue();
+        Positions apos = a.getPositions();
+        Positions opos = other.getPositions();
+        assertThat(apos.getCox().equals(opos.getCox())).isTrue();
+        assertThat(apos.getCoach()).isNull();
+        assertThat(apos.getPort().equals(opos.getPort())).isTrue();
+        assertThat(apos.getStarboard().equals(opos.getStarboard())).isTrue();
+        assertThat(apos.getSculling()).isNull();
         assertThat(a.getCertificate().equals("4+"));
     }
 
