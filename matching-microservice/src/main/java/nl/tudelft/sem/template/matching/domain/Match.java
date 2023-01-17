@@ -4,6 +4,7 @@ package nl.tudelft.sem.template.matching.domain;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,14 +29,8 @@ public class Match {
     @Column(name = "participant_id", nullable = false)
     private String participantId;
 
-    @Column(name = "acivity_id", nullable = false)
-    private long activityId;
-
-    @Column(name = "owner_id", nullable = false)
-    private String ownerId;
-
-    @Column(name = "position", nullable = false)
-    private String position;
+    @Embedded
+    private ActivityInformation activityInformation;
 
     @Column(name = "status", nullable = false)
     private Status status;
@@ -50,9 +45,7 @@ public class Match {
      */
     public Match(String participantId, long activityId, String ownerId, String position) {
         this.participantId = participantId;
-        this.activityId = activityId;
-        this.ownerId = ownerId;
-        this.position = position;
+        this.activityInformation = new ActivityInformation(activityId, ownerId, position);
         this.status = Status.MATCHED;
     }
 
@@ -75,39 +68,21 @@ public class Match {
     }
 
     /**
+     * Getter for the information on the activity.
+     *
+     * @return an activity information entity encapsulating the info
+     */
+    public ActivityInformation getActivityInformation() {
+        return activityInformation;
+    }
+
+    /**
      * Getter for the participant id.
      *
      * @return the email of the participant
      */
     public String getParticipantId() {
         return participantId;
-    }
-
-    /**
-     * Getter for the activity id.
-     *
-     * @return the id of the activity matched
-     */
-    public long getActivityId() {
-        return activityId;
-    }
-
-    /**
-     * Getter for the owner id.
-     *
-     * @return email of the owner of activity
-     */
-    public String getOwnerId() {
-        return ownerId;
-    }
-
-    /**
-     * Getter for the position occupied by the participant.
-     *
-     * @return a String representing the position
-     */
-    public String getPosition() {
-        return position;
     }
 
     /**
