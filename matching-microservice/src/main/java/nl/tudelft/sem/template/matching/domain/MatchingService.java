@@ -77,7 +77,7 @@ public class MatchingService {
             if (activity == null
                     || activity.setTypeOfActivity() == null
                     || !this.filteringHandler.handle(new MatchFilter(activity, userPreferences))
-                    || !matchingRepo.getMatchesByActivityIdAndParticipantId(activity.getId(),
+                    || !matchingRepo.getMatchByActivityInformation_ActivityIdAndParticipantId(activity.getId(),
                     userPreferences.getUser().getEmail()).isEmpty()) {
                 continue;
             }
@@ -180,7 +180,7 @@ public class MatchingService {
      * @param activityId the id of the activity that was modified
      */
     public void discardMatchesByActivity(Long activityId) {
-        List<Match> matchesModifiedByActivityChange = matchingRepo.getMatchesByActivityId(activityId);
+        List<Match> matchesModifiedByActivityChange = matchingRepo.getMatchesByActivityInformation_ActivityId(activityId);
         for (Match match : matchesModifiedByActivityChange) {
             if (match.getStatus() == Status.ACCEPTED) {
                 communication.getNotificationCommunication()

@@ -68,6 +68,6 @@ public class Sanitization {
      * @return the List of matches being in pending for the owner (client making a request)
      */
     public List<Match> getPendingRequests() {
-        return matchingRepo.getMatchesByOwnerIdAndStatus(auth.getUserId(), Status.PENDING);
+        return matchingRepo.getMatchesByActivityInformation_OwnerIdAndStatus(auth.getUserId(), Status.PENDING);
     }
 }
