@@ -42,23 +42,13 @@ public class CreateAccount implements AuthHandler {
             return;
         }
         this.credentials = credentials;
-        try {
-            if (accountExists()) {
-                exceptionHandler.handleException(new SQLException(), "An account with this user id already exists."
-                        + " Please choose a different user id.", 400);
-                return;
-            }
+        if (!accountExists()) {
             String hashedPassword = hashPassword(credentials.getPassword());
             AccountCredentials hashedCredentials = new AccountCredentials(credentials.getUserId(), hashedPassword);
             accountsRepo.save(hashedCredentials);
-            if (!verifySavedAccount(credentials.getPassword())) {
-                exceptionHandler.handleException(new SQLException(), "There was an error while saving your account."
-                        + " Please try again later", 500);
-                return;
+            if (verifySavedAccount(credentials.getPassword())) {
+                next.handle(credentials);
             }
-            next.handle(credentials);
-        } catch (Exception e) {
-            exceptionHandler.handleException(e);
         }
     }
 
@@ -91,7 +81,12 @@ public class CreateAccount implements AuthHandler {
      */
     private boolean accountExists() {
         Optional<AccountCredentials> foundAccount = accountsRepo.findById(credentials.getUserId());
-        return foundAccount.isPresent();
+        if (foundAccount.isPresent()) {
+            exceptionHandler.handleException(new SQLException(), "An account with this user id already exists."
+                    + " Please choose a different user id.", 400);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -102,6 +97,8 @@ public class CreateAccount implements AuthHandler {
     private boolean verifySavedAccount(String password) {
         Optional<AccountCredentials> foundAccount = accountsRepo.findById(credentials.getUserId());
         if (!foundAccount.isPresent()) {
+            exceptionHandler.handleException(new SQLException(), "There was an error while saving your account."
+                    + " Please try again later", 500);
             return false;
         }
         PasswordEncoder encoder = new BCryptPasswordEncoder(12, new SecureRandom());

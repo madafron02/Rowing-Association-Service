@@ -6,6 +6,7 @@ import nl.tudelft.sem.template.matching.domain.MatchFilter;
 import nl.tudelft.sem.template.matching.domain.TimeslotApp;
 import nl.tudelft.sem.template.matching.domain.TypeOfActivity;
 import nl.tudelft.sem.template.matching.domain.UserApp;
+import nl.tudelft.sem.template.matching.models.UserPreferences;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,9 +37,9 @@ class OrganisationHandlerTest {
         user = new UserApp("d.micloiu@icloud.com", "C4",
                 "Female", "SEM", true);
 
-        matchFilter = new MatchFilter(activityApp, user, "coach",
+        matchFilter = new MatchFilter(activityApp, new UserPreferences(
                 new TimeslotApp(LocalDateTime.parse("2022-12-08T10:15"),
-                        LocalDateTime.parse("2022-12-08T17:00")));
+                LocalDateTime.parse("2022-12-08T17:00")), user, "coach"));
     }
 
     @Test
@@ -48,7 +49,7 @@ class OrganisationHandlerTest {
 
     @Test
     void handleTrue() {
-        matchFilter.getActivityApp().setOrganisation("SEM");
+        matchFilter.getActivityApp().getProperties().setOrganisation("SEM");
         assertThat(filteringHandler.handle(matchFilter)).isTrue();
 
         filteringHandler.setNext(new GenderHandler());

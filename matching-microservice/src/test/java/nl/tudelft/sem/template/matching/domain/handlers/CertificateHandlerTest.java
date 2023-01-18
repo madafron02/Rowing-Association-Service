@@ -7,6 +7,7 @@ import nl.tudelft.sem.template.matching.domain.TimeslotApp;
 import nl.tudelft.sem.template.matching.domain.TypeOfActivity;
 import nl.tudelft.sem.template.matching.domain.UserApp;
 import nl.tudelft.sem.template.matching.domain.database.CertificateRepo;
+import nl.tudelft.sem.template.matching.models.UserPreferences;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,9 +51,9 @@ class CertificateHandlerTest {
         UserApp user = new UserApp("d.micloiu@icloud.com", "C4",
                 "Female", "SEM", true);
 
-        MatchFilter matchFilter = new MatchFilter(activityApp, user, "coach",
+        MatchFilter matchFilter = new MatchFilter(activityApp, new UserPreferences(
                 new TimeslotApp(LocalDateTime.parse("2022-12-08T10:15"),
-                        LocalDateTime.parse("2022-12-08T17:00")));
+                LocalDateTime.parse("2022-12-08T17:00")), user, "coach"));
 
         assertThat(filteringHandler.handle(matchFilter)).isTrue();
 
@@ -76,9 +77,9 @@ class CertificateHandlerTest {
         UserApp user = new UserApp("d.micloiu@icloud.com", "4+",
                 "Female", "SEM", true);
 
-        MatchFilter matchFilter = new MatchFilter(activityApp, user, "cox",
+        MatchFilter matchFilter = new MatchFilter(activityApp, new UserPreferences(
                 new TimeslotApp(LocalDateTime.parse("2022-12-08T10:15"),
-                        LocalDateTime.parse("2022-12-08T17:00")));
+                LocalDateTime.parse("2022-12-08T17:00")), user, "cox"));
 
         when(certificateRepo.getCertificateByName("C4")).thenReturn(Optional.of(new Certificate(1L, "C4+")));
         when(certificateRepo.getCertificateByName("4+")).thenReturn(Optional.of(new Certificate(2L, "4+")));
@@ -91,7 +92,7 @@ class CertificateHandlerTest {
 
         // swap so that user is not able to participate
         user.setCertificate("C4");
-        activityApp.setCertificate("4+");
+        activityApp.getProperties().setCertificate("4+");
         assertThat(filteringHandler.handle(matchFilter)).isFalse();
     }
 }
