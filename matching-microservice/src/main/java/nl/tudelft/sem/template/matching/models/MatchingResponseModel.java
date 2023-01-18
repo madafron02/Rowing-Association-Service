@@ -11,5 +11,5 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class MatchingResponseModel {
-    private List<ActivityReponse> activities;
+    private List<ActivityResponse> activities;
 }

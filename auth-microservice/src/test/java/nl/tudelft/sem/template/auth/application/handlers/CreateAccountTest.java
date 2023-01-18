@@ -84,7 +84,7 @@ public class CreateAccountTest {
         AccountCredentials credentials = new AccountCredentials("hello.there@world.com", "world");
         Optional<AccountCredentials> option = Optional.empty();
         when(mockRepo.findById(any())).thenReturn(option);
-        when(mockRepo.save(any())).thenThrow(new RuntimeException());
+        when(mockRepo.save(any())).thenReturn(null);
         createAccount.handle(credentials);
         assertThat(exceptionHandler.didCatchException()).isTrue();
         verify(mockHandler, times(0)).handle(any());

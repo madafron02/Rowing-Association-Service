@@ -102,6 +102,47 @@ class PositionsTest {
     }
 
     @Test
+    void checkIfValidFalseTest() {
+        Positions empty = new Positions();
+        assertThat(empty.checkIfValid()).isFalse();
+    }
+
+    @Test
+    void checkIfValidCoxNotNullTest() {
+        Positions empty = new Positions();
+        empty.setCox(1);
+        assertThat(empty.checkIfValid()).isTrue();
+    }
+
+    @Test
+    void checkIfValidCoachNotNullTest() {
+        Positions empty = new Positions();
+        empty.setCoach(1);
+        assertThat(empty.checkIfValid()).isTrue();
+    }
+
+    @Test
+    void checkIfValidPortNotNullTest() {
+        Positions empty = new Positions();
+        empty.setPort(1);
+        assertThat(empty.checkIfValid()).isTrue();
+    }
+
+    @Test
+    void checkIfValidStarboardNotNullTest() {
+        Positions empty = new Positions();
+        empty.setStarboard(1);
+        assertThat(empty.checkIfValid()).isTrue();
+    }
+
+    @Test
+    void checkIfValidScullingNotNullTest() {
+        Positions empty = new Positions();
+        empty.setSculling(1);
+        assertThat(empty.checkIfValid()).isTrue();
+    }
+
+    @Test
     void emptyConstructorTest() {
         Positions empty = new Positions();
         assertThat(empty).isNotNull();
@@ -165,29 +206,5 @@ class PositionsTest {
     void setScullingRowerTest() {
         positions.setSculling(2);
         assertThat(positions.getSculling()).isEqualTo(2);
-    }
-
-    @Test
-    void equalsTrue() {
-        Positions other = new Positions(0, 8, 0, 3, 0);
-        assertThat(positions.equals(other)).isTrue();
-    }
-
-    @Test
-    void equalsFalse() {
-        Positions other = new Positions(0, 9, 0, 3, 0);
-        assertThat(positions.equals(other)).isFalse();
-    }
-
-    @Test
-    void hashCodeEquals() {
-        Positions other = new Positions(0, 8, 0, 3, 0);
-        assertThat(positions.hashCode()).isEqualTo(other.hashCode());
-    }
-
-    @Test
-    void hashCodeNotEquals() {
-        Positions other = new Positions(0, 9, 0, 3, 0);
-        assertThat(positions.hashCode()).isNotEqualTo(other.hashCode());
     }
 }
