@@ -16,15 +16,21 @@ public interface MatchingRepo extends JpaRepository<Match, Long> {
 
     Optional<Match> getMatchByMatchId(Long matchId);
 
-    List<Match> getMatchesByOwnerId(String ownerId);
+    //List<Match> getMatchesByOwnerId(String ownerId);
 
     List<Match> getMatchesByParticipantIdAndStatus(String participantId, Status status);
 
-    List<Match> getMatchesByOwnerIdAndStatus(String ownerId, Status status);
+    //List<Match> getMatchesByOwnerIdAndStatus(String ownerId, Status status);
 
-    void deleteMatchesByActivityId(Long activityId);
+    List<Match> getMatchesByActivityInformation_OwnerIdAndStatus(String ownerId, Status status);
 
-    List<Match> getMatchesByActivityId(Long activityId);
+    //void deleteMatchesByActivityId(Long activityId);
 
-    Optional<Match> getMatchesByActivityIdAndParticipantId(Long activityId, String participantId);
+    //List<Match> getMatchesByActivityId(Long activityId);
+
+    List<Match> getMatchesByActivityInformation_ActivityId(Long activityId);
+
+    //Optional<Match> getMatchesByActivityIdAndParticipantId(Long activityId, String participantId);
+
+    Optional<Match> getMatchByActivityInformation_ActivityIdAndParticipantId(Long activityId, String participantId);
 }
