@@ -163,7 +163,7 @@ class MatchingServiceTest {
         match.setStatus(Status.PENDING);
 
         when(authManager.getUserId()).thenReturn("l.tosa@tudelft.nl");
-        when(matchingRepo.getMatchesByOwnerIdAndStatus("l.tosa@tudelft.nl",
+        when(matchingRepo.getMatchesByActivityInformation_OwnerIdAndStatus("l.tosa@tudelft.nl",
                 Status.PENDING))
                 .thenReturn(List.of(match));
         assertThat(sanitizationService.getPendingRequests().size()).isEqualTo(1);
@@ -242,7 +242,7 @@ class MatchingServiceTest {
                 "starboard");
         acceptedMatch.setStatus(Status.ACCEPTED);
 
-        when(matchingRepo.getMatchesByActivityId(2L)).thenReturn(List.of(match, acceptedMatch));
+        when(matchingRepo.getMatchesByActivityInformation_ActivityId(2L)).thenReturn(List.of(match, acceptedMatch));
         service.discardMatchesByActivity(2L);
 
         NotificationActivityModified activityModifiedEmail = new NotificationActivityModified(acceptedMatch
