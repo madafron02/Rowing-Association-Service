@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -140,6 +141,34 @@ class MatchingServiceTest {
                 "cox");
         verify(matchingRepo, times(1)).save(matchMade);
     }
+
+    @Test
+    void filterActivityCompetitivenessFail() {
+        HashMap<String, Integer> positions = new HashMap<>();
+        positions.put("cox", 2);
+
+        user = new UserApp("d.micloiu@icloud.com", "C4",
+                "Male", "SEM", false);
+        timeslot = new TimeslotApp(LocalDateTime.now(),
+                LocalDateTime.now().plusDays(1).plusHours(4));
+
+        ArrayList<ActivityApp> activities = new ArrayList<>();
+
+        activities.add(new ActivityApp(4L,
+                "l.tosa@tudelft.nl",
+                new TimeslotApp(LocalDateTime.now().plusDays(1).plusHours(2),
+                        LocalDateTime.now().plusDays(1).plusHours(3)),
+                "Male", "SEM", positions, true, TypeOfActivity.COMPETITION, "C4"));
+
+
+        when(certificateRepo.getCertificateByName("C4")).thenReturn(Optional.of(new Certificate(1L, "C4+")));
+        List<ActivityResponse> result = service.filterActivities(activities, new UserPreferences(timeslot, user, "cox"));
+        assertThat(result.size()).isEqualTo(0);
+
+        verify(matchingRepo, times(0)).save(any());
+    }
+
+
 
     @Test
     void pickActivity() {
