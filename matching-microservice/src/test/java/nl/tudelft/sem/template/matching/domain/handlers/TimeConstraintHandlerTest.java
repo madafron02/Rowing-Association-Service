@@ -129,4 +129,24 @@ class TimeConstraintHandlerTest {
         assertThat(filteringHandler.handle(matchFilter)).isFalse();
     }
 
+
+    @Test
+    void handleTrainingMutant() {
+        HashMap<String, Integer> positions = new HashMap<>();
+        positions.put("cox", 2);
+
+        activityApp = new ActivityApp(3L,
+                "l.tosa@tudelft.nl",
+                new TimeslotApp(LocalDateTime.now().plusMinutes(31),
+                        LocalDateTime.now().plusHours(2)),
+                null, null, positions, false,
+                TypeOfActivity.TRAINING, "4+");
+        user = new UserApp("d.micloiu@icloud.com", "C4",
+                "Female", "SEM", true);
+        matchFilter = new MatchFilter(activityApp, new UserPreferences(new TimeslotApp(LocalDateTime.now(),
+                LocalDateTime.now().plusHours(12)), user, "cox"));
+
+        assertThat(filteringHandler.handle(matchFilter)).isTrue();
+    }
+
 }
