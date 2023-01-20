@@ -251,4 +251,37 @@ class MatchingServiceTest {
         // two times since match and accepted match are not saved in db => same id
         verify(matchingRepo, times(2)).deleteById(match.getMatchId());
     }
+
+    @Test
+    void matchUserToActivityMutant() {
+        HashMap<String, Integer> positions = new HashMap<>();
+        positions.put("cox", 2);
+
+        ArrayList<ActivityApp> activities = new ArrayList<>();
+        activities.add(null);
+        activities.add(new ActivityApp(1L,
+                "l.tosa@tudelft.nl",
+                new TimeslotApp(LocalDateTime.now().plusMinutes(45),
+                        LocalDateTime.now().plusHours(3)),
+                null, null, positions, false, TypeOfActivity.TRAINING, "C4"));
+        activities.add(new ActivityApp(2L,
+                "l.tosa@tudelft.nl",
+                new TimeslotApp(LocalDateTime.now(),
+                        LocalDateTime.now().plusMinutes(45)),
+                null, null, positions, false, TypeOfActivity.TRAINING, "C4"));
+
+        activities.add(new ActivityApp(3L,
+                "l.tosa@tudelft.nl",
+                new TimeslotApp(LocalDateTime.now().plusDays(1),
+                        LocalDateTime.now().plusDays(1).plusHours(1)),
+                "Female", "SEM", positions, false, TypeOfActivity.COMPETITION, "4+"));
+
+
+        when(certificateRepo.getCertificateByName("C4")).thenReturn(Optional.of(new Certificate(1L, "C4")));
+        when(certificateRepo.getCertificateByName("4+")).thenReturn(Optional.of(new Certificate(2L, "4+")));
+        // one because one of the activities is 30 min after the timeslot given by the user
+        List<ActivityResponse> result = service.filterActivities(activities, new UserPreferences(timeslot, user, "cox"));
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.get(0)).isNotNull();
+    }
 }
