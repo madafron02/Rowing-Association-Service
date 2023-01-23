@@ -5,6 +5,7 @@ import nl.tudelft.sem.template.auth.domain.AccountsRepo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.stubbing.Answer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -91,6 +92,26 @@ public class CreateAccountTest {
         createAccount.handle(credentials);
         assertThat(exceptionHandler.didCatchException()).isTrue();
         verify(mockHandler, times(0)).handle(any());
+    }
+
+    @Test
+    void testCorrectHashing() {
+        AccountCredentials credentials = new AccountCredentials("hello.there@world.com", "world");
+        Optional<AccountCredentials> empty = Optional.empty();
+        when(mockRepo.findById(any())).thenReturn(empty);
+
+        final Object[] saved = new Object[1];
+        when(mockRepo.save(any())).thenAnswer((Answer) invocation -> {
+            saved[0] = invocation.getArguments()[0];
+            return saved[0];
+        });
+        createAccount.handle(credentials);
+
+        assertThat(saved[0] instanceof AccountCredentials).isTrue();
+        AccountCredentials savedCredentials = (AccountCredentials) saved[0];
+        assertThat(savedCredentials.getUserId()).isEqualTo(credentials.getUserId());
+        PasswordEncoder encoder = new BCryptPasswordEncoder(12, new SecureRandom());
+        assertThat(encoder.matches(credentials.getPassword(), savedCredentials.getPassword())).isTrue();
     }
 
     @Test
