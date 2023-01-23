@@ -107,6 +107,23 @@ public class CreateAccountTest {
     }
 
     @Test
+    void testIncorrectPassword() {
+        AccountCredentials credentials = new AccountCredentials("Foo", "Bar");
+        PasswordEncoder encoder = new BCryptPasswordEncoder(12, new SecureRandom());
+        AccountCredentials encoded = new AccountCredentials("Foo",
+                encoder.encode("Baz"));
+        Optional<AccountCredentials> notFound = Optional.empty();
+        Optional<AccountCredentials> found = Optional.of(encoded);
+        when(mockRepo.findById(any())).thenReturn(notFound).thenReturn(found);
+        createAccount.handle(credentials);
+
+        assertThat(exceptionHandler.didCatchException()).isTrue();
+        assertThat(exceptionHandler.getErrorMessage()).isEqualTo("There was an error while saving your account."
+                + " Please try again later");
+        verify(mockHandler, times(0)).handle(any());
+    }
+
+    @Test
     void nextNullTest() {
         CreateAccount createAccount1 = new CreateAccount(mockRepo);
         createAccount1.setExceptionHandler(exceptionHandler);
