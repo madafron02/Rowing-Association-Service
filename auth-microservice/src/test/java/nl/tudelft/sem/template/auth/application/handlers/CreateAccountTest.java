@@ -70,7 +70,10 @@ public class CreateAccountTest {
     @Test
     void testAlreadyExists() {
         AccountCredentials credentials = new AccountCredentials("hello.there@world.com", "world");
-        Optional<AccountCredentials> option = Optional.of(credentials);
+        PasswordEncoder encoder = new BCryptPasswordEncoder(12, new SecureRandom());
+        AccountCredentials encoded = new AccountCredentials("hello.there@world.com",
+                encoder.encode("world"));
+        Optional<AccountCredentials> option = Optional.of(encoded);
         when(mockRepo.findById(any())).thenReturn(option);
         createAccount.handle(credentials);
         assertThat(exceptionHandler.didCatchException()).isTrue();
