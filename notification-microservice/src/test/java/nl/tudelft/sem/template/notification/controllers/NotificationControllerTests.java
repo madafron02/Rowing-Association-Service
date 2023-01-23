@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.notification.controllers;
 
 import nl.tudelft.sem.template.notification.authentication.AuthManager;
+import nl.tudelft.sem.template.notification.domain.Director;
 import nl.tudelft.sem.template.notification.domain.Notification;
 import nl.tudelft.sem.template.notification.domain.Timeslot;
 import nl.tudelft.sem.template.notification.models.NotificationRequestModelOwner;
@@ -8,7 +9,11 @@ import nl.tudelft.sem.template.notification.models.NotificationRequestModelParti
 import nl.tudelft.sem.template.notification.models.NotificationRequestModelParticipantChanges;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -20,12 +25,8 @@ import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -34,8 +35,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Tests for NotificationController class.
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({Director.class, NotificationController.class})
 public class NotificationControllerTests {
     private transient NotificationController notificationController;
+    private transient Director director;
     private transient AuthManager authManager;
     private transient JavaMailSender javaMailSender;
 
@@ -53,8 +57,10 @@ public class NotificationControllerTests {
     public void setup() {
         authManager = Mockito.mock(AuthManager.class);
         javaMailSender = Mockito.mock(JavaMailSender.class);
+        director = PowerMockito.mock(Director.class);
+
         doNothing().when(javaMailSender).send(isA(SimpleMailMessage.class));
-        notificationController = new NotificationController(authManager);
+        notificationController = new NotificationController(authManager, director);
         Field javaMail = ReflectionUtils.findField(NotificationController.class, "javaMailSender");
         ReflectionUtils.makeAccessible(javaMail);
         ReflectionUtils.setField(javaMail, notificationController, javaMailSender);
@@ -76,16 +82,17 @@ public class NotificationControllerTests {
     }
 
     @Test
-    public void sendNotificationToPlayerOkTest() {
+    public void sendNotificationToPlayerOkTest() throws Exception {
         notificationRequestModelParticipant = new NotificationRequestModelParticipant(
                 "test@gmail.com", 999, new Timeslot(
                         LocalDateTime.now(), LocalDateTime.now().plusHours(1)), true);
 
-        NotificationController spy = Mockito.spy(notificationController);
-        doNothing().when(spy).sendNotification(any());
+//        Director spyDir = spy(notificationController.director);
+//        whenNew(Director.class).withAnyArguments().thenReturn(spyDir);
 
-        ResponseEntity response = spy.sendNotificationToPlayer(notificationRequestModelParticipant);
+        ResponseEntity response = notificationController.sendNotificationToPlayer(notificationRequestModelParticipant);
         assertThat(response).isEqualTo(ResponseEntity.ok("Email sent successfully."));
+//        verify(spyDir).makeNotificationForPlayer(any(), any(), any(), any());
     }
 
     @Test
@@ -94,13 +101,10 @@ public class NotificationControllerTests {
                 random, 999, new Timeslot(
                 LocalDateTime.now(), LocalDateTime.now().plusHours(1)), true);
         doThrow(new RuntimeException()).when(javaMailSender).send(isA(SimpleMailMessage.class));
-        try {
-            ResponseEntity response = notificationController
+        ResponseEntity response = notificationController
                     .sendNotificationToPlayer(notificationRequestModelParticipant);
-            assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
-        } catch (RuntimeException e) {
-            assertThat(e).isNotNull();
-        }
+        assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
+        assertThat(response).isNotNull();
     }
 
     @Test
@@ -109,10 +113,7 @@ public class NotificationControllerTests {
                 "test@gmail.com", 999, new Timeslot(
                 LocalDateTime.now(), LocalDateTime.now().plusHours(1)));
 
-        NotificationController spy = Mockito.spy(notificationController);
-        doNothing().when(spy).sendNotification(any());
-
-        ResponseEntity response = spy.sendNotificationToPlayerChanges(notificationRequestModelParticipantChanges);
+        ResponseEntity response = notificationController.sendNotificationToPlayerChanges(notificationRequestModelParticipantChanges);
         assertThat(response).isEqualTo(ResponseEntity.ok("Email sent successfully."));
     }
 
@@ -122,13 +123,11 @@ public class NotificationControllerTests {
                 random, 999, new Timeslot(
                 LocalDateTime.now(), LocalDateTime.now().plusHours(1)));
         doThrow(new RuntimeException()).when(javaMailSender).send(isA(SimpleMailMessage.class));
-        try {
-            ResponseEntity response = notificationController
-                    .sendNotificationToPlayerChanges(notificationRequestModelParticipantChanges);
-            assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
-        } catch (RuntimeException e) {
-            assertThat(e).isNotNull();
-        }
+
+        ResponseEntity response = notificationController
+                .sendNotificationToPlayerChanges(notificationRequestModelParticipantChanges);
+        assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
+        assertThat(response).isNotNull();
     }
 
     @Test
@@ -137,10 +136,7 @@ public class NotificationControllerTests {
                 "test@gmail.com", "test1@gmail.com", 999, new Timeslot(
                 LocalDateTime.now(), LocalDateTime.now().plusHours(1)));
 
-        NotificationController spy = Mockito.spy(notificationController);
-        doNothing().when(spy).sendNotification(any());
-
-        ResponseEntity response = spy.sendNotificationToPublisher(notificationRequestModelOwner);
+        ResponseEntity response = notificationController.sendNotificationToPublisher(notificationRequestModelOwner);
         assertThat(response).isEqualTo(ResponseEntity.ok("Email sent successfully."));
     }
 
@@ -150,13 +146,11 @@ public class NotificationControllerTests {
                 random, random, 999, new Timeslot(
                 LocalDateTime.now(), LocalDateTime.now().plusHours(1)));
         doThrow(new RuntimeException()).when(javaMailSender).send(isA(SimpleMailMessage.class));
-        try {
-            ResponseEntity response = notificationController
-                    .sendNotificationToPublisher(notificationRequestModelOwner);
-            assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
-        } catch (RuntimeException e) {
-            assertThat(e).isNotNull();
-        }
+
+        ResponseEntity response = notificationController
+                .sendNotificationToPublisher(notificationRequestModelOwner);
+        assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
+        assertThat(response).isNotNull();
     }
 
     @Test

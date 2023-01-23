@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class NotificationController {
 
     private final transient AuthManager authManager;
-    private transient Director director;
+    protected transient Director director;
 
     @Autowired
     private transient JavaMailSender javaMailSender;
@@ -38,10 +38,12 @@ public class NotificationController {
      * Instantiates a new notification controller.
      *
      * @param authManager Spring Security component used to authenticate and authorize the user
+     * @param director to direct the building process
      */
     @Autowired
-    public NotificationController(AuthManager authManager) {
+    public NotificationController(AuthManager authManager, Director director) {
         this.authManager = authManager;
+        this.director = director;
     }
 
     /**
@@ -128,8 +130,8 @@ public class NotificationController {
                     notificationRequestModelOwner.getTimeslot());
             sendNotification(builder.build());
             return ResponseEntity.ok("Email sent successfully.");
-        } catch (MailException mailException) {
-            return ResponseEntity.unprocessableEntity().body(mailException.getMessage());
+        } catch (Exception exception) {
+            return ResponseEntity.badRequest().body(exception.getMessage());
         }
     }
 
