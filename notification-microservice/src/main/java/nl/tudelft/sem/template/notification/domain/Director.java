@@ -83,7 +83,8 @@ public class Director {
 
     /**
      * Sets the builder of this director.
-     * @param builder
+     * 
+     * @param builder to be set in director
      */
     public void setBuilder(Builder builder) {
         this.builder = builder;
