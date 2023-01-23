@@ -71,7 +71,7 @@ public class NotificationController {
                 @RequestBody NotificationRequestModelParticipant notificationRequestModelParticipant) {
         try {
             Builder builder = new NotificationBuilder();
-            director = new Director(builder);
+            director.setBuilder(builder);
             director.makeNotificationForPlayer(notificationRequestModelParticipant.getParticipantId(),
                     notificationRequestModelParticipant.getActivityId(),
                     notificationRequestModelParticipant.getTimeslot(),
@@ -98,7 +98,7 @@ public class NotificationController {
                 @RequestBody NotificationRequestModelParticipantChanges notificationRequestModelParticipantChanges) {
         try {
             Builder builder = new NotificationBuilder();
-            director = new Director(builder);
+            director.setBuilder(builder);
             director.makeNotificationForPlayerChanges(notificationRequestModelParticipantChanges.getParticipantId(),
                     notificationRequestModelParticipantChanges.getActivityId(),
                     notificationRequestModelParticipantChanges.getTimeslot());
@@ -123,7 +123,7 @@ public class NotificationController {
                 @RequestBody NotificationRequestModelOwner notificationRequestModelOwner) {
         try {
             Builder builder = new NotificationBuilder();
-            director = new Director(builder);
+            director.setBuilder(builder);
             director.makeNotificationForPublisher(notificationRequestModelOwner.getOwnerId(),
                     notificationRequestModelOwner.getParticipantId(),
                     notificationRequestModelOwner.getActivityId(),

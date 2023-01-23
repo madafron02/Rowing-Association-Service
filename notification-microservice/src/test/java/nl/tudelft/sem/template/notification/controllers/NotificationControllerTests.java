@@ -1,6 +1,8 @@
 package nl.tudelft.sem.template.notification.controllers;
 
 import nl.tudelft.sem.template.notification.authentication.AuthManager;
+import nl.tudelft.sem.template.notification.builders.Builder;
+import nl.tudelft.sem.template.notification.builders.NotificationBuilder;
 import nl.tudelft.sem.template.notification.domain.Director;
 import nl.tudelft.sem.template.notification.domain.Notification;
 import nl.tudelft.sem.template.notification.domain.Timeslot;
@@ -10,6 +12,7 @@ import nl.tudelft.sem.template.notification.models.NotificationRequestModelParti
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -25,8 +28,11 @@ import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.*;
+import static org.powermock.api.mockito.PowerMockito.verifyNew;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -82,17 +88,21 @@ public class NotificationControllerTests {
     }
 
     @Test
-    public void sendNotificationToPlayerOkTest() throws Exception {
+    public void sendNotificationToPlayerOkTest() {
         notificationRequestModelParticipant = new NotificationRequestModelParticipant(
                 "test@gmail.com", 999, new Timeslot(
                         LocalDateTime.now(), LocalDateTime.now().plusHours(1)), true);
 
-//        Director spyDir = spy(notificationController.director);
-//        whenNew(Director.class).withAnyArguments().thenReturn(spyDir);
+        NotificationController spyCtrl = spy(notificationController);
 
         ResponseEntity response = notificationController.sendNotificationToPlayer(notificationRequestModelParticipant);
         assertThat(response).isEqualTo(ResponseEntity.ok("Email sent successfully."));
-//        verify(spyDir).makeNotificationForPlayer(any(), any(), any(), any());
+
+        verify(spyCtrl.director).setBuilder(any(Builder.class));
+        verify(spyCtrl.director).makeNotificationForPlayer(notificationRequestModelParticipant.getParticipantId(),
+                notificationRequestModelParticipant.getActivityId(),
+                notificationRequestModelParticipant.getTimeslot(),
+                notificationRequestModelParticipant.isDecision());
     }
 
     @Test
@@ -113,8 +123,15 @@ public class NotificationControllerTests {
                 "test@gmail.com", 999, new Timeslot(
                 LocalDateTime.now(), LocalDateTime.now().plusHours(1)));
 
+        NotificationController spyCtrl = spy(notificationController);
+
         ResponseEntity response = notificationController.sendNotificationToPlayerChanges(notificationRequestModelParticipantChanges);
         assertThat(response).isEqualTo(ResponseEntity.ok("Email sent successfully."));
+
+        verify(spyCtrl.director).setBuilder(any(Builder.class));
+        verify(spyCtrl.director).makeNotificationForPlayerChanges(notificationRequestModelParticipantChanges.getParticipantId(),
+                notificationRequestModelParticipantChanges.getActivityId(),
+                notificationRequestModelParticipantChanges.getTimeslot());
     }
 
     @Test
@@ -136,8 +153,16 @@ public class NotificationControllerTests {
                 "test@gmail.com", "test1@gmail.com", 999, new Timeslot(
                 LocalDateTime.now(), LocalDateTime.now().plusHours(1)));
 
+        NotificationController spyCtrl = spy(notificationController);
+
         ResponseEntity response = notificationController.sendNotificationToPublisher(notificationRequestModelOwner);
         assertThat(response).isEqualTo(ResponseEntity.ok("Email sent successfully."));
+
+        verify(spyCtrl.director).setBuilder(any(Builder.class));
+        verify(spyCtrl.director).makeNotificationForPublisher(notificationRequestModelOwner.getOwnerId(),
+                notificationRequestModelOwner.getParticipantId(),
+                notificationRequestModelOwner.getActivityId(),
+                notificationRequestModelOwner.getTimeslot());
     }
 
     @Test

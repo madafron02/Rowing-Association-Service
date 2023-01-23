@@ -80,4 +80,12 @@ public class Director {
                 + timeslot.getEndTime().toString() + ". Please decide as soon as possible"
                 + " whether you accept this request or not.");
     }
+
+    /**
+     * Sets the builder of this director.
+     * @param builder
+     */
+    public void setBuilder(Builder builder) {
+        this.builder = builder;
+    }
 }
