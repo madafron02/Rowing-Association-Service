@@ -5,6 +5,7 @@ import nl.tudelft.sem.template.auth.domain.AccountsRepo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.stubbing.Answer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -70,7 +71,10 @@ public class CreateAccountTest {
     @Test
     void testAlreadyExists() {
         AccountCredentials credentials = new AccountCredentials("hello.there@world.com", "world");
-        Optional<AccountCredentials> option = Optional.of(credentials);
+        PasswordEncoder encoder = new BCryptPasswordEncoder(12, new SecureRandom());
+        AccountCredentials encoded = new AccountCredentials("hello.there@world.com",
+                encoder.encode("world"));
+        Optional<AccountCredentials> option = Optional.of(encoded);
         when(mockRepo.findById(any())).thenReturn(option);
         createAccount.handle(credentials);
         assertThat(exceptionHandler.didCatchException()).isTrue();
@@ -91,12 +95,49 @@ public class CreateAccountTest {
     }
 
     @Test
+    void testCorrectHashing() {
+        AccountCredentials credentials = new AccountCredentials("hello.there@world.com", "world");
+        Optional<AccountCredentials> empty = Optional.empty();
+        when(mockRepo.findById(any())).thenReturn(empty);
+
+        final Object[] saved = new Object[1];
+        when(mockRepo.save(any())).thenAnswer((Answer) invocation -> {
+            saved[0] = invocation.getArguments()[0];
+            return saved[0];
+        });
+        createAccount.handle(credentials);
+
+        assertThat(saved[0] instanceof AccountCredentials).isTrue();
+        AccountCredentials savedCredentials = (AccountCredentials) saved[0];
+        assertThat(savedCredentials.getUserId()).isEqualTo(credentials.getUserId());
+        PasswordEncoder encoder = new BCryptPasswordEncoder(12, new SecureRandom());
+        assertThat(encoder.matches(credentials.getPassword(), savedCredentials.getPassword())).isTrue();
+    }
+
+    @Test
     void testNotSavedCorrectly() {
         AccountCredentials credentials = new AccountCredentials("hello.there@world.com", "world");
         Optional<AccountCredentials> option = Optional.empty();
         when(mockRepo.findById(any())).thenReturn(option).thenReturn(option);
         when(mockRepo.save(any())).thenReturn(credentials);
         createAccount.handle(credentials);
+        assertThat(exceptionHandler.didCatchException()).isTrue();
+        assertThat(exceptionHandler.getErrorMessage()).isEqualTo("There was an error while saving your account."
+                + " Please try again later");
+        verify(mockHandler, times(0)).handle(any());
+    }
+
+    @Test
+    void testIncorrectPassword() {
+        AccountCredentials credentials = new AccountCredentials("Foo", "Bar");
+        PasswordEncoder encoder = new BCryptPasswordEncoder(12, new SecureRandom());
+        AccountCredentials encoded = new AccountCredentials("Foo",
+                encoder.encode("Baz"));
+        Optional<AccountCredentials> notFound = Optional.empty();
+        Optional<AccountCredentials> found = Optional.of(encoded);
+        when(mockRepo.findById(any())).thenReturn(notFound).thenReturn(found);
+        createAccount.handle(credentials);
+
         assertThat(exceptionHandler.didCatchException()).isTrue();
         assertThat(exceptionHandler.getErrorMessage()).isEqualTo("There was an error while saving your account."
                 + " Please try again later");
