@@ -9,12 +9,15 @@ import nl.tudelft.sem.template.activities.domain.Timeslot;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -77,14 +80,6 @@ class ActivityControllerTest {
     }
 
     @Test
-    public void getActivityTimeslotByIdNotFound() throws Exception {
-        when(activityRepository.findById(1L)).thenReturn(Optional.empty());
-        this.mockMvc
-                .perform(get("/1"))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
     public void getActivityTimeslotByIdOkIntegration() throws Exception {
         when(activityRepository.findById(1L)).thenReturn(Optional.of(c1));
         this.mockMvc
@@ -95,9 +90,12 @@ class ActivityControllerTest {
     @Test
     public void getActivityTimeslotByIdNotFoundIntegration() throws Exception {
         when(activityRepository.findById(1L)).thenReturn(Optional.empty());
-        this.mockMvc
+        MvcResult result = this.mockMvc
                 .perform(get("/1"))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound())
+                .andReturn();
+
+        assertThat(result.getResponse().getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
 
     @Test
@@ -105,6 +103,13 @@ class ActivityControllerTest {
         when(activityRepository.findById(1L)).thenReturn(Optional.of(c1));
         Timeslot timeslot = activityController.getActivityTimeslotById(1L).getBody();
         assertThat(timeslot).isEqualTo(c1.getTimeslot());
+    }
+
+    @Test
+    public void getActivityTimeslotByIdNotFound() throws Exception {
+        when(activityRepository.findById(1L)).thenReturn(Optional.empty());
+        HttpStatus status = activityController.getActivityTimeslotById(1L).getStatusCode();
+        assertThat(status).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     @Test
@@ -126,19 +131,22 @@ class ActivityControllerTest {
 
     @Test
     void createActivity() {
+        Activity spyActivity = spy(t1);
         when(matchingClient.validateCertificate(t1.getCertificate())).thenReturn(true);
         when(authManager.getUserId()).thenReturn(t1.getOwnerId());
-        String response = activityController.createActivity(t1).getBody();
+        String response = activityController.createActivity(spyActivity).getBody();
         assertThat(response).isEqualTo("Activity created successfully!");
-        verify(activityRepository).save(t1);
+        verify(activityRepository).save(spyActivity);
+        verify(spyActivity).setOwnerId(t1.getOwnerId());
     }
 
     @Test
     void createActivityInvalid() {
-        t1.setPositions(new Positions());
+        Activity spyActivity = spy(t1);
+        spyActivity.setPositions(new Positions());
         when(matchingClient.validateCertificate(t1.getCertificate())).thenReturn(false);
         when(authManager.getUserId()).thenReturn(t1.getOwnerId());
-        activityController.createActivity(t1).getBody();
+        activityController.createActivity(spyActivity).getBody();
         verify(activityRepository, never()).save(any());
     }
 
@@ -178,15 +186,18 @@ class ActivityControllerTest {
 
     @Test
     void updateActivity() {
+        Activity spyActivity = spy(c1);
         Activity request = new Activity();
         request.setId(1L);
         request.setGender("Female");
-        when(activityRepository.findById(1L)).thenReturn(Optional.of(c1));
+        when(activityRepository.findById(1L)).thenReturn(Optional.of(spyActivity));
         when(authManager.getUserId()).thenReturn(c1.getOwnerId());
         when(matchingClient.validateCertificate(any())).thenReturn(true);
-        activityController.updateActivity(request).toString();
+        HttpStatus status = activityController.updateActivity(request).getStatusCode();
         verify(activityRepository).save(any());
         verify(matchingClient).deleteAllMatches(anyLong());
+        verify(spyActivity).updateFields(request);
+        assertThat(status).isEqualTo(HttpStatus.OK);
     }
 
     @Test
@@ -197,31 +208,39 @@ class ActivityControllerTest {
         when(activityRepository.findById(1L)).thenReturn(Optional.empty());
         when(authManager.getUserId()).thenReturn(c1.getOwnerId());
         when(matchingClient.validateCertificate(any())).thenReturn(true);
-        activityController.updateActivity(request);
+        HttpStatus status = activityController.updateActivity(request).getStatusCode();
         verify(activityRepository, never()).save(any());
         verify(matchingClient, never()).deleteAllMatches(anyLong());
+        assertThat(status).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
     @Test
-    void updateActivityiInvalid() {
-        when(activityRepository.findById(1L)).thenReturn(Optional.empty());
+    void updateActivityInvalid() {
+        Activity request = new Activity();
+        request.setId(1L);
+        request.setGender("Female");
+        c1.setPositions(null);
+        when(activityRepository.findById(1L)).thenReturn(Optional.of(c1));
         when(authManager.getUserId()).thenReturn(c1.getOwnerId());
         when(matchingClient.validateCertificate(any())).thenReturn(false);
-        Activity request = new Activity();
-        activityController.updateActivity(request);
+        HttpStatus status = activityController.updateActivity(request).getStatusCode();
         verify(activityRepository, never()).save(any());
         verify(matchingClient, never()).deleteAllMatches(anyLong());
+        assertThat(status).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test
-    void updateActivityiInvalidIdMismatch() {
-        when(activityRepository.findById(1L)).thenReturn(Optional.empty());
+    void updateActivityInvalidIdMismatch() {
+        Activity request = new Activity();
+        request.setId(1L);
+        request.setGender("Female");
+        when(activityRepository.findById(1L)).thenReturn(Optional.of(c1));
         when(authManager.getUserId()).thenReturn("a mismatching id");
         when(matchingClient.validateCertificate(any())).thenReturn(false);
-        Activity request = new Activity();
-        activityController.updateActivity(request);
+        HttpStatus status = activityController.updateActivity(request).getStatusCode();
         verify(activityRepository, never()).save(any());
         verify(matchingClient, never()).deleteAllMatches(anyLong());
+        assertThat(status).isEqualTo(HttpStatus.FORBIDDEN);
     }
 
     @Test
