@@ -47,4 +47,9 @@ public class OrganisationValidationHandler implements UserValidationHandler {
         }
         throw new IllegalArgumentException("This organisation is not recognised by our system.");
     }
+
+    @Override
+    public UserValidationHandler getNext() {
+        return next;
+    }
 }

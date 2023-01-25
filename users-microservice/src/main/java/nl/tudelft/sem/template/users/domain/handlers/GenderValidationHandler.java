@@ -39,4 +39,9 @@ public class GenderValidationHandler implements UserValidationHandler {
         }
         throw new IllegalArgumentException("Please enter your gender as 'Male' or 'Female'");
     }
+
+    @Override
+    public UserValidationHandler getNext() {
+        return next;
+    }
 }
