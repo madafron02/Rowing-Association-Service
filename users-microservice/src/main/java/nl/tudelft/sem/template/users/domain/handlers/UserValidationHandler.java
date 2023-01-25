@@ -7,4 +7,6 @@ public interface UserValidationHandler {
     public void setNext(UserValidationHandler handler);
 
     public boolean handle(User user);
+
+    public UserValidationHandler getNext();
 }
