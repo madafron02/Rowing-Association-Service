@@ -96,13 +96,13 @@ public class CreateAccount implements AuthHandler {
      */
     private boolean verifySavedAccount(String password) {
         Optional<AccountCredentials> foundAccount = accountsRepo.findById(credentials.getUserId());
-        if (!foundAccount.isPresent()) {
+        PasswordEncoder encoder = new BCryptPasswordEncoder(12, new SecureRandom());
+        if (!foundAccount.isPresent() || !encoder.matches(password, foundAccount.get().getPassword())) {
             exceptionHandler.handleException(new SQLException(), "There was an error while saving your account."
                     + " Please try again later", 500);
             return false;
         }
-        PasswordEncoder encoder = new BCryptPasswordEncoder(12, new SecureRandom());
-        return encoder.matches(password, foundAccount.get().getPassword());
+        return true;
     }
 
     /**

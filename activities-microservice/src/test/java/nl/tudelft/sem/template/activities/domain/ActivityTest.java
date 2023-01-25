@@ -227,6 +227,19 @@ class ActivityTest {
     }
 
     @Test
+    void updateFieldsTwoValidActivitiesTest() {
+        Activity a = new Activity("owner@gmail.com", validPositions,
+                null, "8+", false, null, "Laga");
+        Activity other = new Activity("owner@gmail.com", validPositions,
+                validTimeslot, "4+", true, "Male", "Proteus");
+        a.updateFields(other);
+        assertThat(a.getCertificate()).isEqualTo("4+");
+        assertThat(a.getTimeslot()).isEqualTo(validTimeslot);
+        assertThat(a.getCompetition()).isTrue();
+        assertThat(a.getGender()).isEqualTo("Male");
+    }
+
+    @Test
     void checkNoArgsConstructorTest() {
         Activity a = new Activity();
         assertThat(a).isNotNull();
