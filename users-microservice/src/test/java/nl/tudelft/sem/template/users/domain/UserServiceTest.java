@@ -4,11 +4,16 @@ package nl.tudelft.sem.template.users.domain;
 import nl.tudelft.sem.template.users.application.MatchingCommunication;
 import nl.tudelft.sem.template.users.domain.database.OrganisationRepo;
 import nl.tudelft.sem.template.users.domain.database.UserRepo;
+import nl.tudelft.sem.template.users.domain.handlers.OrganisationValidationHandler;
+import nl.tudelft.sem.template.users.domain.handlers.CertificateValidationHandler;
+import nl.tudelft.sem.template.users.domain.handlers.EmailValidationHandler;
+import nl.tudelft.sem.template.users.domain.handlers.GenderValidationHandler;
+import nl.tudelft.sem.template.users.domain.handlers.UserValidationHandler;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -22,16 +27,12 @@ import static org.mockito.Mockito.never;
 @SpringBootTest
 public class UserServiceTest {
 
-    @MockBean
     private UserRepo userRepo;
 
-    @MockBean
     private OrganisationRepo organisationRepo;
 
-    @MockBean
     private MatchingCommunication matchingCommunication;
 
-    @Autowired
     private UserService service;
 
     /**
@@ -39,6 +40,12 @@ public class UserServiceTest {
      */
     @BeforeEach
     public void setUp() {
+        userRepo = Mockito.mock(UserRepo.class);
+        organisationRepo = Mockito.mock(OrganisationRepo.class);
+        matchingCommunication = Mockito.mock(MatchingCommunication.class);
+
+        service = new UserService(userRepo, organisationRepo, matchingCommunication);
+
         when(matchingCommunication.validateCertificate("4+")).thenReturn(true);
         when(matchingCommunication.validateCertificate("8+")).thenReturn(true);
 
@@ -168,5 +175,20 @@ public class UserServiceTest {
             assertThat(service.updateUser(testUser)).isNull();
         });
         verify(userRepo, never()).save(testUser);
+    }
+
+    @Test
+    public void responsibilityChainTest() {
+        UserValidationHandler firstHandler = service.userValidationHandler;
+        assertThat(firstHandler).isInstanceOf(EmailValidationHandler.class);
+
+        UserValidationHandler secondHandler = firstHandler.getNext();
+        assertThat(secondHandler).isInstanceOf(GenderValidationHandler.class);
+
+        UserValidationHandler thirdHandler = secondHandler.getNext();
+        assertThat(thirdHandler).isInstanceOf(OrganisationValidationHandler.class);
+
+        UserValidationHandler fourthHandler = thirdHandler.getNext();
+        assertThat(fourthHandler).isInstanceOf(CertificateValidationHandler.class);
     }
 }
