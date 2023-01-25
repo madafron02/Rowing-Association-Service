@@ -36,6 +36,12 @@ public class EmailValidationHandler implements UserValidationHandler {
         throw new IllegalArgumentException("This is not a valid email.");
     }
 
+    @Override
+    public UserValidationHandler getNext() {
+        return next;
+    }
+
+
     /**
      * Checks that an email is valid and matches the regex.
      *

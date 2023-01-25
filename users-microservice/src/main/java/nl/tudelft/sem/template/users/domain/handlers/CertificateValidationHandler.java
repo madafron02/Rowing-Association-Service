@@ -46,4 +46,9 @@ public class CertificateValidationHandler implements UserValidationHandler {
         }
         throw new IllegalArgumentException("This certificate is not recognized by our system.");
     }
+
+    @Override
+    public UserValidationHandler getNext() {
+        return next;
+    }
 }

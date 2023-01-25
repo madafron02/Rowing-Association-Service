@@ -92,5 +92,12 @@ public class CreateTokenTest {
         assertThat(createToken1.getToken()).isNull();
     }
 
+    @Test
+    void credentialsNullTest() {
+        createToken.handle(null);
+        assertThat(createToken.getToken()).isNull();
+        assertThat(exceptionHandler.didCatchException()).isTrue();
+    }
+
 
 }
